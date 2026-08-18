@@ -1,0 +1,41 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}Disconnect — Wiehr{% endblock %}
+
+{% block head %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/youcannotseethis.css' %}">
+    {% endcompress %}
+
+    <meta name="description" content="Disconnect & Unsubscribe from Wiehr emails." />
+    <meta name="robots" content="noindex, nofollow" />
+{% endblock %}
+
+{% block content %}
+    <div class="youcannotseethis">
+        {% if message %}
+            <div class="youcannotseethislabel">{{ message }}</div>
+            {% if not show_form %}
+                <div class="youcannotseethissub">You will no longer receive emails from us.</div>
+                <a href="/" class="youcannotseethisback">Back</a>
+            {% endif %}
+        {% endif %}
+
+        {% if show_form %}
+            <div class="youcannotseethislabel">Disconnect</div>
+            <div class="youcannotseethissub">Unsubscribe from future emails</div>
+            <form method="post" class="disconnect-form" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                {% csrf_token %}
+                <input type="email" name="email" value="{{ email_prefill }}" placeholder="your@email" required
+                       style="background: transparent; border: 1px solid currentColor; padding: 0.6rem 1rem; font-family: inherit; font-size: 0.85rem; color: inherit; width: 260px; text-align: center; outline: none; opacity: 0.7;">
+                <button type="submit"
+                        style="background: transparent; border: 1px solid currentColor; padding: 0.5rem 2rem; font-family: inherit; font-size: 0.75rem; color: inherit; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; transition: opacity 0.2s;"
+                        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                    Disconnect
+                </button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab{% endblock %}
+{% block breadcrumb_label %}INDEX{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/">
+    <link rel="alternate" href="{{ site_url_nodashed }}/" />
+
+    <meta name="title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab">
+    <meta property="vk:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
+    <meta property="og:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
+    <meta name="twitter:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
+    <meta itemprop="name" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab">
+
+    <meta name="description" content="Official site of Wiehr — Belarus-born electronic composer, sound engineer and software engineer. Archive, Globe, Atlas, Storage and Lab. Available for scoring, mixing, mastering and engineering work." />
+    <meta property="og:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab. Available for scoring, mixing, mastering and engineering work." />
+    <meta property="vk:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab." />
+    <meta itemprop="description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab." />
+    <meta name="twitter:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab. Available for hire." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta name="twitter:image:alt" content="Wiehr. Official Website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@wiehrcc" />
+    <meta name="twitter:creator" content="@wiehrcc" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:alt" content="Wiehr. Official Website" />
+
+    <meta name="keywords" content="Wiehr, Wiehr official website, electronic composer, film composer for hire, cinematic sound, ambient, sound design, mixing, mastering, archive, globe, atlas, storage, lab, Yauheni Kandratovich, Eugene Kandratovich">
+    <meta name="geo.region" content="SK" />
+    <meta property="og:type" content="website" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
+      "name": "Yauheni Kandratovich",
+      "alternateName": ["Wiehr", "Eugene Kandratovich"],
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/",
+      "image": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}",
+      "jobTitle": "Electronic Composer",
+      "description": "Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music.",
+      "email": "hello@wiehr.cc",
+      "sameAs": [
+        "https://twitter.com/wiehrcc",
+        "https://instagram.com/wiehrcc",
+        "https://youtube.com/@Wiehr",
+        "https://open.spotify.com/artist/1S1eGa25MQIlhjeBwy7RB4",
+        "https://wiehr.bandcamp.com"
+      ]
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Wiehr. Official Website</h1>
+    <h2 class="seoonly">Archive, Globe, Atlas, Storage &amp; Lab — electronic composer and engineer for hire</h2>
+    <canvas id="linesbetweenus"></canvas>
+    <div class="pleasesavemefromthiswrap">
+        <canvas id="pleasesavemefromthis"></canvas>
+    </div>
+
+    <div class="begyoutostay">
+        <span class="wecountsouls">Visible Listeners — <span id="wecountsoulsnumber">{{ visible_listeners }}</span></span>
+        <button class="becomevisible" id="becomevisible">I'M VISIBLE</button>
+    </div>
+
+    <div id="pleasedontleave" class="pleasedontleave" style="display:none;">
+        <div class="papercutcard">
+            <h3 class="shoutingintovoid">SUBSCRIBE</h3>
+            <p class="smallpromises">Join the Wiehr Network</p>
+            <form class="formalitieskillus" id="formalitieskillus">
+                <input type="email" name="email" placeholder="Email" required class="typehereifyoudare" autocomplete="email" />
+                <div class="wherearetheyfrom">
+                    <input type="text" name="location" placeholder="Country" class="typehereifyoudare" id="wherearetheyfrominput" autocomplete="country-name" />
+                    <div class="wherearetheyfromresults" id="wherearetheyfromresults"></div>
+                </div>
+                <input type="hidden" name="country" id="wherearetheyfromname" />
+                <input type="hidden" name="country_code" id="wherearetheyfromcode" />
+                <button type="submit" class="pressandpray">Connect</button>
+            </form>
+            <p class="didithappen" id="didithappen"></p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/pleasesavemefromthis.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{% static 'js/logolookslikevenom.js' %}"></script>
+    <script src="{% static 'js/countries.js' %}"></script>
+    <script src="{% static 'js/networkgraph.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-wiehr-theme="light" prefix="og: http://ogp.me/ns#">
+
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+<head>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1S3CRTF0DP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1S3CRTF0DP');
+</script>
+
+    <title>{% block title %}Wiehr. Official Website{% endblock %}</title>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/styleiseverything.css' %}">
+        <link rel="stylesheet" href="{% static 'css/wiehr-theme.css' %}">
+        <link rel="stylesheet" href="{% static 'css/waitforitall.css' %}">
+        <link rel="stylesheet" href="{% static 'css/nothingisalitwithoutthis.css' %}">
+    {% endcompress %}
+
+    {% block extra_css %}{% endblock %}
+
+    <script>
+    (function(){'use strict';var L='light',D='dark',K='wiehr-theme';function g(){return localStorage.getItem(K)||L}function a(t){document.documentElement.setAttribute('data-wiehr-theme',t);var b=t===D?'#151617':'#F4F4F4';document.documentElement.style.setProperty('background',b,'important');if(document.body){document.body.style.setProperty('background',b,'important');document.body.style.color=t===D?'#f4f4f4':'#151617'}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t===D?'#151617':'#f4f4f4';var i=document.getElementById('lightnessicon');if(i)i.style.filter=t===D?'invert(1)':'none'}function toggle(){var c=g(),n=c===L?D:L;localStorage.setItem(K,n);a(n);return n}a(g());if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){a(g())})}window.WiehrTheme={get:g,set:function(t){localStorage.setItem(K,t);a(t)},toggle:toggle,LIGHT:L,DARK:D}})();
+</script>
+
+    {% block head %}
+    {% endblock %}
+
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <link rel="preconnect" href="{{ site_url_nodashed }}" crossorigin>
+    <link rel="dns-prefetch" href="{{ site_url_nodashed }}">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ site_url_nodashed }}{% static 'favicon/favicon-16x16.png' %}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ site_url_nodashed }}{% static 'favicon/favicon.png' %}" />
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ site_url_nodashed }}{% static 'favicon/favicon-48x48.png' %}" />
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ site_url_nodashed }}{% static 'favicon/favicon-96x96.png' %}" />
+    <link rel="icon" type="image/svg+xml" href="{{ site_url_nodashed }}{% static 'favicon/favicon.svg' %}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ site_url_nodashed }}{% static 'favicon/favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ site_url_nodashed }}{% static 'favicon/apple-touch-icon.png' %}" />
+
+    <link rel="manifest" href="{{ site_url_nodashed }}{% static 'favicon/site.webmanifest' %}" />
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ site_url_nodashed }}{% static 'favicon/web-app-manifest-192x192.png' %}" />
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ site_url_nodashed }}{% static 'favicon/web-app-manifest-512x512.png' %}" />
+    <meta name="msapplication-TileColor" content="#151617" />
+    <meta name="theme-color" content="#151617" />
+    <meta name="apple-mobile-web-app-title" content="Wiehr" />
+
+    {% block robots %}
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    {% endblock %}
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:site" content="@wiehrcc" />
+    <meta name="copyright" content="2025 Wiehr">
+    <meta name="author" content="Wiehr">
+    <meta name="application-name" content="Wiehr">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="sitemap" type="application/xml" href="{{ site_url_nodashed }}/sitemap.xml">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+      "name": "Wiehr",
+      "alternateName": ["Wiehr. Official Website"],
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/",
+      "description": "Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music.",
+      "publisher": {
+        "@type": "Person",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+</head>
+<body class="loading" data-breadcrumb-label="{% block breadcrumb_label %}{% endblock %}">
+    <canvas id="floatingdustcanvas" class="floatingdustcanvas" aria-hidden="true"></canvas>
+    <div id="moneyruinseverythingoverlay" class="moneyruinseverything"></div>
+
+    <svg class="noisefilterdefinitions" aria-hidden="true">
+        <defs>
+            <filter id="wiehr-noise-filter" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="1" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <filter id="wiehr-noise-filter2" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="7" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <a href="/" class="wilogoatleft noiseonhover" aria-label="Wiehr">
+        <img src="{% static 'images/entities/wiehr_text_logo.svg' %}" alt="Wiehr" width="80" height="16">
+    </a>
+
+    <nav class="youarehere" id="youarehere" aria-label="Breadcrumb">
+        <div class="youarehereitem">
+            <button class="labyrinthopenseverything noiseonhover" id="labyrinthopenseverything" aria-label="Menu">
+                <img src="{% static 'images/entities/labyrinth.svg' %}" alt="Menu" class="labyrinthicon" width="20" height="20">
+            </button>
+        </div>
+    </nav>
+
+    <div class="whatareyouinterestedin" id="whatareyouinterestedin">
+        <div class="pickyourdestination">
+            <div class="treeofalloptions">
+                <div class="routesforyou"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bottomofeverything" id="bottomofeverything">
+        <div class="lastresortlinks">
+            <a href="/licensing" class="lastresortlink">LICENSING</a>
+            <a href="/support" class="lastresortlink">SUPPORT</a>
+            <span class="lastresortsep" aria-hidden="true">|</span>
+            <a href="/privacy" class="lastresortlink">PRIVACY</a>
+            <a href="/terms" class="lastresortlink">TERMS</a>
+        </div>
+        <button class="lightordarkness noiseonhover" id="lightordarkness" aria-label="Toggle theme">
+            <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" id="lightnessicon" width="16" height="16">
+        </button>
+    </div>
+
+    <div class="versionmark" id="versionmark">V1.0</div>
+    <div class="copyrightmark" id="copyrightmark">© 2025 — 2125 Wiehr</div>
+
+    <div id="iwanttoeathealthyfood">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="{% static 'js/waitforitall.js' %}"></script>
+    <script src="{% static 'js/floatingdust.js' %}" defer></script>
+    <script src="{% static 'js/pleasepickasideofthemenu.js' %}" defer></script>
+    <script src="{% static 'js/grabit.js' %}" defer></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

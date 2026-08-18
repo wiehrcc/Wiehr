@@ -1,0 +1,101 @@
+{% extends 'entities/_profile.html' %}
+{% load static %}
+
+{% block title %}Software Engineer for Hire — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}ENGINEER{% endblock %}
+{% block seo_heading %}Hire Wiehr as a software engineer — Python, AWS, DevOps and data pipelines{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer">
+    <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" />
+
+    <meta name="title" content="Software Engineer for Hire — Wiehr. Official Website">
+    <meta property="og:title" content="Software Engineer for Hire — Wiehr. Official Website" />
+    <meta property="vk:title" content="Software Engineer for Hire — Wiehr. Official Website" />
+    <meta name="twitter:title" content="Software Engineer for Hire — Wiehr. Official Website" />
+    <meta itemprop="name" content="Software Engineer for Hire — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+
+    {% with page_desc="Hire Yauheni (Eugene) Kandratovich — lead software engineer. Python, AWS, DevOps and AI. Backend/API $60/hr, AWS/DevOps $70/hr, ETL pipelines $65/hr, custom projects quoted on scope. Downloadable CV." %}
+    <meta name="description" content="{{ page_desc }}" />
+    <meta property="og:description" content="{{ page_desc }}" />
+    <meta property="vk:description" content="{{ page_desc }}" />
+    <meta itemprop="description" content="{{ page_desc }}" />
+    <meta name="twitter:description" content="{{ page_desc }}" />
+    {% endwith %}
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="ENGINEER — Wiehr. Official Website" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+    <meta name="twitter:image:alt" content="ENGINEER — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
+
+    <meta property="og:type" content="profile" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="hire software engineer, Python developer for hire, AWS engineer, DevOps consultant, ETL pipelines, Django developer, freelance backend engineer, Yauheni Kandratovich, Wiehr, Kosice, Slovakia" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer/#profile",
+      "name": "ENGINEER — Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer",
+      "mainEntity": {
+        "@type": "Person",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
+        "name": "Yauheni Kandratovich",
+        "alternateName": "Wiehr",
+        "jobTitle": "Lead Software Engineer",
+        "email": "hello@wiehr.cc",
+        "knowsAbout": ["Python", "AWS", "DevOps", "Django", "ETL", "Terraform", "Kubernetes"],
+        "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Software engineering",
+      "provider": { "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person" },
+      "areaServed": "Worldwide",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Engineering rates",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Backend / API Development" }, "priceSpecification": { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "HUR" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ETL / Data Pipelines" }, "priceSpecification": { "@type": "UnitPriceSpecification", "price": "65", "priceCurrency": "USD", "unitText": "HUR" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AWS / DevOps" }, "priceSpecification": { "@type": "UnitPriceSpecification", "price": "70", "priceCurrency": "USD", "unitText": "HUR" } }
+        ]
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "Engineer", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/engineer" }
+      ]
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}Shortener — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}SHORTENER{% endblock %}
+
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s">
+    <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
+
+    <meta name="title" content="Shortener — Wiehr. Official Website">
+    <meta property="og:title" content="Shortener — Wiehr. Official Website" />
+    <meta property="vk:title" content="Shortener — Wiehr. Official Website" />
+    <meta name="twitter:title" content="Shortener — Wiehr. Official Website" />
+    <meta itemprop="name" content="Shortener — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="Shortener — Wiehr. Official Website" />
+
+    {% with page_desc="Wiehr link shortener — turn a long URL into a wiehr.cc/s short link." %}
+    <meta name="description" content="{{ page_desc }}" />
+    <meta property="og:description" content="{{ page_desc }}" />
+    <meta property="vk:description" content="{{ page_desc }}" />
+    <meta itemprop="description" content="{{ page_desc }}" />
+    <meta name="twitter:description" content="{{ page_desc }}" />
+    {% endwith %}
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+    <meta name="twitter:image:alt" content="Shortener — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, link shortener, short url, wiehr.cc/s">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/s/#page",
+      "name": "Shortener — Wiehr",
+      "description": "Wiehr link shortener.",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/s",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/license.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/shortener.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Link Shortener — Wiehr. Official Website</h1>
+
+    {% if not authed %}
+    <div class="knockknock" id="shortenerGate">
+        <div class="knockknockbox">
+            <p class="knockknocktitle">PASSWORD REQUIRED</p>
+            <p class="knockknockdesc">Enter it once — this browser stays unlocked.</p>
+            <form class="knockknockform" method="post" action="/s" autocomplete="off">
+                {% csrf_token %}
+                <input type="password" name="password" id="shortenerGateInput"
+                       placeholder="Password" autocomplete="new-password"
+                       data-form-type="other" required autofocus>
+                <button type="submit"><span>UNLOCK</span></button>
+            </form>
+            {% if gate_error %}
+            <p class="knockknockwrong">{{ gate_error }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="proveit">
+        <header class="proveithead">
+            <h2 class="whatisthis">Shortener</h2>
+            <p class="whyyoucare">Paste a long URL, name it if you want, get a short one.</p>
+        </header>
+
+        
+        <form class="makeitshort" method="post" action="/s" autocomplete="off">
+            {% csrf_token %}
+            <input type="url" name="long_url" class="thekeyitself" placeholder="https://example.com/something/very/long"
+                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                   data-form-type="other" required>
+            <div class="makeitshortrow">
+                <input type="text" name="name" class="thekeyitself" placeholder="Name (optional) — e.g. SUPPORT"
+                       autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+                       maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9_-]*"
+                       title="Letters, digits, - and _ only" data-form-type="other">
+                <button type="submit" class="checkitnow">Shorten</button>
+            </div>
+            <span class="justsoyouknow">Leave the name empty for a random code. Named links live at /s/NAME.</span>
+            {% if error %}
+            <span class="thatwentbadly">{{ error }}</span>
+            {% endif %}
+        </form>
+
+        {% if created %}
+        <div class="itchecksout">
+            <span class="verdict verdict-good">Done</span>
+            <div class="whatitwasfor">
+                <span class="proofrow">
+                    <span class="proofrowlabel">Short</span>
+                    <a href="{{ created.full_url }}" target="_blank" rel="noopener">{{ created.full_url }}</a>
+                    <button type="button" class="grabit" data-copy="{{ created.full_url }}">COPY</button>
+                </span>
+                <span class="proofrow">
+                    <span class="proofrowlabel">Points to</span>
+                    <span class="thefullkey">{{ created.long_url }}</span>
+                    <button type="button" class="grabit" data-copy="{{ created.long_url }}">COPY</button>
+                </span>
+                <span class="proofrow"><span class="proofrowlabel">Followed</span>{{ created.times_followed }}×</span>
+            </div>
+        </div>
+
+        {% if recent %}
+        <div class="whatelseismade">
+            <span class="takethepaperlabel">Recent</span>
+            {% for item in recent %}
+            <div class="oneshortrow">
+                <a href="{{ item.full_url }}" class="oneshortlink" target="_blank" rel="noopener">
+                    <span class="oneshortcode">{{ item.short_url }}</span>
+                    <span class="oneshorttarget">{{ item.long_url }}</span>
+                    <span class="oneshortcount">{{ item.times_followed }}×</span>
+                </a>
+                <span class="oneshortgrab">
+                    <button type="button" class="grabit" data-copy="{{ item.full_url }}">SHORT</button>
+                    <button type="button" class="grabit" data-copy="{{ item.long_url }}">LONG</button>
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// This block parses before the deferred bundle that defines WiehrOverlay, so
+// wait for DOMContentLoaded — deferred scripts have all run by then.
+document.addEventListener('DOMContentLoaded', function(){
+    var gate=document.getElementById('shortenerGate');
+    if(!gate)return;
+    // Lock the page behind the gate the same way every other overlay does.
+    if(window.WiehrOverlay)window.WiehrOverlay.open();
+    var input=document.getElementById('shortenerGateInput');
+    if(input)input.focus();
+});
+</script>
+{% endblock %}

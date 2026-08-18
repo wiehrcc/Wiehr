@@ -1,0 +1,285 @@
+
+#iwanttoeathealthyfood:has(.everythingwedid) {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.everythingwedid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 6rem 1.5rem 4rem;
+    box-sizing: border-box;
+}
+
+
+.ledgerofyears {
+    max-width: 620px;
+    width: 100%;
+}
+
+.ledger {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.oneyearline {
+    display: table-row;
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+.ledgercell {
+    display: table-cell;
+    padding: 1.1rem 0.6rem;
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-regular);
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    vertical-align: baseline;
+}
+
+[data-wiehr-theme="dark"] .ledgercell {
+    border-bottom-color: rgba(244, 244, 244, 0.08);
+}
+
+.whichyear {
+    font-weight: var(--font-weight-black, 900);
+    white-space: nowrap;
+    width: 1%;
+}
+
+.whatitheld {
+    text-align: center;
+    font-size: var(--font-size-small);
+    opacity: 0.4;
+    white-space: nowrap;
+}
+
+.howmuchitweighed {
+    text-align: right;
+    font-weight: var(--font-weight-bold, 700);
+    white-space: nowrap;
+    width: 1%;
+}
+
+
+.ledgerhead .ledgercell {
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.3;
+    padding-bottom: 0.6rem;
+}
+
+a.oneyearline:hover {
+    opacity: var(--opacity-hover, 0.55);
+}
+
+a.oneyearline:last-child .ledgercell {
+    border-bottom: none;
+}
+
+.nothinghappened {
+    text-align: center;
+    opacity: 0.5;
+    padding: 2rem;
+    font-size: var(--font-size-thin, 13px);
+    font-family: var(--font-family, monospace);
+}
+
+
+.yearsworth {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.branchesofit {
+    width: 100%;
+}
+
+.familytree {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.familytree::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 3.5rem;
+    bottom: 0;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.25;
+}
+
+.onebranch {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    padding-left: 3rem;
+    position: relative;
+}
+
+.onebranch.trunk {
+    padding-left: 0;
+}
+
+.whichyearagain {
+    font-size: var(--font-size-black);
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.kindofthing::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.25;
+}
+
+.kindofthing {
+    padding-left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.kindicon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.85;
+}
+
+[data-wiehr-theme="dark"] .kindicon {
+    filter: invert(1);
+}
+
+.kindname {
+    font-size: var(--font-size-thin);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+}
+
+.leafonbranch::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.25;
+}
+
+.leafonbranch {
+    padding-left: 3.5rem;
+}
+
+.reachforit {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+    font-size: var(--font-size-regular);
+    transition: opacity 0.15s ease;
+}
+
+a.reachforit:hover {
+    opacity: 0.55;
+}
+
+.itsnumber {
+    font-weight: 700;
+    font-size: var(--font-size-light);
+    opacity: 0.5;
+}
+
+.itstitle {
+    font-size: var(--font-size-light);
+    font-weight: 900;
+}
+
+.barebranch {
+    opacity: 0.5;
+    font-size: var(--font-size-light);
+    padding: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .everythingwedid {
+        padding: 5rem 3rem 3rem;
+    }
+
+    .ledgerofyears {
+        width: 100%;
+    }
+
+    .ledgercell {
+        font-size: var(--font-size-light);
+        padding: 0.85rem 0.35rem;
+    }
+
+    .whatitheld {
+        font-size: var(--font-size-thin);
+    }
+
+    .ledgerhead .ledgercell {
+        font-size: var(--font-size-tiny);
+    }
+
+    .yearsworth {
+        padding: 0 1rem;
+    }
+
+    .whichyearagain {
+        font-size: var(--font-size-medium);
+    }
+
+    .reachforit {
+        font-size: var(--font-size-small);
+        gap: 0.5rem;
+    }
+
+    .itsnumber {
+        font-size: var(--font-size-thin);
+    }
+
+    .itstitle {
+        font-size: var(--font-size-small);
+    }
+
+    .onebranch {
+        padding-left: 2rem;
+    }
+
+    .kindofthing {
+        padding-left: 1.5rem;
+    }
+
+    .leafonbranch {
+        padding-left: 2rem;
+    }
+
+    .leafonbranch::before {
+        width: 2rem;
+    }
+}

@@ -1,0 +1,29 @@
+#itsasmallworldafterall {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+    background: transparent;
+    overflow: hidden;
+}
+
+#spinmedizzy {
+    pointer-events: auto !important;
+    cursor: grab;
+    background: transparent;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    touch-action: none;
+}
+
+#spinmedizzy:active {
+    cursor: grabbing;
+}

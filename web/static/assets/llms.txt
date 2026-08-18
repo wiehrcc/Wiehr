@@ -1,0 +1,60 @@
+# Wiehr. Official Website
+
+> Wiehr (Yauheni Kandratovich) is a pseudonymous Belarus-born electronic composer and multidisciplinary artist based in Slovakia. Creating cinematic, ambient, and experimental music since 2017.
+
+## Pages
+
+- [Home](https://wiehr.cc/): Main landing page
+- [Archive](https://wiehr.cc/archive): Complete chronological archive of all releases by Wiehr, organized by year
+- [Globe](https://wiehr.cc/globe): Interactive 3D globe showing all music releases with geographic context
+- [Atlas](https://wiehr.cc/atlas): Photography collections from around the world on an interactive map
+- [Storage](https://wiehr.cc/storage): Digital downloads — themes, fonts, presets, tools, and other assets
+- [Lab](https://wiehr.cc/lab): Works and collaborations — music, production, and software projects
+- [Composer](https://wiehr.cc/composer): Composer profile — bio, credits, rates, and a downloadable one-pager CV
+- [Engineer](https://wiehr.cc/engineer): Engineer profile — bio, credits, rates, and a downloadable one-pager CV
+- [Who Are You](https://wiehr.cc/whoareyou): Artist statement and contact
+- [Support](https://wiehr.cc/support): Support Wiehr on Ko-fi
+- [Privacy](https://wiehr.cc/privacy): Privacy Policy and data protection
+- [Terms](https://wiehr.cc/terms): Terms of Service
+
+## About
+
+Wiehr is an electronic music composer and software engineer. Genres include ambient, cyberpunk, dance, drum & bass, and techno. Each release is numbered and documented with geographic location, color palette, and emotional context in The Compositions Archive.
+
+### Services
+
+Available for hire. Rates and contact details: [Composer](https://wiehr.cc/composer) for composer work, [Engineer](https://wiehr.cc/engineer) for engineering work.
+
+As Composer:
+- Composition / Scoring — from $150/track
+- Mixing — from $80/track
+- Mastering — from $30/track
+- Sound Design — $35/hr (2hr minimum)
+
+As Engineer:
+- Backend / API Development — $60/hr
+- ETL / Data Pipelines — $65/hr
+- AWS / DevOps — $70/hr
+- Custom Projects — quote on scope
+
+### Projects & Collaborations
+
+Portfolio includes independent music releases and collaborative works spanning electronic music production, synthetic music creation (Serum, Serum 2), and software engineering.
+
+## Social & Streaming
+
+- [Twitter](https://twitter.com/wiehrcc)
+- [Instagram](https://instagram.com/wiehrcc)
+- [YouTube](https://youtube.com/@Wiehr)
+- [Spotify](https://open.spotify.com/artist/1S1eGa25MQIlhjeBwy7RB4)
+- [Apple Music](https://music.apple.com/artist/wiehr/1477947042)
+- [Bandcamp](https://wiehr.bandcamp.com)
+
+## Contact
+
+Email: [hello@wiehr.cc](mailto:hello@wiehr.cc)
+
+## Optional
+
+- [Sitemap](https://wiehr.cc/sitemap.xml)
+- [Robots.txt](https://wiehr.cc/robots.txt)

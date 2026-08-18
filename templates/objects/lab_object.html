@@ -1,0 +1,174 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}{{ lab_object.title }} at LAB — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}{{ lab_object.internal_id|default:lab_object.title }}{% endblock %}
+
+{% block head %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/lab-object.css' %}">
+    {% endcompress %}
+
+    <link rel="canonical" href="{{ site_url_nodashed }}/lab/{{ lab_object.slug }}">
+    <link rel="alternate" href="{{ site_url_nodashed }}/lab/{{ lab_object.slug }}" />
+
+    <meta name="title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website">
+    <meta property="vk:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+    <meta property="og:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+
+    {% with project_excerpt=lab_object.description|safe|striptags|truncatewords:30 %}
+        <meta name="description" content="{{ project_excerpt }}" />
+        <meta property="og:description" content="{{ project_excerpt }}" />
+        <meta property="vk:description" content="{{ project_excerpt }}" />
+        <meta itemprop="description" content="{{ project_excerpt }}" />
+        <meta name="twitter:description" content="{{ project_excerpt }}" />
+    {% endwith %}
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" />
+
+    {% if lab_object.media %}
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    <meta property="og:image:type" content="{{ lab_object.media_mime }}" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    <meta name="twitter:image:alt" content="{{ lab_object.title }}" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    {% endif %}
+
+    <meta name="keywords" content="{{ lab_object.title }}, {{ lab_object.role }}, project, portfolio, Wiehr, software engineering, creative work" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="{{ lab_object.start_year }}-01-01T00:00:00+00:00" />
+    <meta property="article:modified_time" content="{{ lab_object.modified_at|date:'c' }}" />
+    <meta property="article:author" content="Wiehr" />
+    <meta property="article:section" content="portfolio" />
+    <meta property="article:tag" content="{{ lab_object.role }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:label1" content="role" />
+    <meta name="twitter:data1" content="{{ lab_object.role }}" />
+    <meta name="twitter:label2" content="years" />
+    <meta name="twitter:data2" content="{{ lab_object.get_year_range }}" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}/#project",
+      "name": "{{ lab_object.title|escapejs }}",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}",
+      "inLanguage": "en-US",
+      "creator": { "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person" },
+      "author": { "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person" },
+      "description": "{{ lab_object.description|striptags|truncatewords:50|escapejs }}",
+      "keywords": "{{ lab_object.title|escapejs }}, {{ lab_object.role|escapejs }}, portfolio, project",
+      "dateCreated": "{{ lab_object.created_at|date:'Y-m-d' }}",
+      "dateModified": "{{ lab_object.modified_at|date:'Y-m-d' }}",
+      "datePublished": "{{ lab_object.start_year }}-01-01",
+      "about": { "@type": "Thing", "name": "{{ lab_object.role|escapejs }}" },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" },
+      "isPartOf": { "@type": "CollectionPage", "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab/#collection", "name": "Wiehr Lab" }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "Lab", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" },
+        { "@type": "ListItem", "position": 3, "name": "{{ lab_object.title|escapejs }}", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.get_absolute_url }}" }
+      ]
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h2 class="seoonly">{{ lab_object.title }} — Lab Project by Wiehr</h2>
+
+    <div class="proofofonemoreidea">
+        {% if lab_object.media %}
+        <div class="thumbnailofmyego{% if lab_object.youtube_url %} actuallyclickable{% endif %}" id="pretendthisisabutton">
+            <img src="{{ lab_object.media.url }}" alt="Wiehr. {{ lab_object.title }}" loading="eager" decoding="async" fetchpriority="high" draggable="false" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease-in-out;">
+            {% if lab_object.youtube_url %}
+            <span class="pretendplaybutton" aria-hidden="true"></span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="whatitactuallyis">
+            <h1 class="whaticalledit">{{ lab_object.title }}</h1>
+            <span class="whenthathappened">{{ lab_object.get_year_range }}</span>
+            {% if lab_object.role %}
+            <span class="whatiwasdoingthere">{{ lab_object.role }}</span>
+            {% endif %}
+
+            {% if lab_object.description %}
+            <div class="thelongstory">{{ lab_object.description|safe }}</div>
+            {% endif %}
+            <span class="filenumber">{{ lab_object.internal_id }}</span>
+        </div>
+
+        {% if lab_object.links.all %}
+        <div class="gosomewhereelse">
+            {% for link in lab_object.links.all %}
+            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="exitdoor">{{ link.description }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if lab_object.youtube_url %}
+    <div id="onemorevideo" class="staringcontest">
+        <button class="staringcontest-close" id="closethisthing">
+            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+        </button>
+        <div id="wherethevideogoes"></div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if lab_object.youtube_url %}
+<script>
+(function(){
+    var trigger = document.getElementById('pretendthisisabutton');
+    var modal = document.getElementById('onemorevideo');
+    var closeBtn = document.getElementById('closethisthing');
+    var frame = document.getElementById('wherethevideogoes');
+    if (!trigger || !modal || !frame) return;
+
+    var embedUrl = '{{ lab_object.youtube_embed_url|escapejs }}';
+    if (!embedUrl) return;
+
+    function open(){
+        frame.innerHTML = '<iframe class="staringcontest-video" src="' + embedUrl +
+            '?autoplay=1" title="{{ lab_object.title|escapejs }}" frameborder="0" ' +
+            'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        modal.style.display = 'flex';
+        window.WiehrOverlay.open({ nativeCursor: true });
+    }
+    function close(){
+        modal.style.display = 'none';
+        frame.innerHTML = '';
+        window.WiehrOverlay.close();
+    }
+
+    trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.style.display === 'flex') close(); });
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}ARCHIVE — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/archive">
+    <link rel="alternate" href="{{ site_url_nodashed }}/archive" />
+
+    <meta name="title" content="ARCHIVE — Wiehr. Official Website">
+    <meta property="vk:title" content="ARCHIVE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="ARCHIVE — Wiehr. Official Website" />
+    <meta property="og:title" content="ARCHIVE — Wiehr. Official Website" />
+    <meta itemprop="name" content="ARCHIVE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="ARCHIVE — Wiehr. Official Website" />
+
+    <meta name="description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
+    <meta property="og:description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
+    <meta property="vk:description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
+    <meta itemprop="description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
+    <meta name="twitter:description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta name="twitter:image:alt" content="ARCHIVE — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, archive, releases, discography, music catalog, electronic music, years, lab" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/#collection",
+      "name": "Wiehr Archive",
+      "description": "Complete chronological archive of all releases by Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Archive",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/archive.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/flipthrough.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Archive — Wiehr. Official Website</h1>
+    <h2 class="seoonly">Complete chronological archive of all releases by Wiehr</h2>
+    <div class="everythingwedid">
+        {% if archives %}
+            <div class="ledgerofyears" data-onepageatatime>
+                {% for page in archive_pages %}
+                <div class="pageslice ledger">
+                    <div class="oneyearline ledgerhead">
+                        <span class="ledgercell whichyear">Year</span>
+                        <span class="ledgercell whatitheld">Globe · Atlas · Storage · Lab</span>
+                        <span class="ledgercell howmuchitweighed">Total</span>
+                    </div>
+                    {% for archive in page %}
+                    <a href="/archive/{{ archive.year }}" class="oneyearline noiseonhover">
+                        <span class="ledgercell whichyear">{{ archive.year }}</span>
+                        <span class="ledgercell whatitheld">{{ archive.globe_count }} · {{ archive.atlas_count }} · {{ archive.storage_count }} · {{ archive.lab_count }}</span>
+                        <span class="ledgercell howmuchitweighed">{{ archive.total_count }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+        <div class="nothinghappened">
+            <p>No archives yet.</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/lookatthesetabs.js' %}" defer></script>
+<script src="{% static 'js/onepageatatime.js' %}" defer></script>
+{% endblock %}

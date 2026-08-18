@@ -1,0 +1,31 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}CLASSIFIED. Wiehr{% endblock %}
+
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block head %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/youcannotseethis.css' %}">
+    {% endcompress %}
+
+    <meta name="description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
+    <meta property="og:description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
+    <meta name="twitter:description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
+    <meta property="og:url" content="{{ site_url_nodashed }}/" />
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:alt" content="Wiehr. Official Website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@wiehrcc" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="youcannotseethis">
+        <div class="youcannotseethislabel">This page is CLASSIFIED.</div>
+        <div class="youcannotseethissub">Wait for release.</div>
+        <a href="/" class="youcannotseethisback">Back</a>
+    </div>
+{% endblock %}

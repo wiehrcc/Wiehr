@@ -1,0 +1,114 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}STORAGE — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/storage">
+    <link rel="alternate" href="{{ site_url_nodashed }}/storage" />
+
+    <meta name="title" content="STORAGE — Wiehr. Official Website">
+    <meta property="vk:title" content="STORAGE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="STORAGE — Wiehr. Official Website" />
+    <meta property="og:title" content="STORAGE — Wiehr. Official Website" />
+    <meta itemprop="name" content="STORAGE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="STORAGE — Wiehr. Official Website" />
+
+    <meta name="description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
+    <meta property="og:description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
+    <meta property="vk:description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
+    <meta itemprop="description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
+    <meta name="twitter:description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+    <meta name="twitter:image:alt" content="STORAGE — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, storage, downloads, themes, fonts, presets, digital assets, tools, telegram themes">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/#collection",
+      "name": "Wiehr Storage",
+      "description": "Digital storage and downloads by Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ storage_list|length|default:"0" }}
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Storage",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/storage.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Storage — Wiehr. Official Website</h1>
+    <h2 class="seoonly">Digital storage and downloads by Wiehr — themes, fonts, presets, and tools</h2>
+    <div class="digitalhoarder">
+        <div class="allmystuff">
+            {% for cell in grid_cells %}
+            {% if cell.filled %}
+            <a href="/storage/{{ cell.slug }}" class="onebox onebox-taken {% if cell.locked %}onebox-locked{% endif %}">
+                {% if cell.cover %}
+                {% comment %}No loading="lazy": the grid sits inside a display-toggled
+                section, so lazy images were never fetched at all. All 25 cells are on
+                screen together anyway, so there is nothing to defer.{% endcomment %}
+                <img class="boxthumb" src="{{ cell.cover }}" alt="" decoding="async" aria-hidden="true">
+                {% endif %}
+                <span class="boxlabel">{{ cell.id }}</span>
+            </a>
+            {% else %}
+            <div class="onebox onebox-empty">
+                <span class="boxlabel boxlabel-empty">{{ cell.id }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

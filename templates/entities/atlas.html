@@ -1,0 +1,122 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}ATLAS — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/atlas">
+    <link rel="alternate" href="{{ site_url_nodashed }}/atlas" />
+
+    <meta name="title" content="ATLAS — Wiehr. Official Website">
+    <meta property="vk:title" content="ATLAS — Wiehr. Official Website" />
+    <meta name="twitter:title" content="ATLAS — Wiehr. Official Website" />
+    <meta property="og:title" content="ATLAS — Wiehr. Official Website" />
+    <meta itemprop="name" content="ATLAS — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="ATLAS — Wiehr. Official Website" />
+
+    <meta name="description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
+    <meta property="og:description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
+    <meta property="vk:description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
+    <meta itemprop="description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
+    <meta name="twitter:description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+    <meta name="twitter:image:alt" content="The Photography Atlas" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/atlas.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, photography, 2D atlas, photo collections, interactive map, geographic photography, world travel, locations, countries, photo gallery" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas/#collection",
+      "name": "Wiehr Atlas",
+      "description": "Photography collections from around the world by Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Atlas",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/atlas.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Atlas — Wiehr. Official Website</h1>
+    <h2 class="seoonly">Photography collections from around the world by Wiehr on an interactive atlas</h2>
+    <div id="flatearththeory">
+        <canvas id="tracingmysteps"></canvas>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const atlasLocations = {{ atlas_data|safe }};
+</script>
+<script>
+    window.ATLAS_URLS = {
+        countriesHi: "{% static 'js/atlas-countries.js' %}",
+        terrain: "{% static 'images/atlas-terrain.png' %}"
+    };
+</script>
+<script type="text/javascript" src="{% static 'js/atlas-countries-lo.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/atlas-terrain-meta.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/webgl-atlas.js' %}"></script>
+<script>
+    (function () {
+        var lo = document.getElementById('moneyruinseverythingoverlay');
+        if (lo) { lo.style.display = 'none'; lo.classList.add('fadeout'); }
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+
+        window.addEventListener('load', function() {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        });
+    })();
+</script>
+{% endblock %}

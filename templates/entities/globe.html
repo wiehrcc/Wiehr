@@ -1,0 +1,141 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}GLOBE — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/globe">
+    <link rel="alternate" href="{{ site_url_nodashed }}/globe" />
+
+    <meta name="title" content="GLOBE — Wiehr. Official Website">
+    <meta property="vk:title" content="GLOBE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="GLOBE — Wiehr. Official Website" />
+    <meta property="og:title" content="GLOBE — Wiehr. Official Website" />
+    <meta itemprop="name" content="GLOBE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="GLOBE — Wiehr. Official Website" />
+
+    <meta name="description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
+    <meta property="og:description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
+    <meta property="vk:description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
+    <meta itemprop="description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
+    <meta name="twitter:description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+    <meta name="twitter:image:alt" content="Official Music by Wiehr" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/globe.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, electronic music, 3D globe, music releases, interactive map, geographic music, world music, travel, locations, countries" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe/#collection",
+      "name": "Wiehr Globe",
+      "description": "Explore all music releases by Wiehr on an interactive 3D globe",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Globe",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/worldspinsaround.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Globe — Wiehr. Official Website</h1>
+    <h2 class="seoonly">Explore all music releases by Wiehr on an interactive 3D globe</h2>
+    <div id="itsasmallworldafterall">
+        <canvas id="spinmedizzy"></canvas>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.ALL_RELEASES = [
+        {% for release in all_releases %}
+        {
+            wid: '{{ release.wid|default:"" }}',
+            title: '{{ release.title|escapejs }}',
+            artist: '{{ release.artist|escapejs }}',
+            date: '{{ release.date|date:"Y-m-d" }}',
+            slug: '{{ release.slug }}',
+            image_url: '{{ site_url_nodashed }}/media/{{ release.image }}',
+            background_color: '{{ release.background_color|default:"#000000" }}'
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const releases = [
+        {% for release in releases %}
+        {
+            wid: '{{ release.wid|default:"" }}',
+            title: '{{ release.title|escapejs }}',
+            geo: '{{ release.geo|escapejs }}',
+            slug: '{{ release.slug }}',
+            url: '/globe/{{ release.slug }}',
+            color: '{{ release.background_color|default:"#ff0000" }}'
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+</script>
+<script type="text/javascript" src="{% static 'js/globe-countries.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/globe-belarus.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/webgl-globe.js' %}"></script>
+<script>
+    (function () {
+        var lo = document.getElementById('moneyruinseverythingoverlay');
+        if (lo) { lo.style.display = 'none'; lo.classList.add('fadeout'); }
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+
+        window.addEventListener('load', function() {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        });
+    })();
+</script>
+{% endblock %}

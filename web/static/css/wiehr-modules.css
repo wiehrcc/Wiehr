@@ -1,0 +1,12 @@
+:root {
+    --content-max-width: 1200px;
+    --transition-fast: 0.15s;
+    --transition-normal: 0.3s;
+    --transition-slow: 0.5s;
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-snappy: cubic-bezier(0.2, 0.5, 0.2, 1);
+    --color-accent: hsla(145, 63%, 42%, 1);
+    --color-error: hsla(0, 100%, 64%, 1);
+    --color-muted: hsla(0, 0%, 53%, 1);
+    --color-border: hsla(0, 0%, 20%, 1);
+}

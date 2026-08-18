@@ -1,0 +1,229 @@
+
+
+.makeitshort {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.makeitshortrow {
+    display: flex;
+    gap: 0;
+}
+
+.makeitshortrow .thekeyitself {
+    flex: 1;
+    min-width: 0;
+    border-right: none;
+}
+
+.thatwentbadly {
+    font-size: var(--font-size-thin);
+    opacity: 0.65;
+    color: #c00;
+}
+
+[data-wiehr-theme="dark"] .thatwentbadly {
+    color: #ff6b6b;
+}
+
+
+.whatelseismade {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-wiehr-theme="dark"] .whatelseismade {
+    border-top-color: rgba(244, 244, 244, 0.08);
+}
+
+.oneshortlink {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+[data-wiehr-theme="dark"] .oneshortlink {
+    border-bottom-color: rgba(244, 244, 244, 0.04);
+}
+
+.oneshortlink:last-child {
+    border-bottom: none;
+}
+
+.oneshortlink:hover {
+    opacity: var(--opacity-hover, 0.55);
+}
+
+.oneshortcode {
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-black, 900);
+    letter-spacing: 0.08em;
+}
+
+.oneshorttarget {
+    font-size: var(--font-size-thin);
+    opacity: 0.45;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.oneshortcount {
+    font-size: var(--font-size-tiny);
+    opacity: 0.35;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .makeitshortrow {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .makeitshortrow .thekeyitself {
+        border-right: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    [data-wiehr-theme="dark"] .makeitshortrow .thekeyitself {
+        border-right-color: rgba(244, 244, 244, 0.15);
+    }
+
+    .oneshortlink {
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "code count" "target target";
+    }
+
+    .oneshortcode { grid-area: code; }
+    .oneshortcount { grid-area: count; justify-self: end; }
+    .oneshorttarget { grid-area: target; }
+}
+
+
+.justsoyouknow {
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    opacity: 0.45;
+    margin-top: 0.5rem;
+}
+
+.oneshortrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.oneshortrow .oneshortlink {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.oneshortgrab {
+    display: flex;
+    flex: none;
+}
+
+@media (max-width: 768px) {
+    .grabit {
+        padding: 0.2rem 0.45rem;
+        margin-left: 0.4rem;
+    }
+
+    .oneshortrow {
+        flex-wrap: wrap;
+    }
+}
+
+
+.knockknock {
+    display: flex;
+    position: fixed;
+    z-index: var(--index-priority-max);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg);
+    justify-content: center;
+    align-items: center;
+}
+
+.knockknockbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem;
+    width: 100%;
+}
+
+.knockknocktitle {
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-light);
+    font-weight: var(--font-weight-black, 900);
+    letter-spacing: 0.12em;
+    margin: 0;
+}
+
+.knockknockdesc {
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    opacity: 0.5;
+    margin: 0;
+}
+
+.knockknockwrong {
+    font-family: var(--font-family, monospace);
+    color: #c00;
+    font-size: var(--font-size-thin);
+    margin: 0;
+}
+
+.knockknockform {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.knockknockform input[type="password"] {
+    padding: 0.75rem 1rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    font-size: var(--font-size-small);
+    font-family: var(--font-family, monospace);
+    color: var(--color-text, #000);
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.knockknockform button {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-text, #000);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.knockknockform button span {
+    color: var(--color-bg, #F4F4F4);
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.12em;
+}
+
+.knockknockform button:hover {
+    opacity: 0.7;
+}

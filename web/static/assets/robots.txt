@@ -1,0 +1,75 @@
+User-agent: *
+Allow: /
+Allow: /cv
+Allow: /static/
+Allow: /media/
+Allow: /sitemap.xml
+Allow: /favicon.ico
+Allow: /apple-touch-icon.png
+Allow: /favicon.svg
+Allow: /favicon-96x96.png
+Allow: /favicon-48x48.png
+Allow: /favicon-16x16.png
+Allow: /favicon.png
+Allow: /site.webmanifest
+Allow: /web-app-manifest-192x192.png
+
+Allow: /web-app-manifest-512x512.png
+Allow: /globe/
+Allow: /projects/
+Allow: /connect/
+Allow: /disconnect/
+Allow: /globe/
+Allow: /atlas/
+Allow: /qr/
+Allow: /ads.txt
+Allow: /robots.txt
+Allow: /privacy/
+Allow: /terms/
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/
+Sitemap: https://wiehr.cc/sitemap.xml
+
+
+User-agent: adsbot-google
+Allow: /
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/
+
+
+User-agent: Nutch
+Disallow: /
+
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+Allow: /
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/
+
+
+User-agent: AhrefsSiteAudit
+Crawl-delay: 10
+Allow: /
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/
+
+
+User-agent: MJ12bot
+Crawl-delay: 10
+Allow: /
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/
+
+
+User-agent: Pinterest
+Crawl-delay: 1
+Allow: /
+Disallow: /admin/
+Disallow: /s/
+Disallow: /api/

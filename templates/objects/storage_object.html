@@ -1,0 +1,318 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}{{ storage_object.title }} at STORAGE — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}{{ storage_object.internal_id|default:storage_object.title }}{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}">
+    <link rel="alternate" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}" />
+
+    <meta name="title" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website">
+    <meta property="vk:title" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website" />
+    <meta property="og:title" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="{{ storage_object.title }} at STORAGE — Wiehr. Official Website" />
+
+    <meta name="description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
+    <meta property="og:description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
+    <meta property="vk:description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
+    <meta itemprop="description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
+    <meta name="twitter:description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, {{ storage_object.title }}, {{ storage_object.file_type }}, download, digital asset">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}/#item",
+      "name": "{{ storage_object.title|escapejs }}",
+      "description": "Download {{ storage_object.title|escapejs }} at STORAGE — Wiehr. Official Website",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}"{% if storage_object.cover_image %},
+      "image": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}"{% endif %},
+      "applicationCategory": "{{ storage_object.file_type|escapejs }}",
+      "author": {
+        "@type": "Person",
+        "name": "Wiehr",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person"
+      },
+      "dateCreated": "{{ storage_object.created_at|date:'Y-m-d' }}",
+      "isPartOf": {
+        "@type": "CollectionPage",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/#collection",
+        "name": "Wiehr Storage"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Storage",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ storage_object.title|escapejs }}",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/storage-object.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h2 class="seoonly">{{ storage_object.title }} — Digital Download at Storage by Wiehr</h2>
+    <div id="imgModal" class="staringcontest">
+        <button class="staringcontest-close" id="modalClose">
+            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+        </button>
+        <img class="staringcontest-img" id="modalImage" alt="Full size preview" loading="eager" decoding="async" />
+    </div>
+
+    {% if password_required %}
+    <div class="onefileonly onefileonly--centered">
+        <div class="provewhoyouare">
+            <p class="provewhoyouaretitle">PASSWORD REQUIRED</p>
+            <p class="provewhoyouaredesc">This content is protected.</p>
+            {% if error_message %}
+            <p class="provewhoyouarewrong">{{ error_message }}</p>
+            {% endif %}
+            <form method="post" class="provewhoyouareform">
+                {% csrf_token %}
+                <input type="password" name="password" placeholder="Enter password" required>
+                <button type="submit"><span>UNLOCK</span></button>
+            </form>
+        </div>
+    </div>
+    {% elif access_granted %}
+    <div class="onefileonly">
+        <div class="fileguts">
+            <div class="filecoverart">
+                {% if storage_object.cover_image %}
+                <img src="{{ storage_object.cover_image.url }}"
+                     alt="{{ storage_object.title }}"
+                     class="tapthis"
+                     loading="eager"
+                     decoding="async"
+                     fetchpriority="high"
+                     onload="this.style.opacity='1'"
+                     style="opacity:0;transition:opacity 0.3s ease-in-out;">
+                {% endif %}
+            </div>
+
+            <div class="filefacts">
+                <h1 class="filename">{{ storage_object.title }}</h1>
+                <span class="filecode">{{ storage_object.internal_id }}</span>
+                {% if storage_object.description %}
+                <div class="filestory">{{ storage_object.description|safe|linebreaks }}</div>
+                {% endif %}
+                <div class="whattodowithit">
+                    {% if storage_object.has_preview %}
+                    <button class="doonething peekatit" id="previewBtn" data-url="{{ storage_object.youtube_embed_url }}">PREVIEW</button>
+                    {% endif %}
+                    {% if storage_object.file %}
+                        {% if download_locked %}
+                        <span class="doonething doonething-locked">DOWNLOAD LOCKED</span>
+                        {% if license_key_required and not license_unlocked %}
+                        <button type="button" class="doonething" id="keyBtn">ENTER KEY</button>
+                        {% endif %}
+                        {% else %}
+                        <a href="/storage/{{ storage_object.slug }}/download" class="doonething">DOWNLOAD</a>
+                        {% endif %}
+                    {% endif %}
+                    {% for link in storage_links %}
+                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="doonething">{{ link.label }}</a>
+                    {% endfor %}
+                </div>
+
+                {% if license_key_required and license_unlocked %}
+                <div class="proofidownloaded">
+                    <span class="proofidownloadedlabel">LICENSE VERIFIED</span>
+                    <span class="proofidownloadedkey">Download unlocked for this session.</span>
+                </div>
+                {% elif auto_issue_required and not auto_issue_unlocked %}
+                <form method="post" class="showmeyourpapers">
+                    {% csrf_token %}
+                    <span class="showmeyourpaperslabel">Enter your details to receive your license and unlock the download.</span>
+                    <div class="showmeyourpapersrow">
+                        <input type="text" name="legal_name" class="thekeyitself" placeholder="Legal Name" autocomplete="name" required value="{{ legal_name_value }}">
+                        <input type="email" name="email" class="thekeyitself" placeholder="Email" autocomplete="email" required value="{{ email_value }}">
+                        <button type="submit" class="checkitnow">Get License</button>
+                    </div>
+                    {% if error_message %}
+                    <span class="provewhoyouarewrong">{{ error_message }}</span>
+                    {% endif %}
+                </form>
+                {% elif auto_issue_required and auto_issue_unlocked %}
+                <div class="proofidownloaded">
+                    <span class="proofidownloadedlabel">LICENSE ISSUED</span>
+                    <span class="proofidownloadedkey">A copy was emailed to you. Download unlocked for this session.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if license_key_required and not license_unlocked %}
+    <div id="keyModal" class="staringcontest"{% if error_message %} data-openonload="1"{% endif %}>
+        <button class="staringcontest-close" id="keyModalClose" type="button">
+            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+        </button>
+        <div class="provewhoyouare">
+            <p class="provewhoyouaretitle">LICENSE KEY REQUIRED</p>
+            <p class="provewhoyouaredesc">This item unlocks with the key issued in your name.</p>
+            <form method="post" class="provewhoyouareform">
+                {% csrf_token %}
+                <input type="text" name="license_key" id="keyModalInput" placeholder="Wiehr License Key"
+                       autocomplete="off" spellcheck="false" required>
+                <button type="submit"><span>UNLOCK</span></button>
+            </form>
+            {% if error_message %}
+            <p class="provewhoyouarewrong">{{ error_message }}</p>
+            {% endif %}
+            <p class="provewhoyouaredesc">Don't have one? hello@wiehr.cc</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if storage_object.has_preview %}
+    <div id="previewModal" class="staringcontest">
+        <button class="staringcontest-close" id="previewModalClose">
+            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+        </button>
+        <div class="thepeek" id="previewContent"></div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var btn=document.getElementById('keyBtn');
+    var modal=document.getElementById('keyModal');
+    if(!modal)return;
+    var closeBtn=document.getElementById('keyModalClose');
+    var input=document.getElementById('keyModalInput');
+
+    function open(){
+        modal.style.display='flex';
+        if(window.WiehrOverlay)window.WiehrOverlay.open();
+        if(input)input.focus();
+    }
+    function close(){
+        modal.style.display='none';
+        if(window.WiehrOverlay)window.WiehrOverlay.close();
+    }
+
+    if(btn)btn.addEventListener('click',open);
+    if(closeBtn)closeBtn.addEventListener('click',close);
+    modal.addEventListener('click',function(e){if(e.target===modal)close();});
+    document.addEventListener('keydown',function(e){
+        if(e.key==='Escape'&&modal.style.display==='flex')close();
+    });
+
+    // A wrong key re-renders the page, so reopen so the error is visible
+    // instead of hidden behind a button the user has to find again.
+    if(modal.getAttribute('data-openonload'))open();
+});
+</script>
+<script>
+(function(){
+    var m=document.getElementById('imgModal');
+    var i=document.getElementById('modalImage');
+    var closeBtn=document.getElementById('modalClose');
+    var c=document.querySelectorAll('.tapthis');
+    if(!m||!i)return;
+    var scale=1;
+    function openModal(e){
+        m.style.display='flex';
+        i.src=e.src;
+        i.alt=e.alt||'Image';
+        scale=1;
+        i.style.transform='scale(1)';
+        window.WiehrOverlay.open();
+    }
+    function closeModal(){
+        m.style.display='none';
+        window.WiehrOverlay.close();
+    }
+    c.forEach(function(img){img.addEventListener('click',function(){openModal(img)})});
+    if(closeBtn)closeBtn.addEventListener('click',closeModal);
+    m.addEventListener('click',function(e){if(e.target===m)closeModal()});
+    i.addEventListener('click',function(e){e.stopPropagation();closeModal()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.style.display==='flex')closeModal()});
+    m.addEventListener('wheel',function(e){var delta=e.deltaY>0?0.9:1.1;scale*=delta;scale=Math.max(0.5,Math.min(3,scale));i.style.transform='scale('+scale+')';e.preventDefault()},{passive:false});
+})();
+</script>
+<script>
+(function(){
+    var btn=document.getElementById('previewBtn');
+    var modal=document.getElementById('previewModal');
+    if(!btn||!modal)return;
+
+    var closeBtn=document.getElementById('previewModalClose');
+    var content=document.getElementById('previewContent');
+
+    function openPreview(){
+        var url=btn.getAttribute('data-url');
+        content.innerHTML='';
+
+        var iframe=document.createElement('iframe');
+        iframe.src=url+'?autoplay=1';
+        iframe.className='staringcontest-video';
+        iframe.setAttribute('allowfullscreen','');
+        iframe.setAttribute('frameborder','0');
+        iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        content.appendChild(iframe);
+
+        modal.style.display='flex';
+        window.WiehrOverlay.open({nativeCursor: true});
+    }
+
+    function closePreview(){
+        content.innerHTML='';
+        modal.style.display='none';
+        window.WiehrOverlay.close();
+    }
+
+    btn.addEventListener('click',openPreview);
+    if(closeBtn)closeBtn.addEventListener('click',closePreview);
+    modal.addEventListener('click',function(e){if(e.target===modal)closePreview()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.style.display==='flex')closePreview()});
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+
+
+.top-left-navigation {
+    position: fixed;
+    left: calc(var(--bottom-padding, 40px) * 0.5);
+    top: calc(var(--bottom-padding, 40px) * 0.5);
+    z-index: var(--index-priority-medium, 100);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.top-left-navigation.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.top-nav-items {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.top-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: var(--color-text, #000);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.top-nav-item:hover {
+    opacity: 1;
+}
+
+.top-nav-item.active {
+    opacity: 0.85;
+}
+
+.top-nav-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.top-nav-label {
+    font-size: var(--font-size-thin, 0.625rem);
+    font-weight: var(--font-weight-bold, 700);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.top-nav-separator {
+    margin: 0 0.5rem;
+    opacity: var(--opacity-base, 0.4);
+    font-size: var(--font-size-thin, 0.625rem);
+}
+
+
+.section-indicator-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-text, #000);
+    opacity: 0.3;
+    display: block;
+}
+
+.section-nav-item.active .section-indicator-dot {
+    opacity: 1;
+}
+
+
+@media (max-width: 1024px) {
+    .top-left-navigation {
+        left: calc(var(--bottom-padding, 40px) * 0.35);
+    }
+
+    .top-nav-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .top-nav-label {
+        font-size: var(--font-size-tiny);
+    }
+
+    .top-nav-separator {
+        margin: 0 0.35rem;
+        font-size: var(--font-size-tiny);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .top-left-navigation {
+        left: 0.5rem;
+        top: 0.5rem;
+    }
+
+    .top-nav-label {
+        font-size: var(--font-size-tiny);
+    }
+
+    .top-nav-separator {
+        margin: 0 0.15rem;
+        font-size: var(--font-size-tiny);
+    }
+}
+
+@media (max-width: 480px) {
+    .top-left-navigation {
+        left: 0.35rem;
+    }
+
+    .top-nav-label {
+        font-size: var(--font-size-tiny);
+    }
+
+    .top-nav-separator {
+        margin: 0 0.1rem;
+        font-size: var(--font-size-tiny);
+    }
+}

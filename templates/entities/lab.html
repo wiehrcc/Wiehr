@@ -1,0 +1,108 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}LAB — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/lab.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/flipthrough.css' %}">
+    {% endcompress %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/lab">
+    <link rel="alternate" href="{{ site_url_nodashed }}/lab" />
+
+    <meta name="title" content="LAB — Wiehr. Official Website">
+    <meta property="vk:title" content="LAB — Wiehr. Official Website" />
+    <meta name="twitter:title" content="LAB — Wiehr. Official Website" />
+    <meta property="og:title" content="LAB — Wiehr. Official Website" />
+    <meta itemprop="name" content="LAB — Wiehr. Official Website" />
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="LAB — Wiehr. Official Website" />
+
+    <meta name="description" content="All works and collaborations by Wiehr. Full portfolio spanning music composition, production, mixing/mastering, and software engineering." />
+    <meta property="og:description" content="All works and collaborations by Wiehr. Full portfolio spanning music composition, production, mixing/mastering, and software engineering." />
+    <meta property="vk:description" content="All works and collaborations by Wiehr. Full portfolio spanning music composition, production, mixing/mastering, and software engineering." />
+    <meta itemprop="description" content="All works and collaborations by Wiehr. Full portfolio spanning music composition, production, mixing/mastering, and software engineering." />
+    <meta name="twitter:description" content="All works and collaborations by Wiehr. Full portfolio spanning music composition, production, mixing/mastering, and software engineering." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+    <meta name="twitter:image:alt" content="Portfolio by Wiehr" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
+
+    <meta name="keywords" content="Wiehr, music projects, collaborations, electronic music, synthetic music, Serum, Serum 2, software engineering, Python, DevOps, React JS, portfolio, SOULOC8, schenkof, Macherata, Yauheni Kandratovich, Artist & Engineer" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab/#collection",
+      "name": "Wiehr Lab",
+      "description": "All works and collaborations by Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ lab|length|default:"0" }}
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "Lab", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/lab" }
+      ]
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Lab — Wiehr. Official Website</h1>
+    <h2 class="seoonly">All works and collaborations by Wiehr — music, production, and software engineering</h2>
+    <div class="proofiwasbusy" id="proofiwasbusy" data-onepageatatime>
+        {% for section in sections %}
+        <div class="pageslice onebatch">
+            {% for item in section %}
+            <a href="/lab/{{ item.slug }}" class="onethingimade {% if forloop.counter|divisibleby:2 %}onethingimade-right{% else %}onethingimade-left{% endif %}">
+                <div class="itactuallymoves">
+                    {% if item.media %}
+                    <img src="{{ item.media.url }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+                    {% endif %}
+                </div>
+                <div class="whatitwas">
+                    <span class="whaticlaimed">{{ item.title }}</span>
+                    <span class="whenitried">{{ item.get_year_range }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/lookatthesetabs.js' %}" defer></script>
+<script src="{% static 'js/onepageatatime.js' %}" defer></script>
+{% endblock %}

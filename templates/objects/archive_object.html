@@ -1,0 +1,141 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}{{ archive.year }} at ARCHIVE — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}{{ archive.year }}{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/archive/{{ archive.year }}">
+    <link rel="alternate" href="{{ site_url_nodashed }}/archive/{{ archive.year }}" />
+
+    <meta name="title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website">
+    <meta property="vk:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
+    <meta property="og:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
+
+    <meta name="description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
+    <meta property="og:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
+    <meta property="vk:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
+    <meta itemprop="description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
+    <meta name="twitter:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta name="twitter:image:alt" content="{{ archive.year }} at ARCHIVE — Wiehr" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, {{ archive.year }}, archive, releases, discography, music, photography, projects" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}/#collection",
+      "name": "{{ archive.year }} Archive — Wiehr",
+      "description": "All releases from {{ archive.year }} by Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}",
+      "isPartOf": {
+        "@type": "CollectionPage",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/#collection",
+        "name": "Wiehr Archive"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Archive",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ archive.year }}",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/archive.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/flipthrough.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Archive {{ archive.year }} — Wiehr. Official Website</h1>
+    <h2 class="seoonly">All releases by Wiehr from {{ archive.year }}</h2>
+    <div class="everythingwedid">
+        <div class="yearsworth">
+            <div class="branchesofit" data-onepageatatime>
+                {% for section in sections %}
+                <div class="pageslice familytree">
+                    <div class="onebranch trunk">
+                        <span class="whichyearagain">{{ archive.year }}</span>
+                    </div>
+
+                    {% for row in section %}
+                        {% if row.is_header %}
+                    <div class="onebranch kindofthing">
+                        <img src="{% static row.icon %}" alt="{{ row.label }}" class="kindicon">
+                        <span class="kindname">{{ row.label }}</span>
+                    </div>
+                        {% else %}
+                    <div class="onebranch leafonbranch">
+                        <a href="{{ row.url }}" class="reachforit noiseonhover">
+                            <span class="itsnumber">{{ row.number }}</span>
+                            <span class="itstitle">{{ row.title }}</span>
+                        </a>
+                    </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                {% if not has_items %}
+                <div class="familytree">
+                    <div class="onebranch trunk">
+                        <span class="whichyearagain">{{ archive.year }}</span>
+                    </div>
+                    <div class="barebranch"><span>No items in this archive yet.</span></div>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/lookatthesetabs.js' %}" defer></script>
+<script src="{% static 'js/onepageatatime.js' %}" defer></script>
+{% endblock %}

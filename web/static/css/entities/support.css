@@ -1,0 +1,276 @@
+/* body/#iwanttoeathealthyfood are locked to a fixed 100vh, overflow:hidden
+   shell site-wide (the paginated full-screen pages depend on it). A short
+   static page inside that shell doesn't fill it, and .bottomofeverything is
+   position:fixed to the true viewport bottom regardless — so the unused
+   remainder of the 100vh shell shows as a large empty area below the card.
+   Same override /licensing already uses to render as a normal, content-sized,
+   naturally scrollable page instead. */
+#iwanttoeathealthyfood:has(.supportpage) {
+    /* wiehr-theme.css locks this element to overflow:hidden !important, so a
+       plain override here (what /licensing's equivalent rule does) can never
+       win regardless of specificity — !important is its own tier above the
+       normal cascade. Matching it is the only way to actually take effect. */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.supportpage {
+    max-width: 480px;
+    width: 88%;
+    margin: 0 auto;
+    /* Bottom padding clears .bottomofeverything, which is fixed to the
+       viewport bottom (1.5rem + ~12px of text) regardless of content height —
+       without this the card's last few pixels sit under the footer. */
+    padding: 6rem 1rem 3.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* Spacing carries the grouping here: 3x the gap inside a block (1rem), so
+       a label always reads as belonging to the thing under it rather than
+       floating between two sections. This was 1rem against the block's
+       0.85rem — near-identical, so nothing grouped. */
+    gap: 3rem;
+}
+
+.supportlede {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1.35;
+    margin: 0;
+    /* Opening line gets a little more air than the gaps between sections. */
+    padding-bottom: 0.5rem;
+}
+
+.supportblock {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.supportblocklabel {
+    font-size: var(--font-size-small);
+    opacity: 0.6;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.supportblocklabel a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+/* Same button as /globe/<slug> and /storage/<slug> (.onemorelink,
+   styleiseverything.css) rather than a page-specific style, so Support reads
+   as part of the same system instead of a one-off. .supportrow reproduces
+   the flex row .onemorelink expects — it collapses the border between
+   adjacent buttons via :not(:first-child), which only looks right when they
+   share one flex container. Support sits alone in its own row so it keeps
+   its full border; Telegram/YouTube share a row like a normal button group. */
+.supportrow {
+    display: flex;
+}
+
+.supportrow .onemorelink {
+    /* 50% larger than the --font-size-thin (12px) .onemorelink uses on
+       release/storage pages — those sit in a dense multi-button row, this
+       page has room to let Support/Telegram/YouTube read as the main point. */
+    font-size: calc(var(--font-size-thin) * 1.5);
+}
+
+
+/* Each method is a bordered strip using the same border/tint/blur language as
+   .onemorelink, so the pay-directly block reads as part of the same system as
+   the KO-FI / TELEGRAM / YOUTUBE buttons instead of a faint footnote under
+   them — it is the most important thing on the page, so it should not be the
+   lightest. Label | value | COPY are three cells divided by hairlines. */
+.paydetails {
+    display: flex;
+    flex-direction: column;
+    /* Deliberately tighter than the gap between sections: these three are one
+       group and should read as a set, not three separate blocks. */
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.payrow {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.02);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.payrow:hover {
+    border-color: rgba(0, 0, 0, 0.28);
+    background: rgba(0, 0, 0, 0.035);
+}
+
+[data-wiehr-theme="dark"] .payrow {
+    border-color: rgba(244, 244, 244, 0.12);
+    background: rgba(244, 244, 244, 0.02);
+}
+
+[data-wiehr-theme="dark"] .payrow:hover {
+    border-color: rgba(244, 244, 244, 0.28);
+    background: rgba(244, 244, 244, 0.035);
+}
+
+.paylabel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.15rem;
+    flex: none;
+    /* Fixed so all three values start on the same x, whatever the label. */
+    width: 5.5rem;
+    padding: 0.7rem 0.75rem;
+    margin: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.1em;
+}
+
+[data-wiehr-theme="dark"] .paylabel {
+    border-right-color: rgba(244, 244, 244, 0.12);
+}
+
+/* Network/currency sits under the name rather than beside it, so the label
+   column stays narrow and the names stay scannable. */
+.paynote {
+    display: block;
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-regular, 400);
+    letter-spacing: 0.06em;
+    opacity: 0.4;
+}
+
+.payvalue {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.7rem 0.75rem;
+    margin: 0;
+    font-size: var(--font-size-thin);
+    line-height: 1.45;
+    opacity: 0.85;
+    /* Account strings have no spaces, so let them break anywhere rather than
+       push the row into a horizontal scroll. */
+    word-break: break-all;
+    /* The page sets `* { user-select: none }`, which made it impossible to
+       select an IBAN by hand — on a page whose entire job is handing over
+       account numbers. Re-enabled here so the COPY button is a convenience,
+       not the only way to get the value out. */
+    user-select: text;
+    -webkit-user-select: text;
+    cursor: text;
+}
+
+.paygrab {
+    /* Fills the row as its own cell instead of floating with a margin. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 4.75rem;
+    margin-left: 0;
+    padding: 0.7rem 0.5rem;
+    border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    align-self: stretch;
+}
+
+[data-wiehr-theme="dark"] .paygrab {
+    border-left-color: rgba(244, 244, 244, 0.12);
+}
+
+.payrow:hover .paygrab {
+    opacity: 0.85;
+}
+
+.paygrab:hover {
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+
+
+@media (max-width: 640px) {
+    /* The site is a fixed 100vh, no-scroll shell. Everything below exists to
+       land this page inside ~640px of usable height on a 667px phone
+       (iPhone SE) without a scrollbar, while keeping every tap target at the
+       44px floor. Space comes out of padding and gaps, never touch targets. */
+    .supportpage {
+        width: 92%;
+        gap: 1.5rem;
+        padding: 5rem 1rem 1.5rem;
+    }
+
+    .supportlede {
+        padding-bottom: 0;
+    }
+
+    .supportblock {
+        gap: 0.65rem;
+    }
+
+    .supportrow {
+        flex-direction: column;
+    }
+
+    .supportrow .onemorelink {
+        min-height: 44px;
+        /* The oversized type earns its keep on desktop; here it just costs
+           height that the page does not have. */
+        font-size: var(--font-size-thin);
+    }
+
+    .supportrow .onemorelink:not(:first-child) {
+        border-left: 1px solid var(--color-text);
+        border-top: none;
+    }
+
+    /* One line per method instead of three. The value is the only thing that
+       can shrink, and it does not need to be fully visible — COPY is the way
+       people take it, and the full string is still in the DOM, so selecting
+       or copying yields all of it. */
+    .payrow {
+        align-items: stretch;
+    }
+
+    .paylabel {
+        flex: none;
+        width: 4.5rem;
+        flex-direction: column;
+        align-items: baseline;
+        gap: 0.3rem;
+        padding: 0.5rem 0.6rem;
+    }
+
+    .paynote {
+        display: inline;
+        font-size: 0.55rem;
+    }
+
+    .payvalue {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0.5rem 0.6rem;
+        /* Single line + ellipsis rather than wrapping to three. */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: normal;
+        display: block;
+        line-height: 44px;
+    }
+
+    .paygrab {
+        width: 4.25rem;
+        min-height: 44px;
+        padding: 0.5rem 0.4rem;
+    }
+}

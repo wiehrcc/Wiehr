@@ -1,0 +1,29 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}{{ title|default:headline|default:"Wiehr" }}{% endblock %}
+
+{% block content %}
+    {% if headline %}
+    <tr>
+      <td>
+        <p style="font-family: 'Courier New', Courier, monospace;margin: 0 auto;font-size: 1.5em;text-align: center;color: {{ text_color|default:'#000' }};">{{ headline }}</p>
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if body %}
+    <tr style="opacity: .8;width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: justify;word-wrap: break-word;word-break: auto-phrase; font-size: 1.2rem; line-height: 1.2;">
+      <td>
+        <p style="word-wrap: break-word;word-break: auto-phrase;font-family: 'Courier New', Courier, monospace;color: {{ text_color|default:'#000' }}; width: 100%; font-size: 1.5rem; text-align: justify; display: block;">{{ body|safe|linebreaks }}</p>
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if button_text and button_url %}
+    <tr>
+      <td>
+        <a href="{{ button_url }}" style="font-family: 'Courier New', Courier, monospace;text-align: center; display:block;user-select: none;padding: .5em 1em;color:{{ text_color|default:'#000' }};text-decoration:none;letter-spacing: 1px;font-size: 1.2rem;border: 1px solid {{ text_color|default:'#000' }};margin: 1rem auto;align-items: center;justify-content: center;width: 100%;max-width: 160px;color: {{ text_color|default:'#000' }};">{{ button_text }}</a>
+      </td>
+    </tr>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}WHO ARE YOU — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/whoareyou.css' %}">
+    {% endcompress %}
+
+    <link rel="canonical" href="{{ site_url_nodashed }}/whoareyou">
+    <link rel="alternate" href="{{ site_url_nodashed }}/whoareyou" />
+
+    <meta name="title" content="WHO ARE YOU — Wiehr. Official Website">
+    <meta property="vk:title" content="WHO ARE YOU — Wiehr. Official Website" />
+    <meta name="twitter:title" content="WHO ARE YOU — Wiehr. Official Website" />
+    <meta property="og:title" content="WHO ARE YOU — Wiehr. Official Website" />
+    <meta itemprop="name" content="WHO ARE YOU — Wiehr. Official Website" />
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="Wiehr — Electronic Composer & Engineer" />
+
+    <meta name="description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+    <meta property="og:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+    <meta property="vk:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+    <meta itemprop="description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+    <meta name="twitter:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="640" />
+    <meta property="og:image:height" content="640" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+    <meta name="twitter:image:alt" content="Wiehr — Electronic Composer & Engineer" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
+
+    <meta name="keywords" content="Wiehr, electronic composer, multidisciplinary artist, cinematic music, ambient, experimental, synthetic orchestra, Belarus, software engineer, mixing, mastering, sound design" />
+    <meta property="og:type" content="profile" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
+      "name": "Wiehr",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou",
+      "description": "Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions.",
+      "knowsAbout": ["Electronic Music", "Sound Design", "Mixing", "Mastering", "Software Engineering", "DevOps", "Data Engineering"],
+      "jobTitle": "Composer & Engineer",
+      "sameAs": [],
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "Who Are You", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" }
+      ]
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Wiehr — Electronic Composer &amp; Multidisciplinary Artist</h1>
+
+    <div class="nobodyknowsme">
+        <div class="proofofexistence">
+            <img src="{% static 'images/live/whoareyou.gif' %}" alt="Wiehr" loading="eager" decoding="async" fetchpriority="high" draggable="false" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease-in-out;">
+        </div>
+
+        <div class="allthatisleft">
+            <div class="wordsaboutnothing">
+                <p>Identifying myself as <span class="iamastring">6FruWhmivKNoqxq+NOikKDMwKsRc0gaQ4lWMY0uw93Y=</span>.</p>
+                <p>Not represented by any institution. Not belong to any ideology, race, sex and don't translate political views.</p>
+            </div>
+        </div>
+
+        <div class="ifyouinsist">
+            <p>If you want to work with me:
+                <a href="/composer" class="onewaytohireme">Composer</a>
+                <span class="thinlinebetweenjobs">/</span>
+                <a href="/engineer" class="onewaytohireme">Engineer</a>
+            </p>
+            <p>For clearance, contact label:
+                <a href="mailto:igor@labelnisha.com">igor@labelnisha.com</a>
+            </p>
+            <p>For any other inquires, send email to
+                <a href="mailto:hello@wiehr.cc?subject=Zero">hello@wiehr.cc</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

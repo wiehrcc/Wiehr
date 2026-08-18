@@ -1,0 +1,206 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% block title %}{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}{{ release.internal_id|default:release.title }}{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed }}/globe/{{ release.slug }}">
+    <link rel="alternate" href="{{ site_url_nodashed }}/globe/{{ release.slug }}" />
+
+    <meta name="title" content="{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website">
+    <meta property="vk:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website" />
+    <meta property="og:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="{{ release.title }}" />
+
+    <meta name="description" content="Listen to {{ release.title }} by Wiehr — electronic music from the Globe archive. Stream on Spotify, Apple Music, and more. Official release page." />
+    <meta property="og:description" content="Listen to {{ release.title }} by Wiehr — electronic music from the Globe archive. Stream on Spotify, Apple Music, and more." />
+    <meta property="vk:description" content="Listen to {{ release.title }} by Wiehr — electronic music from the Globe archive. Stream on Spotify, Apple Music, and more." />
+    <meta itemprop="description" content="Listen to {{ release.title }} by Wiehr — electronic music from the Globe archive. Stream on Spotify, Apple Music, and more." />
+    <meta name="twitter:description" content="Listen to {{ release.title }} by Wiehr — electronic music from the Globe archive. Stream on Spotify, Apple Music, and more." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="640" />
+    <meta property="og:image:height" content="640" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+    <meta name="twitter:image:alt" content="{{ release.title }} cover art" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}" />
+
+    <meta property="og:type" content="music.album" />
+    <meta property="music:release_date" content="{{ release.date|date:'Y-m-d' }}" />
+    <meta property="music:musician" content="{{ release.artist }}" />
+    <meta property="music:album:disc" content="1" />
+    <meta property="article:published_time" content="{{ release.date|date:'c' }}" />
+    <meta property="article:modified_time" content="{{ release.created_at|date:'c' }}" />
+    <meta property="article:author" content="{{ release.artist }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:label1" content="Artist" />
+    <meta name="twitter:data1" content="{{ release.artist }}" />
+    <meta name="twitter:label2" content="Release Date" />
+    <meta name="twitter:data2" content="{{ release.date|date:'Y-m-d' }}" />
+    <meta name="keywords" content="Wiehr, {{ release.title }}, {{ release.artist }}, electronic music, synthetic music, ambient, cyberpunk, soundtrack, OST, music production, mixing, mastering">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicAlbum",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe/{{ release.slug }}/#music-release",
+      "name": "{{ release.title|escapejs }}"{% if release.wid %},
+      "identifier": "{{ release.wid|escapejs }}"{% endif %},
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}"{% if release.image %},
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}",
+        "contentUrl": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ release.image }}"
+      }{% endif %}{% if release.date %},
+      "datePublished": "{{ release.date|date:'Y-m-d' }}"{% endif %},
+      "inLanguage": "en-US"{% if release.artist %},
+      "byArtist": {
+        "@type": "MusicGroup",
+        "name": "{{ release.artist|escapejs }}",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
+        "description": "Belarusian composer and author based in Slovakia. Creating synthetic music at the bridge of electronic, experimental, ambient and dance genres"
+      }{% endif %},
+      "genre": ["Electronic", "Synthetic", "Ambient", "Cyberpunk"],
+      "recordLabel": "Independent",
+      "producer": {
+        "@type": "Person",
+        "name": "Wiehr",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person"
+      },
+      "creditText": "All tracks written, designed, mixed, and mastered by Wiehr"{% if release.geo and release.geo != 'UNKNOWN' %},
+      "locationCreated": {
+        "@type": "Place",
+        "name": "{{ release.geo|escapejs }}"
+      }{% endif %},
+      "isPartOf": {
+        "@type": "CollectionPage",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#globe",
+        "name": "Wiehr Releases"
+      },
+      "publisher": {
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Globe",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/globe"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ release.title|escapejs }}",
+          "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ release.get_absolute_url }}"
+        }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/wiehr-modules.css' %}">
+    {% endcompress %}
+
+{% endblock %}
+{% block content %}
+    <h2 class="seoonly">{{ release.title }} — Electronic Music Release at Globe by Wiehr</h2>
+    <div id="zoomedinnow" class="staringcontest">
+      <button class="staringcontest-close" id="lookawaynow">
+        <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+      </button>
+      <img class="staringcontest-img" id="thebiggerpicture" alt="Full size preview" loading="eager" decoding="async" />
+    </div>
+
+    <div class="onemoretrack">
+        <div class="thealbumface">
+            {% with wid_or_slug=release.wid|default:release.slug %}
+                <img
+                    src="{{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@1280.jpg"
+                    srcset="{{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@640.jpg 640w, {{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@1280.jpg 1280w"
+                    sizes="(max-width: 640px) 640px, 1280px"
+                    alt="Wiehr. {{ release.title }}"
+                    loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
+                    onload="this.style.opacity='1'"
+                    style="opacity: 0; transition: opacity 0.3s ease-in-out;"
+                    class="tapthis"
+                >
+            {% endwith %}
+        </div>
+
+        <div class="thefinerpoints">
+            <h1 class="whaticalledthisone">{{ release.display_release_title }}{% if release.featuring_text %} <span class="whobroughtfriends">({{ release.featuring_text }})</span>{% endif %}</h1>
+            {% if release.display_artist_title %}
+            <p class="whosnamegoeshere">{{ release.display_artist_title }}</p>
+            {% endif %}
+
+            {% if release.pitch %}
+            <div class="mysalespitch">{{ release.pitch|striptags|linebreaks }}</div>
+            {% endif %}
+
+            {% if credits_by_artist %}
+            <div class="whoelsetoblame">
+                {% for item in credits_by_artist %}
+                    <p>{{ item.roles }}: <b>{{ item.name }}</b></p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <span class="catalognumber">{{ release.internal_id }}</span>
+        </div>
+
+        <div class="pickyourpoison">
+            {% if release.listen_url %}
+            <a href="{{ release.listen_short }}" target="_blank" rel="noopener noreferrer" class="onemorelink">STREAM</a>
+            {% endif %}
+            {% if release.lyrics_url %}
+            <a href="{{ release.lyrics_short }}" target="_blank" rel="noopener noreferrer" class="onemorelink">LYRICS</a>
+            {% endif %}
+            {% if release.watch_url %}
+            <a href="{{ release.watch_short }}" target="_blank" rel="noopener noreferrer" class="onemorelink">WATCH</a>
+            {% endif %}
+            {% if release.pdf_file %}
+                <a href="{{ release.pdf_file.url }}" target="_blank" rel="noopener noreferrer" class="onemorelink">PRINT</a>
+            {% endif %}
+            {% if release.geo %}
+            <a href="https://www.google.com/maps/search/?api=1&query={{ release.geo|urlencode }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="onemorelink">LOC</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/globe-object.js' %}"></script>
+{% endblock %}

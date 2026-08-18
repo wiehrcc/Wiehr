@@ -1,0 +1,110 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}License Verification — Wiehr. Official Website{% endblock %}
+{% block breadcrumb_label %}LICENSE{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing">
+    <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
+
+    <meta name="title" content="License Verification — Wiehr. Official Website">
+    <meta property="vk:title" content="License Verification — Wiehr. Official Website" />
+    <meta name="twitter:title" content="License Verification — Wiehr. Official Website" />
+    <meta property="og:title" content="License Verification — Wiehr. Official Website" />
+    <meta itemprop="name" content="License Verification — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="License Verification — Wiehr. Official Website" />
+
+    <meta name="description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
+    <meta property="og:description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
+    <meta property="vk:description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
+    <meta itemprop="description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
+    <meta name="twitter:description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta name="twitter:image:alt" content="License Verification" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, license verification, storage license key, digital asset license">
+    <meta name="robots" content="noindex, follow">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing/#page",
+      "name": "License Verification — Wiehr",
+      "description": "Verify a Wiehr License key.",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/license.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">License Verification — Wiehr. Official Website</h1>
+    <div class="proveit">
+        <header class="proveithead">
+            <h2 class="whatisthis">License Verification</h2>
+            <p class="whyyoucare">Paste a Wiehr License Key to confirm it's genuine and see exactly what it covers.</p>
+        </header>
+
+        <form class="typethekey" method="get" action="/licensing">
+            <input type="text" name="key" placeholder="Wiehr License Key" value="{{ raw_key }}" class="thekeyitself" autocomplete="off" spellcheck="false" />
+            <button type="submit" class="checkitnow">Verify</button>
+        </form>
+
+        {% if result %}
+        <div class="itchecksout">
+            <span class="verdict verdict-good">Valid</span>
+            <div class="whatitwasfor">
+                <span class="proofrow"><span class="proofrowlabel">Internal ID</span>{{ result.internal_id }}</span>
+                <span class="proofrow"><span class="proofrowlabel">License ID</span><span class="thefullkey">{{ result.license_key }}</span></span>
+                <span class="proofrow"><span class="proofrowlabel">Product</span>{% if result.product_storage %}<a href="{{ result.product_storage.get_absolute_url }}">{{ result.product_storage.title }}</a>{% else %}{{ result.get_product_display }}{% endif %}</span>
+                <span class="proofrow"><span class="proofrowlabel">License Type</span>{{ result.license_type.name }}</span>
+                <span class="proofrow"><span class="proofrowlabel">Name</span>{{ result.licensee_name }}</span>
+                <span class="proofrow"><span class="proofrowlabel">Email</span>{{ result.licensee_email }}</span>
+                <span class="proofrow"><span class="proofrowlabel">Effective</span>{{ result.effective_date|date:"F d, Y" }}</span>
+            </div>
+
+            <div class="takethepaper">
+                <span class="takethepaperlabel">Signed agreement</span>
+                <div class="takethepaperrow">
+                    <a href="/licensing/{{ result.license_key }}/download?fmt=pdf" class="grabformat">PDF</a>
+                    <a href="/licensing/{{ result.license_key }}/download?fmt=docx" class="grabformat">DOCX</a>
+                    <a href="/licensing/{{ result.license_key }}/download?fmt=txt" class="grabformat">TXT</a>
+                </div>
+            </div>
+        </div>
+        {% elif error %}
+        <div class="itdoesnotcheckout">
+            <span class="verdict verdict-bad">Invalid</span>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

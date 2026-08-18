@@ -1,0 +1,87 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+{% load i18n %}
+
+{% comment %}
+Shared body for the two hire pages. /engineer and /composer
+differ only in their head/SEO blocks and the config dict fed from the view.
+{% endcomment %}
+
+{% block extra_css %}
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/profile.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <div class="sellingmyself">
+        <h2 class="seoonly">{% block seo_heading %}{% endblock %}</h2>
+
+        <header class="whoisthisguy">
+            <h1 class="nameonthecheque">{{ config.name }}</h1>
+            <p class="whatitellpeople">{{ config.headline }}</p>
+        </header>
+
+        <section class="anotherpitch">
+            <h2 class="pitchlabel">Bio</h2>
+            <div class="storyisell">
+                <p>{{ bio }}</p>
+            </div>
+        </section>
+
+        <section class="anotherpitch" id="rates">
+            <h2 class="pitchlabel">Rates</h2>
+            <div class="priceofmytime">
+                {% for label, price in rates %}
+                <div class="onepricetag">
+                    <span class="whatyouget">{{ label }}</span>
+                    <span class="dotstofill"></span>
+                    <span class="whatitcosts">{{ price }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="anotherpitch">
+            <h2 class="pitchlabel">Inquires</h2>
+            <div class="knockhere">
+                <span class="knockarrow">—</span>
+                <a href="mailto:hello@wiehr.cc?subject={{ config.subject }}" class="knockloud">hello@wiehr.cc</a>
+                <span class="knockhint">subject: {{ config.subject }}</span>
+            </div>
+        </section>
+
+        <section class="anotherpitch">
+            <h2 class="pitchlabel">{{ config.paper_label }}</h2>
+            <div class="paperproof">
+                <div class="paperlabel">Format</div>
+                <div class="pickyourpoison" id="pickyourpoison">
+                    <button class="onepaperformat chosen" data-fmt="pdf">PDF</button>
+                    <button class="onepaperformat" data-fmt="docx">DOCX</button>
+                    <button class="onepaperformat" data-fmt="txt">TXT</button>
+                </div>
+                <a href="{{ download_url }}?fmt=pdf" class="takeitwithyou" id="takeitwithyou">Download</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var opts = document.querySelectorAll('#pickyourpoison .onepaperformat');
+    var btn = document.getElementById('takeitwithyou');
+    if (!btn) return;
+    var base = '{{ download_url }}';
+
+    opts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            opts.forEach(function(o) { o.classList.remove('chosen'); });
+            opt.classList.add('chosen');
+            btn.href = base + '?fmt=' + opt.getAttribute('data-fmt');
+        });
+    });
+})();
+</script>
+{% endblock %}

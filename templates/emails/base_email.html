@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body style="{% block body_style %}margin:0;padding:1rem;color:{{ text_color|default:'#000' }};margin: 0 auto{% endblock %}">
+
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;border-collapse:collapse">
+      <tr>
+        <td align="center">
+          <table role="presentation"  align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%;min-width:100%;border-collapse:collapse;float:left;{% block inner_table_style %}font-family: 'Courier New', Courier, monospace;width: 100%;max-width:640px; border-radius:0px; overflow:hidden;{% endblock %}" width="100%">
+            <td style="font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+            {% block ascii_art %}
+            <tr style="user-select: none; width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: right;">
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00000000000000000011<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00000001000000000111<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00000011000000011111<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00001111000000111111<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">11111111111111111111<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">11110000111111000000<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">11000000111110000000<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">10000000111100000000<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00000000111000000000<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block">00000000100000000000<br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+              <td style="font-size: .75rem;font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+            </tr>
+            {% endblock %}
+            <tr style="user-select: none; width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: right;">
+              <td style="font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+            </tr>
+            {% block content %}{% endblock %}
+            <tr style="user-select: none; width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: right;">
+              <td style="font-family: 'Courier New', Courier, monospace;width:100%;display:block"><br></td>
+            </tr>
+            {% block social_links %}
+            <tr style="opacity: .8; user-select: none;padding-top: 1rem; width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: center;">
+              <td style="font-size: 1rem; font-family: 'Courier New', Courier, monospace;width:100%;display:block">
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://wiehr.cc" target="_blank" rel="noopener noreferrer" title="Website">W</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://youtube.com/@Wiehr" target="_blank" rel="noopener noreferrer" title="YouTube">YT</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://instagram.com/wiehrcc" target="_blank" rel="noopener noreferrer" title="Instagram">IG</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://www.tiktok.com/@wiehrcc" target="_blank" rel="noopener noreferrer" title="TikTok">TT</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://wiehr.bandcamp.com/" target="_blank" rel="noopener noreferrer" title="Bandcamp">BC</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://soundcloud.com/wiehr" target="_blank" rel="noopener noreferrer" title="Soundcloud">SC</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://www.facebook.com/wiehrcc" target="_blank" rel="noopener noreferrer" title="Facebook">FB</a>
+                <span style="opacity: .5;">•</span>
+                <a style="font-family: 'Courier New', Courier, monospace;text-align: center; padding: 0;text-decoration: none;color:{{ text_color|default:'#000' }};" href="https://x.com/wiehrcc" target="_blank" rel="noopener noreferrer" title="X | Twitter">X</a>
+              </td>
+            </tr>
+            <tr style="opacity: 0.66; user-select: none;padding-top: 1em; width: 100%;display: block;margin: 0 auto;max-width: 640px;text-align: center;">
+              <td style="font-size: .8rem !important; {% block footer_style %}font-family: 'Courier New', Courier, monospace;max-width: 640px; width: 100%;display:block;margin: 0 auto; line-height:1; color:{{ text_color|default:'#000' }};text-align:center;{% endblock %}">
+              {% block footer_content %}
+              {% if disconnect_token %}
+              <a href="{{ site_url_nodashed }}/disconnect/{{ disconnect_token }}/" style="font-family: 'Courier New', Courier, monospace;user-select: none;color:{{ text_color|default:'#000' }};text-decoration:none;width:100%">Disconnect & Unsubscribe from future emails</a>
+              {% else %}
+              <a href="{{ site_url_nodashed }}/disconnect/?email={{ recipient_email }}" style="font-family: 'Courier New', Courier, monospace;user-select: none;color:{{ text_color|default:'#000' }};text-decoration:none;width:100%">Disconnect & Unsubscribe from future emails</a>
+              {% endif %}
+              {% endblock %}
+              </td>
+            </tr>
+            {% endblock %}
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

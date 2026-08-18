@@ -1,0 +1,243 @@
+
+
+#iwanttoeathealthyfood:has(.sellingmyself) {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sellingmyself {
+    max-width: 480px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 6rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: var(--color-text);
+}
+
+
+.whoisthisguy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.nameonthecheque {
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-black, 900);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.whatitellpeople {
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-regular, 400);
+    line-height: 1.4;
+    opacity: 0.55;
+    margin: 0;
+}
+
+
+.anotherpitch {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.pitchlabel {
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin: 0;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-wiehr-theme="dark"] .pitchlabel {
+    border-bottom-color: rgba(244, 244, 244, 0.08);
+}
+
+.storyisell p {
+    font-size: var(--font-size-thin);
+    line-height: 1.45;
+    opacity: 0.75;
+    margin: 0 0 0.6rem;
+}
+
+.storyisell p:last-child {
+    margin-bottom: 0;
+}
+
+
+.priceofmytime {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.onepricetag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: var(--font-size-thin, 13px);
+}
+
+.whatyouget {
+    font-weight: var(--font-weight-bold, 700);
+}
+
+.dotstofill {
+    flex: 1;
+    border-bottom: 1px dotted currentColor;
+    opacity: 0.25;
+    transform: translateY(-0.2em);
+}
+
+.whatitcosts {
+    font-weight: var(--font-weight-black, 900);
+    white-space: nowrap;
+}
+
+
+.knockhere {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: var(--font-size-thin);
+}
+
+.knockarrow {
+    opacity: 0.35;
+}
+
+.knockloud {
+    color: inherit;
+    font-weight: var(--font-weight-black, 900);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    transition: opacity 0.15s ease;
+}
+
+.knockloud:hover {
+    opacity: 0.55;
+}
+
+.knockhint {
+    flex-basis: 100%;
+    font-size: var(--font-size-tiny);
+    opacity: 0.4;
+    font-style: italic;
+}
+
+
+.paperproof {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.paperlabel {
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.4;
+}
+
+.pickyourpoison {
+    display: flex;
+}
+
+.onepaperformat {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: none;
+    color: var(--color-text);
+    opacity: 0.6;
+    transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+[data-wiehr-theme="dark"] .onepaperformat {
+    border-color: rgba(244, 244, 244, 0.12);
+}
+
+.onepaperformat:not(:first-child) {
+    border-left: none;
+}
+
+.onepaperformat:hover {
+    opacity: 0.9;
+}
+
+.onepaperformat.chosen {
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+
+.takeitwithyou {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-text);
+    background: var(--color-text);
+    color: var(--color-bg);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.takeitwithyou:hover {
+    opacity: 0.85;
+}
+
+
+@media (max-width: 640px) {
+    .sellingmyself {
+        max-width: 88%;
+        padding: 5rem 1rem 4rem;
+        gap: 1.1rem;
+    }
+
+    .nameonthecheque {
+        font-size: var(--font-size-regular);
+    }
+
+    .whatitellpeople {
+        font-size: var(--font-size-thin);
+    }
+
+    .onepricetag {
+        font-size: var(--font-size-thin);
+    }
+
+    .knockhere {
+        font-size: var(--font-size-thin);
+    }
+
+    .onepaperformat {
+        font-size: var(--font-size-tiny);
+        padding: 0.6rem 0.35rem;
+    }
+
+    .takeitwithyou {
+        font-size: var(--font-size-tiny);
+        padding: 0.85rem;
+    }
+}

@@ -1,0 +1,265 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .campaign-stats {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 0;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .stat-item {
+        display: inline-block;
+        margin-right: 20px;
+        font-weight: bold;
+    }
+    .stat-number {
+        color: #417690;
+        font-size: 1.2em;
+    }
+    .campaign-form {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 0;
+        padding: 20px;
+    }
+    .form-row {
+        margin-bottom: 15px;
+    }
+    .form-row label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .help-text {
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 3px;
+    }
+    .preview-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+    }
+    .preview-button {
+        background: #417690;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 0;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+    .preview-button:hover {
+        background: #345d75;
+    }
+    .email-preview {
+        border: 1px solid #ddd;
+        border-radius: 0;
+        background: #f9f9f9;
+        width: 100%;
+        margin: 0 auto;
+    }
+    .email-preview iframe {
+        width: 100%;
+        border: none;
+        min-height: 640px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h1>{{ title }}</h1>
+
+        <div class="campaign-stats">
+            <h3>Subscriber Statistics</h3>
+            <div class="stat-item">
+                Total Active Subscribers: <span class="stat-number">{{ total_subscribers }}</span>
+            </div>
+            {% for source_name, count in source_counts.items %}
+            <div class="stat-item">
+                {{ source_name|title }}: <span class="stat-number">{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="campaign-form">
+            <form method="post" id="campaign-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="{{ form.wid.id_for_label }}">{{ form.wid.label }}</label>
+                    {{ form.wid }}
+                    {% if form.wid.errors %}
+                        <div class="error">{{ form.wid.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Enter release WID to use its background color as email background and inverted color for text.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <div class="error">{{ form.subject.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="error">{{ form.title.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Optional: Title that appears in the email content. If empty, uses the subject.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+                    {{ form.body }}
+                    {% if form.body.errors %}
+                        <div class="error">{{ form.body.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Use the rich text editor to format your email content.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.button_text.id_for_label }}">{{ form.button_text.label }}</label>
+                    {{ form.button_text }}
+                    {% if form.button_text.errors %}
+                        <div class="error">{{ form.button_text.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Optional: Text for the call-to-action button.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.button_url.id_for_label }}">{{ form.button_url.label }}</label>
+                    {{ form.button_url }}
+                    {% if form.button_url.errors %}
+                        <div class="error">{{ form.button_url.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Optional: URL the button should link to. Required if button text is provided.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.tags.id_for_label }}">{{ form.tags.label }}</label>
+                    {{ form.tags }}
+                    {% if form.tags.errors %}
+                        <div class="error">{{ form.tags.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Optional: Tags to include in the email, e.g., #synthetic #electronic #drumnbass.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.source_filter.id_for_label }}">{{ form.source_filter.label }}</label>
+                    {{ form.source_filter }}
+                    {% if form.source_filter.errors %}
+                        <div class="error">{{ form.source_filter.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Choose which subscribers to send to. Leave empty to send to all.</div>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.test_email.id_for_label }}">{{ form.test_email.label }}</label>
+                    {{ form.test_email }}
+                    {% if form.test_email.errors %}
+                        <div class="error">{{ form.test_email.errors }}</div>
+                    {% endif %}
+                    <div class="help-text">Optional: Send a test email to this address before sending to all subscribers.</div>
+                </div>
+
+                <div class="form-row">
+                    <button type="submit" name="action" value="send" class="default" style="margin-right: 10px;">
+                        📧 Send Campaign
+                    </button>
+                    <button type="submit" name="action" value="test" class="default" style="margin-right: 10px; background: #f0ad4e; border-color: #eea236;">
+                        🧪 Send Test
+                    </button>
+                    <button type="button" class="preview-button" onclick="previewEmail()">
+                        👁️ Preview Email
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="preview-section" id="preview-section" style="display: none;">
+            <h3>Email Preview</h3>
+            <div class="email-preview">
+                <iframe id="email-preview-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script>
+function previewEmail() {
+    const form = document.getElementById('campaign-form');
+    const formData = new FormData(form);
+
+
+    const previewSection = document.getElementById('preview-section');
+    const iframe = document.getElementById('email-preview-iframe');
+    previewSection.style.display = 'block';
+    iframe.src = 'about:blank';
+    iframe.style.height = '100px';
+    iframe.contentDocument.body.innerHTML = '<div style="text-align: center; padding: 20px;">Loading preview...</div>';
+
+
+    fetch('{% url "admin:team_campaign_preview" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text();
+        } else {
+            throw new Error('Preview failed');
+        }
+    })
+    .then(html => {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+        iframe.style.height = '640px'; 
+    })
+    .catch(error => {
+        console.error('Preview error:', error);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write('<div style="text-align: center; padding: 20px; color: red;">Error loading preview</div>');
+        doc.close();
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const buttonTextField = document.getElementById('{{ form.button_text.id_for_label }}');
+    const buttonUrlField = document.getElementById('{{ form.button_url.id_for_label }}');
+
+    if (buttonTextField && buttonUrlField) {
+        buttonTextField.addEventListener('input', function() {
+            if (this.value.trim() && !buttonUrlField.value.trim()) {
+                buttonUrlField.required = true;
+                buttonUrlField.setAttribute('required', 'required');
+            } else if (!this.value.trim()) {
+                buttonUrlField.required = false;
+                buttonUrlField.removeAttribute('required');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

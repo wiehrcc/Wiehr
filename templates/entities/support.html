@@ -1,0 +1,119 @@
+{% extends 'nothingmattersalikebase.html' %}
+{% load static %}
+{% load compress %}
+
+{% block title %}SUPPORT — Wiehr. Official Website{% endblock %}
+
+{% block head %}
+    <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support">
+    <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
+
+    <meta name="title" content="SUPPORT — Wiehr. Official Website">
+    <meta property="vk:title" content="SUPPORT — Wiehr. Official Website" />
+    <meta name="twitter:title" content="SUPPORT — Wiehr. Official Website" />
+    <meta property="og:title" content="SUPPORT — Wiehr. Official Website" />
+    <meta itemprop="name" content="SUPPORT — Wiehr. Official Website">
+    <meta property="og:image:alt" content="SUPPORT — Wiehr. Official Website" />
+
+    <meta name="description" content="If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube." />
+    <meta property="og:description" content="If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube." />
+    <meta property="vk:description" content="If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube." />
+    <meta itemprop="description" content="If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube." />
+    <meta name="twitter:description" content="If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta name="twitter:image:alt" content="Support Wiehr" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, support, ko-fi, donate, telegram, youtube, subscribe">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/support/#page",
+      "name": "Support — Wiehr",
+      "description": "If you like what I do, let me do more. Support Wiehr on Ko-fi or subscribe on Telegram and YouTube.",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/support",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#website",
+        "name": "Wiehr"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "Support", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" }
+      ]
+    }
+    </script>
+
+    {% compress css inline %}
+        <link rel="stylesheet" href="{% static 'css/entities/support.css' %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="seoonly">Support Wiehr</h1>
+    <div class="supportpage">
+        <p class="supportlede">If you like what I do, let me do more.</p>
+
+        <div class="supportblock">
+            <p class="supportblocklabel">Support me on <a href="https://ko-fi.com/wiehr" target="_blank" rel="noopener noreferrer">ko-fi.com</a></p>
+            <div class="supportrow">
+                <a href="https://wiehr.cc/s/support" target="_blank" rel="noopener noreferrer" class="onemorelink">KO-FI</a>
+            </div>
+        </div>
+
+        <div class="supportblock">
+            <p class="supportblocklabel">Or send it directly:</p>
+            <dl class="paydetails">
+                <div class="payrow">
+                    <dt class="paylabel">IBAN<span class="paynote">EUR</span></dt>
+                    {% comment %}Shown in the conventional groups of four so it can
+                    be checked by eye; data-copy carries the unspaced value that
+                    banks expect.{% endcomment %}
+                    <dd class="payvalue">SK84 5600 0000 0002 4307 0003</dd>
+                    <button type="button" class="grabit paygrab" data-copy="SK8456000000000243070003">COPY</button>
+                </div>
+                <div class="payrow">
+                    <dt class="paylabel">USDT<span class="paynote">TRC20</span></dt>
+                    <dd class="payvalue">TR3VDdmrHHzmTixuqpG9RComjCmbxKX3wv</dd>
+                    <button type="button" class="grabit paygrab" data-copy="TR3VDdmrHHzmTixuqpG9RComjCmbxKX3wv">COPY</button>
+                </div>
+                <div class="payrow">
+                    <dt class="paylabel">TON<span class="paynote">GRAM</span></dt>
+                    <dd class="payvalue">UQD7MdiSMdHLJ0f8N9jEev0vF87KnCXnyxPkppFQxK9dnEcF</dd>
+                    <button type="button" class="grabit paygrab" data-copy="UQD7MdiSMdHLJ0f8N9jEev0vF87KnCXnyxPkppFQxK9dnEcF">COPY</button>
+                </div>
+            </dl>
+        </div>
+
+        <div class="supportblock">
+            <p class="supportblocklabel">Or subscribe to main channels:</p>
+            <div class="supportrow">
+                <a href="https://wiehr.cc/s/telegram" target="_blank" rel="noopener noreferrer" class="onemorelink">TELEGRAM</a>
+                <a href="https://wiehr.cc/s/youtube" target="_blank" rel="noopener noreferrer" class="onemorelink">YOUTUBE</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
