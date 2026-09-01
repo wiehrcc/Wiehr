@@ -10,11 +10,12 @@ body {
     position: relative;
 }
 
+/* Position and box only — overflow and the centring live with the rest of the
+   container's behaviour in styleiseverything.css. */
 #iwanttoeathealthyfood {
     width: 100%;
     height: 100%;
     position: relative;
-    overflow: hidden;
 }
 
 .noisefilterdefinitions {
@@ -53,8 +54,7 @@ body.cursorisnotmine .cursor-dot-outline {
 }
 
 
-body.nothingelsematters .wilogoatleft,
-body.nothingelsematters .youarehere,
+body.nothingelsematters .acrossthetop,
 body.nothingelsematters .bottomofeverything,
 body.nothingelsematters .versionmark,
 body.nothingelsematters .copyrightmark,
@@ -142,20 +142,77 @@ body.themeglitch {
     100% { filter: none; }
 }
 
-.wilogoatleft {
+/* --------------------------------------------------------------------------
+   The header
+
+   One glass bar across the top holding the logo and the breadcrumb, rather
+   than two chips floating in opposite corners. The pane below now runs the
+   full width between the same insets, so a bar is the only shape that lines
+   up with it — two chips left a ragged edge on both sides of the page.
+   -------------------------------------------------------------------------- */
+.acrossthetop {
     position: fixed;
-    top: 1.5rem;
-    left: 1.5rem;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: var(--chrome-inset);
+    box-sizing: border-box;
+    /* One piece of glass at every width. It was split for a while — a
+       transparent row with a chip at each end on desktop — but two chips at
+       different heights never sat level with each other, and the band between
+       them read as a gap rather than as a header. As one bar the two ends are
+       centred against the same line by definition. */
+    background-color: var(--glass-bg);
+    background-image: var(--glass-tint);
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur-plain);
+    -webkit-backdrop-filter: var(--glass-blur-plain);
+    backdrop-filter: var(--glass-refraction);
+    box-shadow:
+        var(--glass-shadow-chip),
+        inset 0 1px 0 var(--glass-edge);
+    pointer-events: none;
+}
+
+.acrossthetop > * {
+    pointer-events: auto;
+}
+
+/* Both ends are bare: the bar is the material, and anything with its own
+   fill inside it would be glass on glass. */
+.wilogoatleft,
+.youarehere {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .acrossthetop {
+        background: var(--glass-bg-flat);
+    }
+}
+
+.wilogoatleft {
     display: block;
     text-decoration: none;
     line-height: 0;
-    padding: .5rem;
-    margin: -.5rem
+    margin: 0;
 }
 
+/* Trimmed from 36px. It is the wordmark so it stays the largest thing in the
+   bar, but at 36 against an 18px breadcrumb it was twice everything else and
+   made the two ends of the header look like different sizes of furniture. */
 .wilogoatleft img {
-    height: 36px;
+    height: 28px;
     width: auto;
     object-fit: contain;
     transition: opacity 0.3s ease;
@@ -170,19 +227,20 @@ body.themeglitch {
     filter: invert(1) drop-shadow(0 2px 6px rgba(255, 255, 255, 0.06));
 }
 
+/* Row-reverse, so the menu button ends up hard against the right edge — the
+   corner it has always lived in — and the trail reads outward from it. The
+   glass is the bar's now; this is just a row inside it.
+
+   One gap on this element and nothing else: the items and the dividers are all
+   direct children and all spaced by it, which is what makes the spacing even.
+   The dividers used to carry their own margin-right, so every gap next to one
+   was that margin wider than its neighbour and the labyrinth sat closer in
+   than the rest. */
 .youarehere {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 100;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: .5rem;
-    padding: 0.5rem;
-    border-radius: 0;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 0.6rem;
 }
 
 
@@ -198,8 +256,8 @@ body.themeglitch {
 .youarehere .labyrinthopenseverything,
 .youarehere .youareherelink {
     position: relative;
-    width: 36px;
-    height: 36px;
+    width: var(--crumb-icon);
+    height: var(--crumb-icon);
     padding: 0;
     margin: 0;
     display: flex;
@@ -219,10 +277,6 @@ body.themeglitch {
     left: -8px;
 }
 
-.youarehereline {
-    align-self: flex-end;
-    margin-right: 17.5px;
-}
 
 .youarehere.no-glass {
     backdrop-filter: none;
@@ -232,17 +286,18 @@ body.themeglitch {
 }
 
 .youarehereline {
-    width: 1px;
-    height: 12px;
+    width: 12px;
+    height: 1px;
     background: var(--color-text, #000);
     opacity: 0.4;
     flex-shrink: 0;
 }
 
+
 .youarehereicon {
     display: block;
-    width: 24px;
-    height: 24px;
+    width: var(--crumb-icon);
+    height: var(--crumb-icon);
     object-fit: contain;
     opacity: 0.7;
     transition: opacity 0.2s ease;
@@ -288,9 +343,11 @@ a.youareherelink {
     margin: -1rem;
 }
 
+/* Same size as the section icons beside it. It was 36px, which made the menu
+   glyph the largest thing in the header by a distance. */
 .labyrinthopenseverything .labyrinthicon {
-    width: 36px;
-    height: 36px;
+    width: var(--crumb-icon);
+    height: var(--crumb-icon);
     object-fit: contain;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
     transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -355,8 +412,7 @@ a.youareherelink {
 .treeofalloptions {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 480px;
+    width: var(--page-frame);
 }
 
 .routesforyou {
@@ -448,10 +504,35 @@ a.youareherelink {
 
 .routelabel {
     font-family: 'Wiehr', sans-serif;
-    font-size: var(--font-size-semibold);
+    /* 20% down from --font-size-semibold (28px): the menu now carries a nested
+       level under WHO ARE YOU?, and at the old size the tree ran past the
+       bottom of a short viewport. */
+    font-size: var(--font-size-large);
     font-weight: 900;
     letter-spacing: 0;
     text-transform: uppercase;
+}
+
+/* Nested rows read as subordinate: smaller label, lighter icon, dimmer until
+   hovered or current. */
+.singlerouteforyou-child .routelabel {
+    font-size: var(--font-size-light);
+    font-weight: 700;
+}
+
+.singlerouteforyou-child .routeicon {
+    width: 18px;
+    height: 18px;
+}
+
+.singlerouteforyou-child .routelink {
+    padding: 0.5em 0.25em;
+    opacity: 0.7;
+}
+
+.singlerouteforyou-child:hover .routelink,
+.singlerouteforyou-child.singlerouteforyou-current .routelink {
+    opacity: 1;
 }
 
 .routepath {
@@ -483,8 +564,8 @@ a.youareherelink {
 
 .versionmark {
     position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: var(--chrome-inset);
+    right: var(--chrome-inset);
     font-family: 'Wiehr', monospace;
     font-size: var(--font-size-micro);
     font-weight: 500;
@@ -504,8 +585,8 @@ a.youareherelink {
 
 .copyrightmark {
     position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
+    bottom: var(--chrome-inset);
+    left: var(--chrome-inset);
     font-family: 'Wiehr', monospace;
     font-size: var(--font-size-micro);
     font-weight: 500;
@@ -523,15 +604,18 @@ a.youareherelink {
     visibility: hidden;
 }
 
+/* Now a row at the foot of the menu pane rather than a strip pinned to the
+   viewport. It is still hidden until the menu opens — same .shownitself hook,
+   same JS — it just does it from inside the glass. The rule above it is the
+   only separation it needs; the two chips inside keep their own edges. */
 .bottomofeverything {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    right: 1.5rem;
-    z-index: 101;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -548,6 +632,16 @@ a.youareherelink {
     display: flex;
     gap: 1.2em;
     align-items: center;
+}
+
+
+/* Still one pair, so still one height — PRIVACY/TERMS are 16px text and the
+   knobs are 20px icons, so left alone each sizes to its own contents and the
+   menu's bottom row comes out lopsided. */
+.lastresortlinks,
+.whichknobs {
+    min-height: 24px;
+    box-sizing: border-box;
 }
 
 .lastresortlink {
@@ -576,28 +670,90 @@ a.youareherelink {
     opacity: 1;
 }
 
-/* Divider between LICENSING/SUPPORT and PRIVACY/TERMS. Mirrors
-   .lastresortlink's reveal so it doesn't pop in ahead of/behind the links it
-   sits between; getFooterLinks() in pleasepickasideofthemenu.js includes it
-   in the same stagger. Never a link, so no hover state and pointer-events
-   stays off in both states. */
-.lastresortsep {
-    font-family: 'Wiehr', sans-serif;
-    font-size: var(--font-size-light);
-    font-weight: 500;
-    color: var(--color-text);
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: none;
-    user-select: none;
+/* --- Bottom-right controls ------------------------------------------------
+   The language switcher sits beside the theme toggle and behaves identically:
+   hidden until the menu opens, then revealed with the same stagger. The glyph
+   is text in the Wiehr font (lang_en / lang_ru), not an icon file. */
+.whichknobs {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.lastresortsep.shownitself {
-    /* Matches .lastresortlink.shownitself exactly, not a dimmer variant, so
-       the divider reads as part of the same row instead of standing out. */
+
+/* --------------------------------------------------------------------------
+   What does *not* get glass
+
+   The logo, and the legal links and language/theme knobs inside the menu.
+
+   The logo is a mark, not a control — a chip around it made it look like a
+   button. The other two now sit inside the menu pane, so glassing them was
+   glass on glass: three nested edges where one is the actual object.
+
+   Glass marks a surface you look *through* at the page. Something already on
+   such a surface only needs its own text.
+   -------------------------------------------------------------------------- */
+
+/* The section pager on /privacy, /terms, /archive and /lab is the exception —
+   it floats over the page on its own, like the breadcrumb, so it is made of
+   the same thing rather than being the last bare strip on the page. */
+.flipthrough {
+    background-color: var(--glass-bg);
+    background-image: var(--glass-tint);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    backdrop-filter: var(--glass-blur-plain);
+    -webkit-backdrop-filter: var(--glass-blur-plain);
+    backdrop-filter: var(--glass-refraction);
+    box-shadow:
+        var(--glass-shadow-chip),
+        inset 0 1px 0 var(--glass-edge),
+        inset 0 -1px 0 var(--glass-underedge);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .flipthrough {
+        background: var(--glass-bg-flat);
+    }
+}
+
+.changethetongue {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 1rem;
+    margin: -1rem;
+    font-family: 'Wiehr', sans-serif;
+    font-size: var(--font-size-light);
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: var(--color-text, #000);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.changethetongue.shownitself {
     opacity: 0.6;
-    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.changethetongue:hover {
+    opacity: 1;
+}
+
+.tonguemark {
+    /* Sized and inverted exactly like the theme icon next to it. */
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+
+[data-wiehr-theme="dark"] .tonguemark {
+    filter: invert(1);
 }
 
 .lightordarkness {
@@ -642,39 +798,30 @@ a.youareherelink {
 
 
 @media screen and (max-width: 640px) {
+    /* Content clears this column (see syncHeaderClearance), so every pixel
+       here is a pixel of empty space above the page. The tap target is kept at
+       the 44px floor by the ::after inset above, which is unchanged. */
     .youarehere {
-        top: .5rem;
-        right: .5rem;
-    }
-
-    .labyrinthopenseverything .labyrinthicon {
-        width: 24px;
-        height: 24px;
-    }
-
-    .youarehereicon {
-        width: 16px;
-        height: 16px;
-    }
-
-    .youarehere .labyrinthopenseverything,
-    .youarehere .youareherelink {
-        width: 24px;
-        height: 24px;
-    }
-
-    .youarehereline {
-        height: 8px;
-        margin-right: 11.5px;
-    }
-
-    .wilogoatleft {
-        top: 1rem;
-        left: 1rem;
+        gap: 0.45rem;
     }
 
     .wilogoatleft img {
-        height: 24px;
+        height: 22px;
+    }
+
+    .lastresortlinks,
+    .whichknobs {
+        min-height: 20px;
+    }
+
+    /* One number instead of three hardcoded 24s; every icon in the breadcrumb
+       reads it. Sizes and positions elsewhere come from the tokens too. */
+    :root {
+        --crumb-icon: 24px;
+    }
+
+    .youarehereline {
+        width: 8px;
     }
 
     .pickyourdestination {
@@ -686,7 +833,7 @@ a.youareherelink {
         transition: opacity 0.15s ease, transform 0.15s ease;
     }
 
-    .lastresortsep {
+    .changethetongue {
         font-size: var(--font-size-thin);
         transition: opacity 0.15s ease, transform 0.15s ease;
     }
@@ -701,21 +848,24 @@ a.youareherelink {
         height: 16px;
     }
 
+    .tonguemark {
+        width: 16px;
+        height: 16px;
+    }
+
     .bottomofeverything {
-        bottom: 1rem;
-        left: 1rem;
-        right: 1rem;
         transition: opacity 0.15s ease, visibility 0.15s ease;
     }
 
+    /* Same corners as everything else that floats. */
     .versionmark {
-        bottom: 1rem;
-        right: 1rem;
+        bottom: var(--chrome-inset);
+        right: var(--chrome-inset);
     }
 
     .copyrightmark {
-        bottom: 1rem;
-        left: 1rem;
+        bottom: var(--chrome-inset);
+        left: var(--chrome-inset);
     }
 
     * { cursor: default !important; }

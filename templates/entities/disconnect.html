@@ -4,6 +4,8 @@
 
 {% block title %}Disconnect — Wiehr{% endblock %}
 
+{% block backdrop %}{% static 'images/backdrop/labyrinth.jpg' %}{% endblock %}
+
 {% block head %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/youcannotseethis.css' %}">
@@ -11,6 +13,14 @@
 
     <meta name="description" content="Disconnect & Unsubscribe from Wiehr emails." />
     <meta name="robots" content="noindex, nofollow" />
+
+    {% comment %}noindex, but the link still gets pasted into chats — the
+    labyrinth mark keeps that preview from rendering blank.{% endcomment %}
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta name="twitter:card" content="summary_large_image" />
 {% endblock %}
 
 {% block content %}

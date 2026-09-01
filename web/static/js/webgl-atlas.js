@@ -44,8 +44,18 @@
 
     function computeWorldView() {
         const asp = (canvas ? canvas.width / canvas.height : window.innerWidth / window.innerHeight) || 1.8;
-        const latSpan = 360 / asp;
-        return { lonMin: -180, lonMax: 180, latMin: 15 - latSpan / 2, latMax: 15 + latSpan / 2 };
+        // Phones start 50% closer in: the full-world span left the map tiny on
+        // a narrow screen. A smaller span is a tighter view, so the divisor is
+        // what zooms in. Panning and pinch still reach the whole world.
+        const zoomIn = window.innerWidth <= 640 ? 1.5 : 1;
+        const lonSpan = 360 / zoomIn;
+        const latSpan = (360 / asp) / zoomIn;
+        return {
+            lonMin: -lonSpan / 2,
+            lonMax: lonSpan / 2,
+            latMin: 15 - latSpan / 2,
+            latMax: 15 + latSpan / 2
+        };
     }
     let WORLD_VIEW = { lonMin: -180, lonMax: 180, latMin: -75, latMax: 85 };
     let currentView = { ...WORLD_VIEW };

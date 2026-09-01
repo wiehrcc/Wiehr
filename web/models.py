@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import re
@@ -10,8 +11,8 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import get_language
 from PIL import Image as PILImage
-from ckeditor.fields import RichTextField
 from slugify import slugify
 from decimal import Decimal
 
@@ -991,7 +992,21 @@ class WiehrLabModel(models.Model):
         max_length=140,
         db_index=True
     )
-    description = RichTextField(verbose_name='Description')
+    # Plain TextField holding HTML, rendered through `tr_safe`. It was a
+    # CKEditor RichTextField; see the note in settings.py for why that went.
+    # Same column type, so the migration is a no-op rename of the field class.
+    description = models.TextField(
+        verbose_name='Description',
+        help_text='HTML. Wrap paragraphs in <p>...</p>.'
+    )
+    media_poster = models.ImageField(
+        verbose_name='Media Poster',
+        upload_to='lab_media/posters/',
+        blank=True,
+        null=True,
+        editable=False,
+        help_text='Auto-generated first frame, used for the page backdrop when Media is a GIF.'
+    )
     media = models.FileField(
         verbose_name='Media',
         upload_to='lab_media/',
@@ -1008,6 +1023,18 @@ class WiehrLabModel(models.Model):
         blank=True,
         default='',
         help_text='Clicking the cover opens this as an embedded video. Leave empty to keep the cover non-interactive.'
+    )
+    project_type = models.CharField(
+        verbose_name='Type',
+        max_length=140,
+        blank=True,
+        default='',
+        db_index=True,
+        help_text=(
+            'What the project is — e.g. "Chrome Extension", "Telegram Bot". '
+            'Shown after the title on /lab as "Wanda • Chrome Extension"; '
+            '/archive lists the title on its own.'
+        )
     )
     role = models.CharField(
         verbose_name='Role',
@@ -1080,11 +1107,39 @@ class WiehrLabModel(models.Model):
             return str(self.start_year)
         return f"{self.start_year} — {self.end_year}"
 
+    @property
+    def title_with_type(self):
+        """'Wanda • Chrome Extension' for /lab; plain title when no type is set.
+
+        /archive deliberately uses `title` on its own — it lists items from
+        every section together, so the extra qualifier only adds noise there.
+        """
+        title = self.title
+        project_type = self.project_type
+        if project_type:
+            return f"{title} • {project_type}"
+        return title
+
     def youtube_embed_url(self):
         return youtube_watch_url_to_embed(self.youtube_url)
 
     @property
     def media_url(self):
+        return self.media.url if self.media else ''
+
+    @property
+    def backdrop_url(self):
+        """Still image for the page backdrop behind this item.
+
+        The foreground thumbnail keeps the animation; the backdrop must not.
+        It is a full-viewport layer under a greyscale + 16px blur, so an
+        animated GIF there re-filters the whole viewport on every frame — real
+        CPU for a blurred echo nobody can read. `media_poster` holds frame 0,
+        extracted on save; anything that is not a GIF is already a still and is
+        used directly.
+        """
+        if self.media_poster:
+            return self.media_poster.url
         return self.media.url if self.media else ''
 
     @property
@@ -1123,6 +1178,62 @@ class WiehrLabModel(models.Model):
             if storage.exists(old_media_name):
                 storage.delete(old_media_name)
 
+        # Regenerate the still only when the media actually changed, or when a
+        # GIF has no poster yet — not on every save.
+        if old_media_name != new_media_name or (self._media_is_gif and not self.media_poster):
+            self._sync_media_poster()
+
+    @property
+    def _media_is_gif(self):
+        import os
+        return bool(self.media) and os.path.splitext(self.media.name)[1].lower() == '.gif'
+
+    def _sync_media_poster(self):
+        """Keep `media_poster` in step with `media`: frame 0 of a GIF, else nothing.
+
+        A missing or unreadable file is not worth failing a save over — the
+        backdrop just falls back to `media`, which is what it used to be.
+        """
+        import os
+        from io import BytesIO
+
+        old_poster = self.media_poster.name if self.media_poster else None
+        new_poster = None
+
+        if self._media_is_gif:
+            try:
+                from PIL import Image as PILImage
+
+                self.media.open('rb')
+                with PILImage.open(self.media) as im:
+                    im.seek(0)
+                    frame = im.convert('RGB')
+                    buf = BytesIO()
+                    frame.save(buf, 'JPEG', quality=88, optimize=True)
+                base = os.path.splitext(os.path.basename(self.media.name))[0]
+                new_poster = f'{base}.jpg'
+                self.media_poster.save(new_poster, ContentFile(buf.getvalue()), save=False)
+                new_poster = self.media_poster.name
+            except Exception:
+                logging.getLogger(__name__).exception(
+                    'Could not extract a poster frame from %s', self.media.name)
+                new_poster = None
+            finally:
+                try:
+                    self.media.close()
+                except Exception:
+                    pass
+
+        if new_poster is None and self.media_poster:
+            self.media_poster = None
+
+        if (self.media_poster.name if self.media_poster else None) != old_poster:
+            super().save(update_fields=['media_poster'])
+            if old_poster and old_poster != (self.media_poster.name if self.media_poster else None):
+                storage = self.__class__._meta.get_field('media_poster').storage
+                if storage.exists(old_poster):
+                    storage.delete(old_poster)
+
 
 class WiehrLabObjectLink(models.Model):
     lab = models.ForeignKey(
@@ -1156,6 +1267,17 @@ class WiehrLabObjectLink(models.Model):
 
 
 class WiehrStorageModel(models.Model):
+    CURRENCY_CHOICES = [
+        ('USD', 'USD'),
+        ('EUR', 'EUR'),
+    ]
+    # Prefix for dollars, suffix for euros, because that is how each is
+    # actually written.
+    CURRENCY_FORMATS = {
+        'USD': '${amount}',
+        'EUR': '{amount} €',
+    }
+
     ACCESS_CHOICES = [
         ('public', 'Public'),
         ('link', 'Link Only'),
@@ -1211,6 +1333,31 @@ class WiehrStorageModel(models.Model):
         verbose_name='Download Count',
         default=0,
         help_text='Number of downloads'
+    )
+    price = models.DecimalField(
+        verbose_name='Price',
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text='Leave empty for a free download. 29 shows as $29, 29.50 as $29.50. '
+                  'Setting a price does not lock the file on its own — pair it with '
+                  'Access Type "license_key" and a Purchase URL to actually sell it.'
+    )
+    currency = models.CharField(
+        verbose_name='Currency',
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default='USD',
+        help_text='Only read when a Price is set'
+    )
+    purchase_url = models.URLField(
+        verbose_name='Purchase URL',
+        max_length=500,
+        blank=True,
+        default='',
+        help_text='Where a visitor buys this — Ko-fi, Gumroad, Boosty, anything. '
+                  'Shown as the BUY button next to a locked download.'
     )
     year = models.IntegerField(
         verbose_name='Year',
@@ -1318,6 +1465,23 @@ class WiehrStorageModel(models.Model):
         if self.preview_type == 'video':
             return bool(self.youtube_embed_url())
         return False
+
+    @property
+    def is_paid(self):
+        return self.price is not None and self.price > 0
+
+    @property
+    def price_display(self):
+        """'$29' for a round price, '$29.50' when there are real cents.
+
+        Trailing '.00' is noise on a price list; '.50' is not.
+        """
+        if not self.is_paid:
+            return ''
+        amount = self.price.quantize(Decimal('0.01'))
+        text = (f'{amount:.0f}' if amount == amount.to_integral_value()
+                else f'{amount:.2f}')
+        return self.CURRENCY_FORMATS.get(self.currency, '{amount}').format(amount=text)
 
 
 class WiehrStorageLinkModel(models.Model):

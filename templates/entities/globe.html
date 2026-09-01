@@ -1,9 +1,10 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}GLOBE — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/globe.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe">
@@ -102,7 +103,7 @@
             artist: '{{ release.artist|escapejs }}',
             date: '{{ release.date|date:"Y-m-d" }}',
             slug: '{{ release.slug }}',
-            image_url: '{{ site_url_nodashed }}/media/{{ release.image }}',
+            image_url: '/media/{{ release.image }}',
             background_color: '{{ release.background_color|default:"#000000" }}'
         }{% if not forloop.last %},{% endif %}
         {% endfor %}

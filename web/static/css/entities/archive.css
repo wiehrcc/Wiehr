@@ -1,9 +1,3 @@
-
-#iwanttoeathealthyfood:has(.everythingwedid) {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 .everythingwedid {
     display: flex;
     flex-direction: column;
@@ -11,14 +5,20 @@
     justify-content: center;
     min-height: 100vh;
     min-height: 100dvh;
-    padding: 6rem 1.5rem 4rem;
+    /* The frame lives on .ledgerofyears now (it is the glass pane), so this
+       wrapper only centres. It used to add 6rem of its own on top of that. */
     box-sizing: border-box;
 }
 
 
+/* The ledger is the pane. Same shared frame as every other page — see the
+   --space-* tokens in styleiseverything.css — and the glass material comes
+   from the pane list there. */
 .ledgerofyears {
-    max-width: 620px;
-    width: 100%;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
 }
 
 .ledger {
@@ -95,11 +95,12 @@ a.oneyearline:last-child .ledgercell {
 }
 
 
+/* Same again for a single year: the tree of that year's releases is the pane. */
 .yearsworth {
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
 }
 
 .branchesofit {
@@ -225,30 +226,33 @@ a.reachforit:hover {
 }
 
 @media (max-width: 640px) {
-    .everythingwedid {
-        padding: 5rem 3rem 3rem;
-    }
-
-    .ledgerofyears {
-        width: 100%;
-    }
+    /* Width, frame and gutter come from the shared tokens on both panes — the
+       mobile overrides that used to sit here fought them. */
 
     .ledgercell {
         font-size: var(--font-size-light);
-        padding: 0.85rem 0.35rem;
+        padding: 0.85rem 0.25rem;
     }
 
     .whatitheld {
         font-size: var(--font-size-thin);
     }
 
+    /* The header label — "GLOBE · ATLAS · STORAGE · LAB", uppercase at 0.18em
+       tracking — is the widest thing in the table by a distance, and a
+       table-cell cannot shrink below its content. On a 375px phone it forced
+       the table to 318px inside a 261px pane, which is why TOTAL ran off the
+       screen. It is a header, so it can wrap; the data rows below are four
+       digits and never do. */
     .ledgerhead .ledgercell {
-        font-size: var(--font-size-tiny);
+        font-size: var(--font-size-micro);
+        letter-spacing: 0.08em;
     }
 
-    .yearsworth {
-        padding: 0 1rem;
+    .ledgerhead .whatitheld {
+        white-space: normal;
     }
+
 
     .whichyearagain {
         font-size: var(--font-size-medium);

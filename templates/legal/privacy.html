@@ -1,9 +1,10 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}PRIVACY — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/legal.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/privacy">
@@ -78,83 +79,7 @@
     <h1 class="seoonly">Privacy Policy — Wiehr. Official Website</h1>
     <div class="legal-page">
         <div class="legal-content" id="legal-content" data-viewport-sections>
-            <p class="last-updated">Updated: August 01, 2026</p>
-
-            <div class="legal-section">
-                <h2>Privacy Policy</h2>
-                <p>We collect minimal data to operate this website.</p>
-            </div>
-
-            <div class="legal-section">
-                <h2>1. Information We Collect</h2>
-                <ul>
-                    <li><strong>Usage Data:</strong> Anonymized IP, browser type, access times, pages visited (server logs and Google Analytics with anonymization).</li>
-                    <li><strong>Cookies:</strong> Essential cookies for functionality; analytics cookies (anonymized, production only).</li>
-                    <li><strong>Contact Info:</strong> Only when voluntarily provided (e.g., subscription email).</li>
-                </ul>
-            </div>
-
-            <div class="legal-section">
-                <h2>2. How We Use Your Data</h2>
-                <ul>
-                    <li>Provide and maintain website functionality</li>
-                    <li>Analyze usage to improve experience (anonymized only)</li>
-                    <li>Respond to inquiries</li>
-                    <li>Ensure security</li>
-                    <li>Comply with legal obligations</li>
-                </ul>
-            </div>
-
-            <div class="legal-section">
-                <h2>3. Sharing</h2>
-                <p>We do not sell or trade your personal information. We may share data:</p>
-                <ul>
-                    <li>When required by law</li>
-                    <li>With trusted service providers under data processing agreements</li>
-                    <li>With your explicit consent</li>
-                </ul>
-            </div>
-
-            <div class="legal-section">
-                <h2>4. Data Retention</h2>
-                <ul>
-                    <li><strong>Analytics:</strong> 26 months (anonymized)</li>
-                    <li><strong>Server Logs:</strong> 30 days</li>
-                    <li><strong>Contact Info:</strong> Up to 2 years or until you request deletion</li>
-                    <li><strong>Cookies:</strong> Session cookies expire on close; persistent per purpose</li>
-                </ul>
-            </div>
-
-            <div class="legal-section">
-                <h2>5. Your Rights</h2>
-                <p>Depending on your jurisdiction, you may have the right to:</p>
-                <ul>
-                    <li>Access your personal data</li>
-                    <li>Correct inaccurate data</li>
-                    <li>Delete your data</li>
-                    <li>Restrict or object to processing</li>
-                    <li>Data portability</li>
-                    <li>Withdraw consent</li>
-                    <li>Lodge a complaint with your local authority</li>
-                </ul>
-            </div>
-
-            <div class="legal-section">
-                <h2>6. Security</h2>
-                <p>We use SSL/TLS encryption, secure infrastructure, access controls, and regular audits. In case of a breach, we notify affected users and authorities per applicable law.</p>
-            </div>
-
-            <div class="legal-section">
-                <h2>7. Compliance</h2>
-                <p>This policy complies with GDPR (EU), CCPA/CPRA (US), Federal Law 152-FZ (Russia), and other applicable data protection laws. International transfers are protected by appropriate safeguards.</p>
-            </div>
-
-            <div class="legal-section">
-                <h2>Contact</h2>
-                <p>For inquiries, data requests, or to exercise your rights:</p>
-                <p><strong>Email:</strong> <a href="mailto:hello@wiehr.cc">hello@wiehr.cc</a></p>
-                <p>We respond within legally required timeframes.</p>
-            </div>
+            {% include 'legal/_privacy_en.html' %}
         </div>
     </div>
 {% endblock %}

@@ -1,15 +1,12 @@
-
-#iwanttoeathealthyfood:has(.proofofonemoreidea) {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-
+/* Same shared shell as every other item page — /globe/<slug>'s .onemoretrack
+   and /storage/<slug>'s .onefileonly — rather than its own width and its own
+   6rem/4rem frame. It was the last item page still rendering on bare page
+   colour; the glass comes from the pane list in styleiseverything.css. */
 .proofofonemoreidea {
-    max-width: 480px;
-    width: 80%;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 4rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -203,8 +200,8 @@
 
 @media (max-width: 640px) {
     .proofofonemoreidea {
-        max-width: 90%;
-        padding: 5rem 1rem 3rem;
+        /* Width and frame come from the shared tokens; only the rhythm is
+           tightened here. */
         gap: 0.5rem;
     }
 

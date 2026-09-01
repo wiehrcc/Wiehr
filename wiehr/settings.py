@@ -27,14 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'compressor',
-    'ckeditor',
     'htmlmin',
     
     'web',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'wiehr.cache_middleware.StaticFilesCacheMiddleware',
@@ -64,6 +62,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'web.context_processors.site_context',
             ],
         },
     },
@@ -111,13 +111,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 TIME_ZONE = 'UTC'
-USE_I18N = True
+# English only. There was a Russian locale with a ?lang= switcher, a cookie and
+# a catalogue; it is gone, along with the gettext tooling that maintained it.
+# The model still carries the `<field>_ru` columns (see translated_field in
+# models.py) — they hold data and dropping them is a separate, destructive call.
+USE_I18N = False
 USE_TZ = True
-LANGUAGE_CODE = 'en-us'
-
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale'),
-]
+LANGUAGE_CODE = 'en'
 
 DATE_FORMAT = 'd.m.Y'
 DATE_INPUT_FORMATS = ('%d.%m.%Y', )
@@ -203,17 +203,21 @@ else:
 
 MEDIA_FULL = f"{SITE_URL}{MEDIA_URL}"
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['|', 'Bold', 'Italic', 'Underline', 'Blockquote', 'Strike'],
-            ['NumberedList', 'BulletedList', '|', 'Outdent', 'Indent', '|', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink'],
-            ['RemoveFormat', '-', 'Preview', 'Maximize']
-        ],
-    },
-}
+# django-ckeditor is gone, and with it the CKEditor 4 bundle and the system
+# check (ckeditor.W001) warning about its unfixed security issues.
+#
+# The obvious replacement, django-ckeditor-5, was not viable here: CKEditor 5
+# is dual-licensed GPL2+/commercial, and this repository is all-rights-reserved
+# and public (see LICENSE), so the GPL option and the repo's own terms
+# contradict each other.
+#
+# It was also barely being used. The only RichTextField on the site is
+# WiehrLabModel.description, and every stored value contains nothing but <p>
+# tags — no bold, no lists, no links. The two admin forms that used the widget
+# compose HTML emails. All three are now monospace textareas holding HTML,
+# which is what they were already storing, and the ~2,000 CKEditor 4 files that
+# collectstatic was publishing under /static/ckeditor/ (samples and manual test
+# pages included) are no longer served at all.
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

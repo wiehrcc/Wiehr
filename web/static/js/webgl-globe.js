@@ -15,9 +15,19 @@
     const CUBE_SIZE = isLowPerf ? 28.0 : 38.0;
     const GLOBE_RADIUS = 0.45;
 
-    const ZOOM_MIN = isLowPerf ? 0.6 : 0.4;    
-    const ZOOM_MAX = isLowPerf ? 3.5 : 3.0;      
-    const ZOOM_DEFAULT = isMobile ? (isLowPerf ? 2.4 : 2.0) : (isLowPerf ? 1.6 : 1.4);
+    const ZOOM_MIN = isLowPerf ? 0.6 : 0.4;
+    // These are camera *distances*, not magnifications — project() computes
+    // `scale = fov / (z + camDist)`, so a bigger number is further away and a
+    // smaller globe. The mobile default carried a `* 1.5` meant to make the
+    // globe fill a small screen; multiplying the distance did the exact
+    // opposite and pushed it 50% further out, which is why it opened as a dot.
+    // Apparent size goes as 1/camDist, so dropping the multiplier is exactly
+    // the 50% increase asked for: 3.6 -> 2.4 shows the globe half again as
+    // large. (Dividing by 1.5 instead would have been 2.25x, not 1.5x.)
+    const ZOOM_DEFAULT = isMobile
+        ? (isLowPerf ? 2.4 : 2.0)
+        : (isLowPerf ? 1.6 : 1.4);
+    const ZOOM_MAX = Math.max(isLowPerf ? 3.5 : 3.0, ZOOM_DEFAULT * 1.6);
     const BELARUS = { lat: 53.8875, lon: 25.2997 }; 
 
     let canvas, gl;
@@ -488,7 +498,14 @@
         lineProgram = createProgram(lineVS, lineFS);
 
         gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // blendFuncSeparate, not blendFunc: with a transparent drawing buffer
+        // the alpha channel has to accumulate with ONE, or every fragment
+        // multiplies its own alpha twice and the globe composites onto the
+        // page with dark fringes around every edge.
+        gl.blendFuncSeparate(
+            gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
+            gl.ONE, gl.ONE_MINUS_SRC_ALPHA
+        );
 
 
         landVAO = gl.createVertexArray();
@@ -830,12 +847,9 @@
 
 
         const isDark = document.documentElement.getAttribute('data-wiehr-theme') === 'dark';
-        if (isDark) {
-
-            gl.clearColor(0.0824, 0.0863, 0.0902, 1.0);
-        } else {
-            gl.clearColor(0.957, 0.957, 0.957, 1.0);
-        }
+        // Clear to nothing rather than to the page colour: the page colour is
+        // already there, behind the canvas, along with the backdrop.
+        gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         var darkVal = isDark ? 1.0 : 0.0;
@@ -913,8 +927,11 @@
         canvas = document.getElementById('spinmedizzy');
         if (!canvas) return false;
 
+        // alpha:true so the page backdrop shows through the globe. The canvas
+        // covers the whole viewport, so an opaque drawing buffer made /globe
+        // the one section with nothing behind it.
         gl = canvas.getContext('webgl2', {
-            alpha: false,
+            alpha: true,
             antialias: true,
             depth: false,
             powerPreference: 'high-performance'

@@ -100,6 +100,16 @@
             }
         }
 
+        /* Space a section's content actually gets, which is the viewport minus
+           everything the pane reserves around it.
+
+           This used to subtract the pane's padding only. That was right while
+           the page frame *was* padding; the frame is now margin (top clearance
+           and bottom clearance) with padding left as the gutter, so it was
+           subtracting 24px where it should have subtracted 24 + the frame, and
+           every section was sliced to roughly a viewport taller than it had
+           room for. That is what put a scrollbar inside the glass and cut the
+           last line off. */
         getAvailableHeight() {
             const vh = window.innerHeight;
 
@@ -109,10 +119,45 @@
             probe.style.position = 'absolute';
             document.body.appendChild(probe);
             const style = window.getComputedStyle(probe);
-            const paddingTop = parseFloat(style.paddingTop) || 140;
-            const paddingBottom = parseFloat(style.paddingBottom) || 80;
+            const reserved =
+                (parseFloat(style.marginTop) || 0) +
+                (parseFloat(style.marginBottom) || 0) +
+                (parseFloat(style.paddingTop) || 0) +
+                (parseFloat(style.paddingBottom) || 0) +
+                (parseFloat(style.borderTopWidth) || 0) +
+                (parseFloat(style.borderBottomWidth) || 0);
             document.body.removeChild(probe);
-            return vh - paddingTop - paddingBottom - CONFIG.safetyMargin;
+            return vh - reserved - CONFIG.safetyMargin;
+        }
+
+        /* Width the content is measured at. Text height depends on where it
+           wraps, so the probe has to be the same width as the real pane —
+           otherwise every height it reports is for a different line count. */
+        /* Vertical gap the content column puts between blocks. It is not part
+           of any element's own height, so the running total has to add it back
+           for every block after the first — otherwise a section is (n-1) gaps
+           taller than the slicer thinks it is. */
+        getColumnGap() {
+            const probe = document.createElement('div');
+            probe.className = 'viewport-section-content';
+            probe.style.cssText = 'visibility:hidden;position:absolute';
+            document.body.appendChild(probe);
+            const gap = parseFloat(window.getComputedStyle(probe).rowGap) || 0;
+            document.body.removeChild(probe);
+            return gap;
+        }
+
+        getContentWidth() {
+            const probe = document.createElement('div');
+            probe.className = 'viewport-section-content';
+            probe.style.cssText = 'visibility:hidden;position:absolute';
+            document.body.appendChild(probe);
+            const style = window.getComputedStyle(probe);
+            const inner = probe.clientWidth -
+                (parseFloat(style.paddingLeft) || 0) -
+                (parseFloat(style.paddingRight) || 0);
+            document.body.removeChild(probe);
+            return Math.max(160, Math.round(inner));
         }
 
         sliceContent() {
@@ -120,11 +165,38 @@
             if (sourceElements.length === 0) return;
 
             const availableHeight = this.getAvailableHeight();
+            const columnGap = this.getColumnGap();
+            const contentWidth = this.getContentWidth();
+
+            /* The measuring container has to carry the same classes as the
+               real one, or it measures the wrong thing.
+
+               Every typographic rule on this page is written as
+               `.viewport-section h2`, `.viewport-section p`, `.viewport-section
+               li` — descendant selectors. The probe was a bare, class-less div,
+               so none of them applied to the clones inside it and every height
+               came back as unstyled browser defaults: default line-height
+               instead of 1.6, default margins instead of the section rhythm.
+               The slicer then packed sections to fit heights that were never
+               real, which is why a section overflowed its own glass and put a
+               scrollbar in it.
+
+               The layout properties are overridden inline so the host can grow
+               to its natural height instead of being a hidden 100vh page. */
+            const measureHost = document.createElement('div');
+            measureHost.className = 'viewport-section';
+            measureHost.style.cssText =
+                'position:absolute;left:-99999px;top:0;visibility:hidden;' +
+                'display:block;height:auto;width:' + contentWidth + 'px;';
+
             const tempContainer = document.createElement('div');
-            const contentWidth = Math.min(640, this.container.offsetWidth);
-            tempContainer.style.cssText = 'position:absolute;visibility:hidden;width:' + 
-                contentWidth + 'px;padding:0 30px;box-sizing:border-box;';
-            document.body.appendChild(tempContainer);
+            tempContainer.className = 'viewport-section-content';
+            tempContainer.style.cssText =
+                'width:100%;max-width:none;margin:0;padding:0;border:0;' +
+                'max-height:none;overflow:visible;';
+
+            measureHost.appendChild(tempContainer);
+            document.body.appendChild(measureHost);
 
             let currentSection = {
                 elements: [],
@@ -139,7 +211,9 @@
                 const clone = element.cloneNode(true);
                 tempContainer.innerHTML = '';
                 tempContainer.appendChild(clone);
-                const elementHeight = tempContainer.offsetHeight;
+                // Every block but the first in a section also costs one gap.
+                const elementHeight = tempContainer.offsetHeight +
+                    (currentSection.elements.length ? columnGap : 0);
 
                 const label = element.dataset.viewportLabel || null;
                 const icon = element.dataset.viewportIcon || null;
@@ -197,7 +271,7 @@
                 this.sections.push(currentSection);
             }
 
-            document.body.removeChild(tempContainer);
+            document.body.removeChild(measureHost);
             this.renderSections();
         }
 

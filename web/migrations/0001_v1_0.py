@@ -1,8 +1,13 @@
 # Wiehr Website V1.0 — the entire schema as a single migration.
 #
-# `replaces` lets a database that already applied 0001_initial and
-# 0002_v1_0 record this as applied without re-running anything; a fresh
-# install builds everything from here.
+# The V1.0 baseline. This used to carry
+# `replaces = [('web','0001_initial'), ('web','0002_v1_0')]`, but neither of
+# those files exists in this repository any more — V1.0 was published as a
+# fresh history — so the graph could not resolve them and any database that had
+# only one of the two recorded (which is what production had) could not migrate
+# at all. It is a plain initial migration now: a fresh install builds from
+# here, and a database that already has these tables records it with
+# `migrate web 0001_v1_0 --fake`.
 
 import ckeditor.fields
 import django.core.validators
@@ -21,8 +26,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
-    replaces = [('web', '0001_initial'), ('web', '0002_v1_0')]
 
     dependencies = [
     ]

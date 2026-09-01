@@ -1,26 +1,6 @@
-/* body/#iwanttoeathealthyfood are locked to a fixed 100vh, overflow:hidden
-   shell site-wide (the paginated full-screen pages depend on it), so a long
-   description here was clipped with no way to scroll to it. Same override
-   /support and /licensing use to render as a normal, content-sized,
-   naturally scrollable page. */
-#iwanttoeathealthyfood:has(.onefileonly) {
-    /* wiehr-theme.css locks this element to overflow:hidden !important, so a
-       plain override can never win regardless of specificity. */
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-
-.onefileonly {
-    max-width: 480px;
-    width: 80%;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-}
+/* Width, padding and type come from the shared content-page shell in
+   styleiseverything.css, so this page matches /globe/<slug> exactly instead of
+   carrying its own narrower gutters and larger title. */
 
 .onefileonly--centered {
     align-items: center;
@@ -37,7 +17,6 @@
 .filecoverart {
     width: 100%;
     max-width: 480px;
-    align-self: left;
 }
 
 .filecoverart img {
@@ -63,27 +42,12 @@
     width: 100%;
 }
 
-.filename {
-    font-size: var(--font-size-large);
-    font-weight: var(--font-weight-black, 900);
-    margin: 0;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-}
-
-.filecode {
-    font-size: var(--font-size-thin);
-    opacity: 0.35;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: var(--font-weight-bold, 700);
-}
+/* .filename and .filecode take their size/leading from the shared title and
+   meta roles — see styleiseverything.css. */
 
 .filestory {
-    font-size: var(--font-size-thin);
+    /* Size, leading and opacity come from the shared body role. */
     font-weight: var(--font-weight-regular, 400);
-    line-height: 1.5;
-    opacity: 0.7;
     margin-top: .5rem;
 }
 
@@ -403,14 +367,10 @@
 
 
 @media (max-width: 640px) {
-    .onefileonly {
-        /* was 80%, which threw away a fifth of an already narrow screen */
-        max-width: none;
-        width: 92%;
-        padding: 4rem 0 2rem;
-        gap: 0.75rem;
-    }
-
+    /* .onefileonly's mobile width/padding now come from the shared shell, the
+       same values /globe/<slug> uses — this page used to go nearly edge to
+       edge with a much smaller top gap, which is what made it look unlike
+       every other item page. */
     .filecoverart {
         /* A square cover at full width used to fill most of the fold and push
            every word of the description below it. Capped so the title and the
@@ -425,14 +385,7 @@
         margin: 0 auto;
     }
 
-    .filename {
-        font-size: var(--font-size-standard);
-    }
-
     .filestory {
-        font-size: var(--font-size-thin);
-        line-height: 1.6;
-        opacity: 0.8;
         margin-top: 0.25rem;
     }
 
@@ -441,7 +394,7 @@
         padding: 0.75rem 0.5rem;
     }
 
-                .showmeyourpapersrow {
+    .showmeyourpapersrow {
         flex-direction: column;
     }
 
@@ -457,4 +410,41 @@
     .showmeyourpapersrow .checkitnow {
         border-top: none;
     }
+}
+
+
+/* Price, sitting on the same line as the WID. The WID is at 0.4 opacity as a
+   quiet catalogue mark; the price is the opposite kind of fact, so it is
+   knocked out of a solid block at full strength. */
+.whatitcosts {
+    display: inline-block;
+    margin-left: 0.45rem;
+    padding: 0.15rem 0.4rem;
+    color: var(--color-bg, #f4f4f4);
+    background: var(--color-text, #161718);
+    letter-spacing: 0.08em;
+    opacity: 1;
+}
+
+/* BUY replaces DOWNLOAD LOCKED when the item has a price and somewhere to buy
+   it, so it is the one solid button in the row — the same weight the eventual
+   DOWNLOAD gets, because it is the same step in the same journey. */
+.doonething-buy {
+    background: var(--color-text, #161718);
+    border-color: var(--color-text, #161718);
+    color: var(--color-bg, #f4f4f4);
+    opacity: 1;
+}
+
+.doonething-buy:hover {
+    opacity: 0.85;
+    background: var(--color-text, #161718);
+    color: var(--color-bg, #f4f4f4);
+}
+
+[data-wiehr-theme="dark"] .doonething-buy,
+[data-wiehr-theme="dark"] .doonething-buy:hover {
+    background: var(--color-text);
+    border-color: var(--color-text);
+    color: var(--color-bg);
 }

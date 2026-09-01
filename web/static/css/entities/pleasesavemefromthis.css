@@ -134,15 +134,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(244, 244, 244, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* Same veil and blur as .staringcontest — see the modal block in
+       styleiseverything.css. This one keeps its opacity transition because it
+       is opened by adding .awake rather than by flipping display. */
+    background: var(--modal-veil);
+    backdrop-filter: var(--modal-blur);
+    -webkit-backdrop-filter: var(--modal-blur);
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-[data-wiehr-theme="dark"] .pleasedontleave {
-    background: rgba(21, 22, 23, 0.6);
+    transition: opacity var(--modal-in);
 }
 
 .pleasedontleave.awake {
@@ -154,8 +153,8 @@
     max-width: 340px;
     padding: 2rem;
     background: rgba(244, 244, 244, 0.85);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    backdrop-filter: blur(24px) grayscale(1);
+    -webkit-backdrop-filter: blur(24px) grayscale(1);
     border: 1px solid rgba(21, 22, 23, 0.08);
     border-radius: 0;
     box-shadow:

@@ -115,6 +115,8 @@ def archive_object_page(request, slug):
         is_visible=True, year=archive.year,
     ).order_by('-created_at', '-order')
 
+    # Lab deliberately uses the bare title, not title_with_type — the qualifier
+    # only belongs on /lab.
     groups = [
         ('GLOBE', 'images/entities/globe.svg', [
             {'url': f'/globe/{i.slug}', 'number': i.internal_id, 'title': i.title}
@@ -299,7 +301,7 @@ def lab_page(request):
 
     lab_list = WiehrLabModel.objects.filter(
         is_visible=True
-    ).prefetch_related('links').order_by('order', '-start_year')
+    ).prefetch_related('links').order_by('-order', 'start_year')
 
     section_size = 5
     sections = []
@@ -372,6 +374,7 @@ def storage_page(request):
                 'filled': True,
                 'locked': item.access_type == 'password',
                 'cover': item.cover_image.url if item.cover_image else '',
+                'price': item.price_display,
             })
         else:
             grid_cells.append({'id': cell_id, 'filled': False})
@@ -863,7 +866,9 @@ def short_redirect(request, short_url):
     # /s/SUPPORT both land.
     shortener = Shortener.objects.filter(short_url__iexact=short_url).first()
     if not shortener:
-        return redirect('/s')
+        # An unknown code is almost always a mistyped/expired public link, so
+        # send those visitors to the site rather than the shortener tool.
+        return redirect('/')
 
     Shortener.objects.filter(pk=shortener.pk).update(times_followed=F('times_followed') + 1)
     return redirect(shortener.long_url)

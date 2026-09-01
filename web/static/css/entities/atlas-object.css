@@ -1,26 +1,24 @@
+/* Centres the card and nothing else. Its 1rem of side padding was inset on
+   top of the pane's own frame, so /atlas/<id> came out narrower than every
+   other item page. */
 .onepassportstamp {
     width: 100%;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 1rem 3rem;
 }
 
+/* The atlas item's card is the same thing /globe/<slug> and /storage/<slug>
+   call .onemoretrack and .onefileonly, so it is in the shared pane list in
+   styleiseverything.css now rather than carrying its own 0.6 sheet — that made
+   it the one item page whose pane you could not see through. */
 .theevidence {
-    width: 100%;
-    max-width: 420px;
-    border-radius: 0;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
     overflow: hidden;
-    background: rgba(244, 244, 244, 0.6);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid rgba(244, 244, 244, 0.3);
-}
-
-[data-wiehr-theme="dark"] .theevidence {
-    background: rgba(21, 22, 23, 0.6);
-    border: 1px solid rgba(244, 244, 244, 0.08);
 }
 
 .theevidenceheader {
@@ -29,13 +27,11 @@
     justify-content: center;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: rgba(244, 244, 244, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(21, 22, 23, 0.035);
 }
 
 [data-wiehr-theme="dark"] .theevidenceheader {
-    background: rgba(21, 22, 23, 0.4);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .whosecolorsthose {
@@ -84,13 +80,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.25rem;
-    background: rgba(244, 244, 244, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(21, 22, 23, 0.035);
 }
 
 [data-wiehr-theme="dark"] .theevidencefooter {
-    background: rgba(21, 22, 23, 0.4);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .exhibitnumber {

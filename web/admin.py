@@ -5,7 +5,6 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from .models import *
 from wiehr import settings
-from ckeditor.widgets import CKEditorWidget
 
 
 def invert_hex_color(hex_color):
@@ -31,7 +30,8 @@ class TeamCampaignActionForm(ActionForm):
     campaign_body = forms.CharField(
         label='Message',
         required=True,
-        widget=CKEditorWidget(config_name='default', attrs={'placeholder': 'Main text'})
+        widget=forms.Textarea(attrs={'placeholder': 'Main text (HTML)', 'rows': 12,
+                                     'style': 'font-family:monospace;width:100%'})
     )
     campaign_button_text = forms.CharField(
         label='Button label',
@@ -67,7 +67,7 @@ class TeamCampaignForm(forms.Form):
     body = forms.CharField(
         label='Email Body',
         required=True,
-        widget=CKEditorWidget(config_name='default')
+        widget=forms.Textarea(attrs={'rows': 14, 'style': 'font-family:monospace;width:100%'})
     )
     button_text = forms.CharField(
         label='Button Text',
@@ -133,9 +133,9 @@ class WiehrLabObjectLinkInline(admin.TabularInline):
 
 @admin.register(WiehrLabModel)
 class WiehrLabModelAdmin(admin.ModelAdmin):
-    list_display = ('internal_id', 'title', 'r_media', 'order', 'role', 'release_type', 'start_year', 'end_year', 'slug', 'is_visible', 'created_at')
+    list_display = ('internal_id', 'title', 'project_type', 'r_media', 'order', 'role', 'release_type', 'start_year', 'end_year', 'slug', 'is_visible', 'created_at')
     list_filter = ('release_type', 'is_visible', 'start_year', 'end_year', 'created_at')
-    search_fields = ('internal_id', 'title', 'description', 'role', 'slug')
+    search_fields = ('internal_id', 'title', 'project_type', 'description', 'role', 'slug')
     readonly_fields = ('created_at', 'modified_at', 'r_media_large')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [WiehrLabObjectLinkInline]
@@ -147,7 +147,7 @@ class WiehrLabModelAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('📝 Basic Info', {
-            'fields': ('internal_id', 'title', 'slug', 'role', 'release_type')
+            'fields': ('internal_id', 'title', 'project_type', 'slug', 'role', 'release_type')
         }),
         ('📅 Years', {
             'fields': ('start_year', 'end_year', 'extra_archives'),
@@ -687,8 +687,8 @@ class LicenseInline(admin.TabularInline):
 
 @admin.register(WiehrStorageModel)
 class WiehrStorageModelAdmin(admin.ModelAdmin):
-    list_display = ('internal_id', 'title', 'file_type', 'year', 'order', 'access_type', 'download_count', 'is_visible', 'created_at')
-    list_filter = ('is_visible', 'access_type', 'file_type', 'year')
+    list_display = ('internal_id', 'title', 'file_type', 'price_display', 'year', 'order', 'access_type', 'download_count', 'is_visible', 'created_at')
+    list_filter = ('is_visible', 'access_type', 'currency', 'file_type', 'year')
     search_fields = ('internal_id', 'title', 'description', 'slug')
     readonly_fields = ('created_at', 'modified_at', 'file_size', 'download_count')
     prepopulated_fields = {'slug': ('title',)}
@@ -705,6 +705,14 @@ class WiehrStorageModelAdmin(admin.ModelAdmin):
         }),
         ('📁 File', {
             'fields': ('file', 'file_size', 'download_count')
+        }),
+        ('💵 Price', {
+            'fields': ('price', 'currency', 'purchase_url'),
+            'description': 'Leave Price empty and the item is free — nothing renders. '
+                           'With a Price set, /storage marks the cell and the item page shows the amount. '
+                           'A price on its own does not gate the file: to actually sell it, set Access Type to '
+                           '"License Key Required" and put the shop link in Purchase URL, so the locked download '
+                           'offers BUY, and the key you issue on purchase unlocks it.'
         }),
         ('👁️ Preview', {
             'fields': ('preview_type', 'preview_url'),

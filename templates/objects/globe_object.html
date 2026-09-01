@@ -1,10 +1,11 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}{{ release.display_release_title|default:release.title }} by Wiehr at GLOBE — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ release.internal_id|default:release.title }}{% endblock %}
+
+{% block backdropmode %}art{% endblock %}
+{% block backdrop %}/media/data/images/{{ release.wid|default:release.slug }}@640.jpg{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe/{{ release.slug }}">
@@ -128,25 +129,19 @@
     </script>
 
     {% compress css inline %}
-        <link rel="stylesheet" href="{% static 'css/wiehr-modules.css' %}">
     {% endcompress %}
 
 {% endblock %}
 {% block content %}
     <h2 class="seoonly">{{ release.title }} — Electronic Music Release at Globe by Wiehr</h2>
-    <div id="zoomedinnow" class="staringcontest">
-      <button class="staringcontest-close" id="lookawaynow">
-        <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
-      </button>
-      <img class="staringcontest-img" id="thebiggerpicture" alt="Full size preview" loading="eager" decoding="async" />
-    </div>
+    {% include 'objects/_imagemodal.html' %}
 
     <div class="onemoretrack">
         <div class="thealbumface">
             {% with wid_or_slug=release.wid|default:release.slug %}
                 <img
-                    src="{{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@1280.jpg"
-                    srcset="{{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@640.jpg 640w, {{ site_url_nodashed }}/media/data/images/{{ wid_or_slug }}@1280.jpg 1280w"
+                    src="/media/data/images/{{ wid_or_slug }}@1280.jpg"
+                    srcset="/media/data/images/{{ wid_or_slug }}@640.jpg 640w, /media/data/images/{{ wid_or_slug }}@1280.jpg 1280w"
                     sizes="(max-width: 640px) 640px, 1280px"
                     alt="Wiehr. {{ release.title }}"
                     loading="eager"

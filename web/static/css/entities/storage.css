@@ -29,11 +29,15 @@
     text-decoration: none;
     color: var(--color-text, #000);
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
-    backdrop-filter: blur(10px) saturate(1.2);
-    -webkit-backdrop-filter: blur(10px) saturate(1.2);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.02);
+    /* Reads the shared glass tokens instead of its own hardcoded white
+       gradient, which was 0.5/0.2 and left the grid the most opaque surface on
+       the site once the panes were thinned. */
+    border: 1px solid var(--glass-border);
+    background-color: var(--glass-bg);
+    background-image: var(--glass-tint);
+    backdrop-filter: blur(10px) grayscale(1);
+    -webkit-backdrop-filter: blur(10px) grayscale(1);
+    box-shadow: var(--glass-shadow-chip), inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 var(--glass-underedge);
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     overflow: hidden;
 }
@@ -77,17 +81,18 @@
     box-shadow: 0 0 0 3px var(--color-bg, #f4f4f4);
 }
 
+/* A filled cell is separated from an empty one by its edge and its lift, not
+   by being more opaque than it. */
 .onebox-taken {
     cursor: pointer;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.35) 100%);
-    border-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+    backdrop-filter: var(--glass-refraction);
+    -webkit-backdrop-filter: blur(14px) grayscale(1);
+    box-shadow: var(--glass-shadow-chip), inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 var(--glass-underedge);
 }
 
 .onebox-taken:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 var(--glass-underedge);
     z-index: 2;
 }
 
@@ -182,4 +187,29 @@
     .onebox-taken .boxlabel {
         font-size: var(--font-size-micro);
     }
+}
+
+
+/* Price tag on a grid cell. Top-right, opposite the id at the bottom, so the
+   cell still reads thumbnail-then-id and the price is a mark on it rather than
+   a second label competing with the first. z-index clears the grain overlay
+   (.onebox::after). */
+.boxprice {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.35rem;
+    z-index: 2;
+    font-size: var(--font-size-micro);
+    font-weight: var(--font-weight-black, 900);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 0.2rem 0.3rem;
+    color: var(--color-bg, #f4f4f4);
+    background: var(--color-text, #161718);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+.onebox-taken:hover .boxprice {
+    opacity: 1;
 }

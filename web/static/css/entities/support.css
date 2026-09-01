@@ -1,44 +1,9 @@
-/* body/#iwanttoeathealthyfood are locked to a fixed 100vh, overflow:hidden
-   shell site-wide (the paginated full-screen pages depend on it). A short
-   static page inside that shell doesn't fill it, and .bottomofeverything is
-   position:fixed to the true viewport bottom regardless — so the unused
-   remainder of the 100vh shell shows as a large empty area below the card.
-   Same override /licensing already uses to render as a normal, content-sized,
-   naturally scrollable page instead. */
-#iwanttoeathealthyfood:has(.supportpage) {
-    /* wiehr-theme.css locks this element to overflow:hidden !important, so a
-       plain override here (what /licensing's equivalent rule does) can never
-       win regardless of specificity — !important is its own tier above the
-       normal cascade. Matching it is the only way to actually take effect. */
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
+/* Width, padding and type roles come from the shared content-page shell in
+   styleiseverything.css. Only the section rhythm is page-specific: 3x the gap
+   inside a block, so a label always reads as belonging to the thing under it
+   rather than floating between two sections. */
 .supportpage {
-    max-width: 480px;
-    width: 88%;
-    margin: 0 auto;
-    /* Bottom padding clears .bottomofeverything, which is fixed to the
-       viewport bottom (1.5rem + ~12px of text) regardless of content height —
-       without this the card's last few pixels sit under the footer. */
-    padding: 6rem 1rem 3.5rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    /* Spacing carries the grouping here: 3x the gap inside a block (1rem), so
-       a label always reads as belonging to the thing under it rather than
-       floating between two sections. This was 1rem against the block's
-       0.85rem — near-identical, so nothing grouped. */
     gap: 3rem;
-}
-
-.supportlede {
-    font-size: clamp(1rem, 3vw, 1.25rem);
-    font-weight: var(--font-weight-bold, 700);
-    line-height: 1.35;
-    margin: 0;
-    /* Opening line gets a little more air than the gaps between sections. */
-    padding-bottom: 0.5rem;
 }
 
 .supportblock {
@@ -48,10 +13,10 @@
 }
 
 .supportblocklabel {
-    font-size: var(--font-size-small);
+    font-size: var(--type-body);
     opacity: 0.6;
     margin: 0;
-    line-height: 1.4;
+    line-height: var(--line-height-body);
 }
 
 .supportblocklabel a {
@@ -59,24 +24,18 @@
     text-decoration: underline;
 }
 
-/* Same button as /globe/<slug> and /storage/<slug> (.onemorelink,
-   styleiseverything.css) rather than a page-specific style, so Support reads
-   as part of the same system instead of a one-off. .supportrow reproduces
-   the flex row .onemorelink expects — it collapses the border between
-   adjacent buttons via :not(:first-child), which only looks right when they
-   share one flex container. Support sits alone in its own row so it keeps
-   its full border; Telegram/YouTube share a row like a normal button group. */
-.supportrow {
-    display: flex;
+/* Now that the Ko-fi button is gone, this link is the call to action — it has
+   to read as one rather than as a word inside a dimmed sentence. */
+.supportstronglink {
+    font-weight: var(--font-weight-black, 900);
+    opacity: 1;
+    text-underline-offset: 3px;
+    transition: opacity 0.15s ease;
 }
 
-.supportrow .onemorelink {
-    /* 50% larger than the --font-size-thin (12px) .onemorelink uses on
-       release/storage pages — those sit in a dense multi-button row, this
-       page has room to let Support/Telegram/YouTube read as the main point. */
-    font-size: calc(var(--font-size-thin) * 1.5);
+.supportstronglink:hover {
+    opacity: 0.6;
 }
-
 
 /* Each method is a bordered strip using the same border/tint/blur language as
    .onemorelink, so the pay-directly block reads as part of the same system as
@@ -199,38 +158,15 @@
 
 
 @media (max-width: 640px) {
-    /* The site is a fixed 100vh, no-scroll shell. Everything below exists to
-       land this page inside ~640px of usable height on a 667px phone
-       (iPhone SE) without a scrollbar, while keeping every tap target at the
-       44px floor. Space comes out of padding and gaps, never touch targets. */
+    /* Width and padding come from the shared shell; only the section rhythm is
+       tightened here, so the page still lands inside a 667px phone (iPhone SE)
+       without scrolling. Tap targets are never what gets squeezed. */
     .supportpage {
-        width: 92%;
         gap: 1.5rem;
-        padding: 5rem 1rem 1.5rem;
     }
 
-    .supportlede {
-        padding-bottom: 0;
-    }
-
-    .supportblock {
+        .supportblock {
         gap: 0.65rem;
-    }
-
-    .supportrow {
-        flex-direction: column;
-    }
-
-    .supportrow .onemorelink {
-        min-height: 44px;
-        /* The oversized type earns its keep on desktop; here it just costs
-           height that the page does not have. */
-        font-size: var(--font-size-thin);
-    }
-
-    .supportrow .onemorelink:not(:first-child) {
-        border-left: 1px solid var(--color-text);
-        border-top: none;
     }
 
     /* One line per method instead of three. The value is the only thing that

@@ -1,0 +1,245 @@
+/* ==========================================================================
+   What lies beneath — the page backdrop, and the menu's destination preview.
+
+   Two features, one mechanism, because they are the same idea seen from two
+   sides: every page now names an image that sits behind everything on it, and
+   hovering a menu row shows you the image belonging to the page that row
+   would take you to.
+
+   The backdrop is not decoration. The liquid glass in styleiseverything.css
+   refracts its backdrop through an feDisplacementMap, and displacement needs
+   something with an edge to displace — over a flat #F4F4F4 a warped flat
+   colour is still a flat colour, which is why the panes read as plain grey
+   boxes on the light theme no matter how the tint was tuned. Putting a
+   high-contrast mark behind the page is what makes the refraction visible,
+   and therefore what makes the glass read as glass.
+
+   The marks are web/static/images/backdrop/*.jpg — greyscale reductions of
+   the OG cards in images/seo/. They are built by taking the red channel
+   rather than a luminance average: the cards are a red glyph (~#cc1111) on a
+   near-black field, and those two are almost the same brightness, so
+   desaturating them normally flattens the glyph into the background. The red
+   channel separates them cleanly and keeps the film grain, which is itself
+   useful — grain gives the warp fine detail to bend.
+   ========================================================================== */
+
+:root {
+    /* How far out of focus the backdrop sits. It is a *backdrop*, not an
+       illustration: sharp, it competed with the page (worst on a phone, where
+       `cover` crops a 1200x630 card down to its middle third and the glyph
+       fills the screen). Out of focus it stays a field of soft tone.
+
+       This does not cost the refraction anything. feDisplacementMap is driven
+       by low-frequency turbulence at scale 46 — it bends the glyph's overall
+       silhouette, not its grain, and this blur leaves the silhouette
+       completely intact. */
+    --backdrop-blur: blur(7px);
+
+    /* "mark" — a backdrop card. Light theme inverts it, so the near-black
+       field becomes the page and the bright glyph becomes a grey watermark;
+       dark theme uses it as it is.
+
+       A mark is meant to be *seen* — every page carries its own and that is
+       the point of them. It is also safe to carry at this weight, unlike the
+       art backdrops: a mark is a flat glyph on a flat field, so it puts one
+       soft shape on the page rather than dragging the whole surface down the
+       way a dark photograph does. At 0.08 it had effectively disappeared. */
+    --backdrop-filter: invert(1) contrast(0.92) var(--backdrop-blur);
+    --backdrop-opacity: 0.2;
+
+    /* "art" — a real cover or photograph on an item page. Never inverted; a
+       negative album cover reads as a mistake, not as a treatment. Desaturated
+       and blurred harder than a mark, because a cover carries detail a glyph
+       does not.
+
+       `contrast()` below 1 is doing the real work, and it is worth saying why.
+       `brightness()` multiplies, so it cannot rescue a near-black frame — 0
+       times anything is still 0, and a dark cover (a night photograph, a
+       theatre still) dragged the whole page down 44 levels, from #F4F4F4 to
+       about 200. `contrast(0.45)` pulls every value toward mid-grey first, so
+       the blacks come up off the floor, and brightness then lifts the result.
+       A pure black pixel lands near 230 against a 244 page instead of near 0.
+
+       Carried at roughly twice the mark's opacity, and deliberately so: the
+       cover is centred, the pane is centred, so this is the one backdrop that
+       sits directly *behind* the glass rather than around it. That is the
+       whole difference between the menu — where a preview at 0.5 gives the
+       tree something to refract — and an item page, where at 0.12 the pane
+       had nothing behind it and no amount of thinning the fill could make it
+       read as glass. 16px of blur keeps it a field of tone, not a picture
+       competing with the text on top of it. */
+    --backdrop-art-filter: grayscale(1) contrast(0.45) brightness(1.55) blur(16px);
+    --backdrop-art-opacity: 0.1;
+
+    /* The menu veil. Translucent, not the opaque --color-bg it used to be —
+       the page behind has to stay visible for the blur to have anything to
+       do. */
+    --menu-veil: rgba(244, 244, 244, 0.52);
+    --menu-preview-opacity: 0.5;
+}
+
+[data-wiehr-theme="dark"] {
+    --backdrop-filter: contrast(1.05) var(--backdrop-blur);
+    --backdrop-opacity: 0.24;
+
+    --backdrop-art-filter: grayscale(1) contrast(0.5) brightness(0.75) blur(16px);
+    --backdrop-art-opacity: 0.16;
+
+    --menu-veil: rgba(21, 22, 23, 0.6);
+    --menu-preview-opacity: 0.45;
+}
+
+
+/* --------------------------------------------------------------------------
+   The backdrop layer
+
+   z-index 0, so it sits above the flat colour on html/body (which the theme
+   script in nothingmattersalikebase.html sets with !important, and which no
+   stylesheet can therefore hold) and below everything else: the dust canvas
+   and the scene washes at 1, the page content at 2.
+   -------------------------------------------------------------------------- */
+.whatliesbeneath {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    animation: backdroparrives 1.4s ease both;
+}
+
+.themarkbehind {
+    position: absolute;
+    /* Bleeds past the viewport so neither the settle nor the blur radius ever
+       exposes an edge. */
+    inset: -6vmax;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: var(--backdrop-opacity);
+    filter: var(--backdrop-filter);
+    animation: marksettles 2.4s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+
+.themarkbehind[data-backdrop="art"] {
+    opacity: var(--backdrop-art-opacity);
+    filter: var(--backdrop-art-filter);
+}
+
+/* Opacity fades on the container and scale settles on the mark, rather than
+   one keyframe doing both. @keyframes resolving a var() that a child rule
+   redefines (as [data-backdrop="art"] does) is the kind of thing that works
+   until it doesn't; keeping the animated properties free of custom properties
+   sidesteps it entirely. */
+@keyframes backdroparrives {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes marksettles {
+    from { transform: scale(1.05); }
+    to   { transform: scale(1); }
+}
+
+
+/* --------------------------------------------------------------------------
+   Where the menu would take you
+
+   The overlay stops being an opaque sheet and becomes glass over the page:
+   a translucent veil plus a blur of whatever is behind it. Hovering a row
+   crossfades that row's backdrop in underneath, so the menu answers "what is
+   over there?" before you commit to going.
+
+   The blur is only attached while the menu is open. A full-viewport
+   backdrop-filter on a permanently-present element is a compositor cost paid
+   on every frame of every page, whether or not anyone opens the menu.
+   -------------------------------------------------------------------------- */
+.whatareyouinterestedin {
+    background: var(--menu-veil);
+}
+
+.whatareyouinterestedin.awake {
+    backdrop-filter: blur(26px) grayscale(1);
+    -webkit-backdrop-filter: blur(26px) grayscale(1);
+}
+
+.wherewewouldgo {
+    position: absolute;
+    inset: -6vmax;
+    z-index: 0;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: var(--backdrop-filter);
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 0.45s ease, transform 1s cubic-bezier(0.2, 0.6, 0.2, 1);
+    pointer-events: none;
+}
+
+.wherewewouldgo.showingitself {
+    opacity: var(--menu-preview-opacity);
+    transform: scale(1);
+}
+
+/* Above the preview, so the tree is never sitting inside the blur it casts. */
+.pickyourdestination {
+    position: relative;
+    z-index: 1;
+}
+
+/* The route list becomes the pane — the one place in the menu where the
+   refraction is worth its cost, because it is small, it is stationary, and it
+   has the preview moving underneath it to bend. The full-screen veil above
+   gets a plain blur instead: an feDisplacementMap over the whole viewport
+   costs far more than it shows. */
+.treeofalloptions {
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+    background-color: var(--glass-bg);
+    background-image: var(--glass-tint);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    backdrop-filter: var(--glass-blur-plain);
+    -webkit-backdrop-filter: var(--glass-blur-plain);
+    backdrop-filter: var(--glass-refraction);
+    box-shadow:
+        var(--glass-shadow),
+        inset 0 1px 0 var(--glass-edge),
+        inset 0 -1px 0 var(--glass-underedge);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .treeofalloptions {
+        background: var(--glass-bg-flat);
+    }
+
+    /* Without a blur the veil is the only thing separating the menu from the
+       page, so it has to carry the separation on its own. */
+    .whatareyouinterestedin {
+        background: var(--color-bg, #F4F4F4);
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .whatliesbeneath,
+    .themarkbehind {
+        animation: none;
+    }
+
+    .wherewewouldgo {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+
+    .wherewewouldgo.showingitself {
+        transform: none;
+    }
+}
+
+
+@media (max-width: 640px) {
+    .treeofalloptions {
+        padding: 1rem 1.1rem;
+    }
+}

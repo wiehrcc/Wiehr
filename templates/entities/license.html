@@ -3,7 +3,8 @@
 {% load compress %}
 
 {% block title %}License Verification — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}LICENSE{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/license.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing">

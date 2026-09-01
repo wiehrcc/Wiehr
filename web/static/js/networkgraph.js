@@ -186,7 +186,7 @@
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
                 body: JSON.stringify({ email: email, country: country, country_code: countryCode })
             }).then(function(r) { return r.json(); }).then(function(data) {
-                if (status) status.textContent = data.message || 'You are visible now.';
+                if (status) status.textContent = data.message || 'You are in the network now.';
                 form.reset();
                 if (countryField) countryField.value = '';
                 if (countryCodeField) countryCodeField.value = '';
@@ -199,7 +199,7 @@
                 // the same request, so there is nothing to wait for.
                 if (window._reloadNetwork) window._reloadNetwork();
             }).catch(function() {
-                if (status) status.textContent = 'You are visible now.';
+                if (status) status.textContent = 'You are in the network now.';
                 form.reset();
             });
         });

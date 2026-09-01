@@ -1,15 +1,10 @@
-
-
-#iwanttoeathealthyfood:has(.sellingmyself) {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
+/* Same shared shell as every other page; the glass comes from the pane list
+   in styleiseverything.css. */
 .sellingmyself {
-    max-width: 480px;
-    width: 80%;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 5rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -210,8 +205,6 @@
 
 @media (max-width: 640px) {
     .sellingmyself {
-        max-width: 88%;
-        padding: 5rem 1rem 4rem;
         gap: 1.1rem;
     }
 

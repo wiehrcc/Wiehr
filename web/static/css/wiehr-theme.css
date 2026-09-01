@@ -2,15 +2,11 @@
 [data-wiehr-theme="light"] {
     --color-bg: hsla(0, 0%, 96%, 1);
     --color-text: hsla(210, 5%, 9%, 1);
-    --color-accent: hsla(56, 100%, 46%, 1);
-    --color-secondary: hsla(0, 100%, 34%, 1);
 }
 
 [data-wiehr-theme="dark"] {
     --color-bg: hsla(210, 5%, 9%, 1);
     --color-text: hsla(0, 0%, 92%, 1);
-    --color-accent: hsla(56, 100%, 46%, 1);
-    --color-secondary: hsla(0, 100%, 50%, 1);
 }
 
 html, body {
@@ -37,8 +33,13 @@ body::-webkit-scrollbar,
     height: 0;
 }
 
+/* Hides the scrollbar, nothing else. This used to also carry
+   `overflow: hidden !important`, which locked the site's only scroll container
+   shut — so every page that needed to scroll fought it back with its own
+   `#iwanttoeathealthyfood:has(.thatpage)` override, eight of them, half with a
+   second !important. The scroll behaviour belongs to the container's own rule
+   in styleiseverything.css. */
 #iwanttoeathealthyfood {
-    overflow: hidden !important;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }

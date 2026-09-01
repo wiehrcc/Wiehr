@@ -3,7 +3,8 @@
 {% load compress %}
 
 {% block title %}Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab{% endblock %}
-{% block breadcrumb_label %}INDEX{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/network.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/">
@@ -77,8 +78,8 @@
     </div>
 
     <div class="begyoutostay">
-        <span class="wecountsouls">Visible Listeners — <span id="wecountsoulsnumber">{{ visible_listeners }}</span></span>
-        <button class="becomevisible" id="becomevisible">I'M VISIBLE</button>
+        <span class="wecountsouls">Listeners in Network &mdash; <span id="wecountsoulsnumber">{{ visible_listeners }}</span></span>
+        <button class="becomevisible" id="becomevisible">Join the Wiehr Network</button>
     </div>
 
     <div id="pleasedontleave" class="pleasedontleave" style="display:none;">

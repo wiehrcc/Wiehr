@@ -3,7 +3,8 @@
 {% load compress %}
 
 {% block title %}{{ archive.year }} at ARCHIVE — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ archive.year }}{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/archive.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/archive/{{ archive.year }}">

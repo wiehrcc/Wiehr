@@ -4,6 +4,8 @@
 
 {% block title %}SUPPORT — Wiehr. Official Website{% endblock %}
 
+{% block backdrop %}{% static 'images/backdrop/support.jpg' %}{% endblock %}
+
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support">
     <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
@@ -26,16 +28,16 @@
     <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
     <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/support" />
 
-    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
-    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
-    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
     <meta name="twitter:image:alt" content="Support Wiehr" />
-    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
-    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/_labyrinth.png' %}" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/support.png' %}" />
 
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -75,13 +77,11 @@
 {% block content %}
     <h1 class="seoonly">Support Wiehr</h1>
     <div class="supportpage">
-        <p class="supportlede">If you like what I do, let me do more.</p>
 
         <div class="supportblock">
-            <p class="supportblocklabel">Support me on <a href="https://ko-fi.com/wiehr" target="_blank" rel="noopener noreferrer">ko-fi.com</a></p>
-            <div class="supportrow">
-                <a href="https://wiehr.cc/s/support" target="_blank" rel="noopener noreferrer" class="onemorelink">KO-FI</a>
-            </div>
+            {% comment %}The Ko-fi button duplicated the link right above it, so
+            the link carries it on its own now.{% endcomment %}
+            <p class="supportblocklabel">Support me on <a href="https://wiehr.cc/s/support" target="_blank" rel="noopener noreferrer" class="supportstronglink">ko-fi.com</a></p>
         </div>
 
         <div class="supportblock">
@@ -106,14 +106,6 @@
                     <button type="button" class="grabit paygrab" data-copy="UQD7MdiSMdHLJ0f8N9jEev0vF87KnCXnyxPkppFQxK9dnEcF">COPY</button>
                 </div>
             </dl>
-        </div>
-
-        <div class="supportblock">
-            <p class="supportblocklabel">Or subscribe to main channels:</p>
-            <div class="supportrow">
-                <a href="https://wiehr.cc/s/telegram" target="_blank" rel="noopener noreferrer" class="onemorelink">TELEGRAM</a>
-                <a href="https://wiehr.cc/s/youtube" target="_blank" rel="noopener noreferrer" class="onemorelink">YOUTUBE</a>
-            </div>
         </div>
     </div>
 {% endblock %}

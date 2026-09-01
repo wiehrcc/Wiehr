@@ -3,7 +3,9 @@
 {% load compress %}
 
 {% block title %}{{ storage_object.title }} at STORAGE — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ storage_object.internal_id|default:storage_object.title }}{% endblock %}
+
+{% block backdropmode %}{% if access_granted and storage_object.cover_image %}art{% else %}mark{% endif %}{% endblock %}
+{% block backdrop %}{% if access_granted and storage_object.cover_image %}{{ storage_object.cover_image.url }}{% else %}{% static 'images/backdrop/storage.jpg' %}{% endif %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}">
@@ -95,12 +97,7 @@
 
 {% block content %}
     <h2 class="seoonly">{{ storage_object.title }} — Digital Download at Storage by Wiehr</h2>
-    <div id="imgModal" class="staringcontest">
-        <button class="staringcontest-close" id="modalClose">
-            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
-        </button>
-        <img class="staringcontest-img" id="modalImage" alt="Full size preview" loading="eager" decoding="async" />
-    </div>
+    {% include 'objects/_imagemodal.html' with modal_id='imgModal' close_id='modalClose' image_id='modalImage' %}
 
     {% if password_required %}
     <div class="onefileonly onefileonly--centered">
@@ -135,7 +132,7 @@
 
             <div class="filefacts">
                 <h1 class="filename">{{ storage_object.title }}</h1>
-                <span class="filecode">{{ storage_object.internal_id }}</span>
+                <span class="filecode">{{ storage_object.internal_id }}{% if storage_object.is_paid %} <span class="whatitcosts">{{ storage_object.price_display }}</span>{% endif %}</span>
                 {% if storage_object.description %}
                 <div class="filestory">{{ storage_object.description|safe|linebreaks }}</div>
                 {% endif %}
@@ -145,7 +142,15 @@
                     {% endif %}
                     {% if storage_object.file %}
                         {% if download_locked %}
+                        {% comment %}A price alone never locks anything — the lock is
+                        whatever Access Type says. What a price adds here is somewhere
+                        to go: BUY leads to the shop, and the key it sells unlocks the
+                        file through the existing licence gate.{% endcomment %}
+                        {% if storage_object.is_paid and storage_object.purchase_url %}
+                        <a href="{{ storage_object.purchase_url }}" target="_blank" rel="noopener noreferrer" class="doonething doonething-buy">BUY — {{ storage_object.price_display }}</a>
+                        {% else %}
                         <span class="doonething doonething-locked">DOWNLOAD LOCKED</span>
+                        {% endif %}
                         {% if license_key_required and not license_unlocked %}
                         <button type="button" class="doonething" id="keyBtn">ENTER KEY</button>
                         {% endif %}
