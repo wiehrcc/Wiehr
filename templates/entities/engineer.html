@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block title %}Software Engineer for Hire — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}ENGINEER{% endblock %}
 {% block seo_heading %}Hire Wiehr as a software engineer — Python, AWS, DevOps and data pipelines{% endblock %}
 
 {% block head %}
@@ -15,6 +14,7 @@
     <meta name="twitter:title" content="Software Engineer for Hire — Wiehr. Official Website" />
     <meta itemprop="name" content="Software Engineer for Hire — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="ENGINEER — Wiehr. Official Website" />
 
     {% with page_desc="Hire Yauheni (Eugene) Kandratovich — lead software engineer. Python, AWS, DevOps and AI. Backend/API $60/hr, AWS/DevOps $70/hr, ETL pipelines $65/hr, custom projects quoted on scope. Downloadable CV." %}
     <meta name="description" content="{{ page_desc }}" />
@@ -34,7 +34,6 @@
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="ENGINEER — Wiehr. Official Website" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/hire.png' %}" />
     <meta name="twitter:image:alt" content="ENGINEER — Wiehr. Official Website" />

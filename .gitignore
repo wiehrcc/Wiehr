@@ -184,3 +184,5 @@ WINDSURF_INSTRUCTIONS.md
 .devin/
 .claude/
 
+# Local DB snapshots taken before destructive migrations
+*.bak

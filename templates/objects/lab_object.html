@@ -1,10 +1,11 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}{{ lab_object.title }} at LAB — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ lab_object.internal_id|default:lab_object.title }}{% endblock %}
+
+{% block backdropmode %}{% if lab_object.media %}art{% else %}mark{% endif %}{% endblock %}
+{% block backdrop %}{% if lab_object.backdrop_url %}{{ lab_object.backdrop_url }}{% else %}{% static 'images/backdrop/lab.jpg' %}{% endif %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
@@ -15,9 +16,9 @@
     <link rel="alternate" href="{{ site_url_nodashed }}/lab/{{ lab_object.slug }}" />
 
     <meta name="title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website">
+    <meta property="og:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
     <meta property="vk:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
     <meta name="twitter:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
-    <meta property="og:title" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
     <meta itemprop="name" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
@@ -44,16 +45,30 @@
     <meta name="twitter:image:alt" content="{{ lab_object.title }}" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
+    {% else %}
+    {% comment %}No artwork on this item yet — fall back to the labyrinth mark
+    so a shared link still previews as something rather than a blank card.
+    {% endcomment %}
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta name="twitter:image:alt" content="{{ lab_object.title }} at LAB — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     {% endif %}
 
-    <meta name="keywords" content="{{ lab_object.title }}, {{ lab_object.role }}, project, portfolio, Wiehr, software engineering, creative work" />
     <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="{{ lab_object.title }}, {{ lab_object.role }}, project, portfolio, Wiehr, software engineering, creative work" />
     <meta property="article:published_time" content="{{ lab_object.start_year }}-01-01T00:00:00+00:00" />
     <meta property="article:modified_time" content="{{ lab_object.modified_at|date:'c' }}" />
     <meta property="article:author" content="Wiehr" />
     <meta property="article:section" content="portfolio" />
     <meta property="article:tag" content="{{ lab_object.role }}" />
-    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:label1" content="role" />
     <meta name="twitter:data1" content="{{ lab_object.role }}" />
     <meta name="twitter:label2" content="years" />

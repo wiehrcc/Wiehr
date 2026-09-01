@@ -3,21 +3,47 @@
     'use strict';
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 640;
-    const isLowPerf = (window.WIEHR_PERFORMANCE || (isMobile ? 'low' : 'high')) === 'low';
 
+    /* Three densities, not two. This file used to read the old two-state
+       performance flag, where every phone was `low`; with the tiers a modern
+       phone is `mid`, so a binary check would have handed it the full 300x150
+       grid. `pick` gives the middle its own numbers instead. */
+    const Tier = window.WiehrTier;
+    const pick = Tier ? Tier.pick.bind(Tier)
+                      : function (h, m, l) { return isMobile ? l : h; };
+    const isLowPerf = Tier ? Tier.is('low') : isMobile;
 
-    const GRID_COLS = isLowPerf ? 180 : 300;
-    const GRID_ROWS = isLowPerf ? 90 : 150;
-    const OCEAN_COLS = isLowPerf ? 120 : 220;
-    const OCEAN_ROWS = isLowPerf ? 60 : 110;
-    const NOISE_COUNT = isLowPerf ? 200 : 400;
-    const POINT_SIZE = isLowPerf ? 2.0 : 2.5;
-    const CUBE_SIZE = isLowPerf ? 28.0 : 38.0;
+    const GRID_COLS = pick(300, 230, 180);
+    const GRID_ROWS = pick(150, 115, 90);
+    const OCEAN_COLS = pick(220, 165, 120);
+    const OCEAN_ROWS = pick(110, 85, 60);
+    const NOISE_COUNT = pick(400, 280, 200);
+    const POINT_SIZE = pick(2.5, 2.2, 2.0);
+    const CUBE_SIZE = pick(38.0, 33.0, 28.0);
+
+    /* Frame budget. The globe is the heaviest thing on the site; capping it is
+       what keeps a phone cool without touching how it looks. */
+    const FRAME_MS = (Tier && Tier.fps) ? 1000 / Tier.fps - 4 : 0;  // -4: see frame() in howfastareyou.js
+    let lastFrameAt = 0;
     const GLOBE_RADIUS = 0.45;
 
-    const ZOOM_MIN = isLowPerf ? 0.6 : 0.4;    
-    const ZOOM_MAX = isLowPerf ? 3.5 : 3.0;      
-    const ZOOM_DEFAULT = isMobile ? (isLowPerf ? 2.4 : 2.0) : (isLowPerf ? 1.6 : 1.4);
+    const ZOOM_MIN = isLowPerf ? 0.6 : 0.4;
+    const ZOOM_DEFAULT = isMobile
+        ? (isLowPerf ? 2.4 : 2.0)
+        : (isLowPerf ? 1.6 : 1.4);
+    const ZOOM_MAX = Math.max(isLowPerf ? 3.5 : 3.0, ZOOM_DEFAULT * 1.6);
+
+    /* How far one pixel of drag turns the globe, as a function of zoom.
+
+       This used to be `0.75 + (targetZoom / ZOOM_MAX) * 0.25`, which grows
+       with zoom — so the further in you went, the FASTER the globe spun under
+       your finger, and picking out a single country meant fighting it. Zoomed
+       in, the same angular step covers more screen, so the angle per pixel has
+       to shrink, not grow. Inverse to zoom, clamped so it stays usable at both
+       ends of the range. */
+    function dragSensitivity() {
+        return Math.max(0.3, Math.min(1.25, ZOOM_DEFAULT / targetZoom));
+    }
     const BELARUS = { lat: 53.8875, lon: 25.2997 }; 
 
     let canvas, gl;
@@ -488,7 +514,10 @@
         lineProgram = createProgram(lineVS, lineFS);
 
         gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.blendFuncSeparate(
+            gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
+            gl.ONE, gl.ONE_MINUS_SRC_ALPHA
+        );
 
 
         landVAO = gl.createVertexArray();
@@ -629,8 +658,7 @@
             if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
                 wasDrag = true;
             }
-            const zoomFactor = 0.75 + (targetZoom / ZOOM_MAX) * 0.25;
-            const dragScale = 0.005 * zoomFactor;
+            const dragScale = 0.005 * dragSensitivity();
 
             targetRotation.y += dx * dragScale;
             targetRotation.x = clampTilt(targetRotation.x - dy * dragScale);
@@ -645,7 +673,7 @@
 
         canvas.addEventListener('wheel', e => {
             e.preventDefault();
-            const zoomSpeed = 0.0008 * targetZoom;
+            const zoomSpeed = 0.0022 * targetZoom;
             targetZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetZoom + e.deltaY * zoomSpeed));
         }, { passive: false });
 
@@ -672,8 +700,7 @@
                 if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
                     wasDrag = true;
                 }
-                const zoomFactor = 0.75 + (targetZoom / ZOOM_MAX) * 0.25;
-                const dragScale = 0.007 * zoomFactor;
+                const dragScale = 0.007 * dragSensitivity();
                 targetRotation.y += dx * dragScale;
                 targetRotation.x = clampTilt(targetRotation.x - dy * dragScale);
                 lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -681,7 +708,7 @@
                 const dx = e.touches[0].clientX - e.touches[1].clientX;
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const pinchSpeed = 0.001 * targetZoom;
+                const pinchSpeed = 0.0026 * targetZoom;
                 targetZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetZoom - (dist - pinchDist) * pinchSpeed));
                 pinchDist = dist;
             }
@@ -715,8 +742,13 @@
         }
     }
 
-    function render() {
+    function render(now) {
         if (!isVisible) { requestAnimationFrame(render); return; }
+
+        if (FRAME_MS) {
+            if (now - lastFrameAt < FRAME_MS) { requestAnimationFrame(render); return; }
+            lastFrameAt = now;
+        }
 
         time += 0.016;
         if (autoRotate) targetRotation.y += 0.0005;
@@ -830,12 +862,7 @@
 
 
         const isDark = document.documentElement.getAttribute('data-wiehr-theme') === 'dark';
-        if (isDark) {
-
-            gl.clearColor(0.0824, 0.0863, 0.0902, 1.0);
-        } else {
-            gl.clearColor(0.957, 0.957, 0.957, 1.0);
-        }
+        gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         var darkVal = isDark ? 1.0 : 0.0;
@@ -914,7 +941,7 @@
         if (!canvas) return false;
 
         gl = canvas.getContext('webgl2', {
-            alpha: false,
+            alpha: true,
             antialias: true,
             depth: false,
             powerPreference: 'high-performance'

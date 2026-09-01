@@ -3,23 +3,28 @@
 {% load compress %}
 
 {% block title %}Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab{% endblock %}
-{% block breadcrumb_label %}INDEX{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/network.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/">
     <link rel="alternate" href="{{ site_url_nodashed }}/" />
 
     <meta name="title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab">
-    <meta property="vk:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
     <meta property="og:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
+    <meta property="vk:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
     <meta name="twitter:title" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab" />
     <meta itemprop="name" content="Wiehr. Official Website — Archive, Globe, Atlas, Storage &amp; Lab">
+    <meta property="og:site_name" content="Wiehr" />
+    <meta property="og:image:alt" content="Wiehr. Official Website" />
 
-    <meta name="description" content="Official site of Wiehr — Belarus-born electronic composer, sound engineer and software engineer. Archive, Globe, Atlas, Storage and Lab. Available for scoring, mixing, mastering and engineering work." />
-    <meta property="og:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab. Available for scoring, mixing, mastering and engineering work." />
-    <meta property="vk:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab." />
-    <meta itemprop="description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab." />
-    <meta name="twitter:description" content="Official site of Wiehr — electronic composer and engineer. Archive, Globe, Atlas, Storage and Lab. Available for hire." />
+    {% with page_desc="Official site of Wiehr — Belarus-born electronic composer, sound engineer and software engineer. Archive, Globe, Atlas, Storage and Lab. Available for scoring, mixing, mastering and engineering work." %}
+    <meta name="description" content="{{ page_desc }}" />
+    <meta property="og:description" content="{{ page_desc }}" />
+    <meta property="vk:description" content="{{ page_desc }}" />
+    <meta itemprop="description" content="{{ page_desc }}" />
+    <meta name="twitter:description" content="{{ page_desc }}" />
+    {% endwith %}
 
     <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
     <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
@@ -34,16 +39,13 @@
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
     <meta name="twitter:image:alt" content="Wiehr. Official Website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@wiehrcc" />
-    <meta name="twitter:creator" content="@wiehrcc" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
-    <meta property="og:image:alt" content="Wiehr. Official Website" />
 
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="keywords" content="Wiehr, Wiehr official website, electronic composer, film composer for hire, cinematic sound, ambient, sound design, mixing, mastering, archive, globe, atlas, storage, lab, Yauheni Kandratovich, Eugene Kandratovich">
     <meta name="geo.region" content="SK" />
-    <meta property="og:type" content="website" />
 
     <script type="application/ld+json">
     {
@@ -77,8 +79,8 @@
     </div>
 
     <div class="begyoutostay">
-        <span class="wecountsouls">Visible Listeners — <span id="wecountsoulsnumber">{{ visible_listeners }}</span></span>
-        <button class="becomevisible" id="becomevisible">I'M VISIBLE</button>
+        <span class="wecountsouls">Listeners in Network &mdash; <span id="wecountsoulsnumber">{{ visible_listeners }}</span></span>
+        <button class="becomevisible" id="becomevisible">Join the Wiehr Network</button>
     </div>
 
     <div id="pleasedontleave" class="pleasedontleave" style="display:none;">

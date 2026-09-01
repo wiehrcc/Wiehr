@@ -451,6 +451,40 @@ class Particle {
     this.z += this.vz;
   }
 
+  /* The hot path: no trig, no object.
+
+     getProjected3D below recomputes cos/sin of the SAME two rotation angles
+     for every particle - four trig calls per particle per frame, when the
+     angles change once per frame - and returns a fresh {x, y, scale} that is
+     read twice and thrown away. At a thousand particles and 60fps that is a
+     quarter of a million redundant trig calls and sixty thousand short-lived
+     objects a second, which is GC pressure disguised as maths.
+
+     This takes the trig already done for the frame and writes the result
+     straight into the position buffer. */
+  projectInto(cosY, sinY, cosX, sinX, canvasAspect, out, idx) {
+    const x1 = this.x * cosY - this.z * sinY;
+    const z1 = this.x * sinY + this.z * cosY;
+
+    const y2 = this.y * cosX - z1 * sinX;
+    const z2 = this.y * sinX + z1 * cosX;
+
+    const focalLength = 2.5;
+    const perspective = focalLength / (focalLength + z2);
+    let projX = x1 * perspective;
+    let projY = y2 * perspective;
+
+    if (canvasAspect > 1.0) {
+      projY *= canvasAspect;
+    } else {
+      projX /= canvasAspect;
+    }
+
+    const spacingFactor = 0.98;
+    out[idx] = projX * spacingFactor;
+    out[idx + 1] = projY * spacingFactor;
+  }
+
   getProjected3D(rotX, rotY, canvasAspect) {
     const cosY = Math.cos(rotY);
     const sinY = Math.sin(rotY);
@@ -506,8 +540,12 @@ function getPerformanceTier() {
   }
 
   if (isMobile) {
-    if (cores >= 8 && mem >= 6) return 2;
-    if (cores >= 4 && mem >= 4) return 3;
+    // Safari implements no deviceMemory at all, so `mem` falls back to 2 and
+    // both tests below used to fail — every iPhone landed in tier 4, the
+    // worst. An unknown memory size is not evidence of a small one.
+    const memKnown = !!navigator.deviceMemory;
+    if (cores >= 8 && (!memKnown || mem >= 6)) return 2;
+    if (cores >= 4 && (!memKnown || mem >= 4)) return 3;
     return 4;
   }
 
@@ -523,18 +561,27 @@ function buildTargets() {
   const tier = getPerformanceTier();
   perfTier = tier;
 
-  // Sampling is the pixel stride over the mask, so it drives detail directly.
-  // Tier 1/2 machines now step every pixel and tier 3 every two, roughly
-  // doubling the dot count and resolving coastlines that used to read as blobs.
   const sampling = tier <= 2 ? 1 : tier === 3 ? 2 : 3;
 
   swapInterval = tier === 1 ? 150 : tier === 2 ? 250 : tier === 3 ? 500 : 1000;
 
-
-  // Random thinning fought the finer sampling above, so it is relaxed to match:
-  // keep more of what the denser stride finds instead of discarding a quarter.
   const complexityThin = svgComplexity > 10000 ? 0.75 : svgComplexity > 5000 ? 0.88 : 1.0;
-  const desktopThin = Math.min(1.0, (isMobile ? 0.85 : 1.0) * complexityThin * 1.35);
+  /* Mobile carries a further 25% off the dot count, on top of the sampling
+     step. This is the heaviest thing on the page and a phone is where that
+     costs the most; the logo reads the same at this density.
+
+     The mobile factors sit OUTSIDE the clamp deliberately. Folded in, they
+     land under a Math.min(1.0, ...) that the current logo happens to clear
+     (25069 chars, so complexityThin is 0.75) — but a simpler logo pushes the
+     product over 1.0, the clamp swallows the difference, and the mobile
+     reduction quietly becomes 14% or nothing at all. Out here the 25% is 25%
+     whatever the artwork does. */
+  const base = Math.min(1.0, (isMobile ? 0.85 : 1.0) * complexityThin * 1.35);
+  /* The tier's saving lands here rather than on the frame rate — fewer dots to
+     integrate and draw, at full speed, instead of the same dots at half. */
+  const T = window.WiehrTier;
+  const tierThin = T ? T.pick(1.0, 0.7, 0.45) : 0.7;
+  const desktopThin = (isMobile ? base * 0.75 : base) * tierThin;
 
   for (let y = 0; y < mask.height; y += sampling) {
     for (let x = 0; x < mask.width; x += sampling) {
@@ -659,8 +706,6 @@ let lastSwapTime = 0;
 let time = 0;
 let cursorSize = 0.04;
 let cursorSizeTarget = 0.04;
-// Timestamp of the current press. The vacuum's reach grows the longer it is
-// held, so keeping the button down eventually pulls every dot into one point.
 let vacuumStart = 0;
 const VACUUM_GROWTH_PER_SEC = 0.55;
 const VACUUM_MAX_RADIUS = 3.0;
@@ -782,23 +827,47 @@ if (typeof document.hidden !== "undefined") {
 }
 
 
-window.pauseWebGL = function() {
-  isPaused = true;
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
-  }
-};
-
-window.resumeWebGL = function() {
-  isPaused = false;
-  if (isVisible && isLogoSectionVisible && !animationId) {
-    render();
-  }
-};
+/* Registered, not assigned. This used to overwrite window.pauseWebGL outright,
+   which silently discarded the hook floatingdust.js had already published from
+   an earlier <script>. See WiehrLoops in howfastareyou.js. */
+if (window.WiehrLoops) {
+  window.WiehrLoops.add(
+    function () {
+      isPaused = true;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    },
+    function () {
+      isPaused = false;
+      if (isVisible && isLogoSectionVisible && !animationId) {
+        render();
+      }
+    }
+  );
+}
 
 let lastFrameTime = 0;
-const FRAME_INTERVAL = (isMobile && perfTier >= 3) ? 30 : 0; 
+
+/* 60fps ceiling, and deliberately NOT the tier's frame cap.
+
+   Every particle here is integrated per FRAME, not per second — the spring is
+   `vx += dx * force; vx *= 0.88; x += vx`, once per render. Frame rate is
+   therefore the animation's clock: capping a phone to the tier's 30fps ran the
+   whole logo at exactly half speed, which is what "slowmo" was. It was not the
+   dot count.
+
+   So the frame budget on this one comes off the density instead (see
+   tierThin in buildTargets), which cuts real work per frame without touching
+   the speed anything moves at. The 60 ceiling still spares a 144Hz monitor
+   from integrating 144 steps a second. */
+const FRAME_INTERVAL = 1000 / 60 - 4;
+
+// Allocated once, reused every frame. See the render loop below.
+const NO_FORCES = [];
+const projectedNetwork = [];
+const networkMouseScreen = { x: 0, y: 0 };
 
 function render(timestamp = 0) {
   if (!isVisible || isPaused || !isLogoSectionVisible) {
@@ -829,8 +898,11 @@ function render(timestamp = 0) {
 
   cursorSize += (cursorSizeTarget - cursorSize) * 0.1;
 
+  /* Reuse the arrays. `= []` here allocated one array per particle per frame —
+     tens of thousands of throwaway objects a second, and the GC pauses that
+     buys are exactly the stutter you feel on a phone. */
   for (let i = 0; i < logoParticleCount; i++) {
-    particles[i].neighbors = [];
+    particles[i].neighbors.length = 0;
   }
 
   const neighborCheckProb = perfTier === 1 ? 0.08 : perfTier === 2 ? 0.05 : 0.02;
@@ -866,42 +938,59 @@ function render(timestamp = 0) {
       vacuumRadius = 0.15 + Math.min(outsideDist * 0.8, 0.6);
     }
 
-    // Keep holding and the field keeps widening, so a long press sweeps the
-    // whole map into a single point instead of stalling at whatever happened
-    // to be inside the initial radius.
     if (vacuumStart) {
       const held = (performance.now() - vacuumStart) / 1000;
       vacuumRadius = Math.min(vacuumRadius + held * VACUUM_GROWTH_PER_SEC, VACUUM_MAX_RADIUS);
     }
   }
 
-  for (let i = 0; i < logoParticleCount; i++) {
-    particles[i].update(mouseX3D, mouseY3D, isVacuum, mouseVelX, mouseVelY, time, [], cursorSize, vacuumRadius);
+  /* Everything that is constant for the frame, computed once for the frame.
+     canvasAspect was being recomputed inside the loop, and the empty array
+     literal allocated one throwaway array per particle per frame. */
+  const canvasAspect = canvas.width / canvas.height;
+  const cosY = Math.cos(rotationY);
+  const sinY = Math.sin(rotationY);
+  const cosX = Math.cos(rotationX);
+  const sinX = Math.sin(rotationX);
 
-    const canvasAspect = canvas.width / canvas.height;
-    const projected = particles[i].getProjected3D(rotationX, rotationY, canvasAspect);
-    positions[i * 2] = projected.x;
-    positions[i * 2 + 1] = projected.y;
-    venomValues[i] = particles[i].venomStrength;
+  for (let i = 0; i < logoParticleCount; i++) {
+    const pt = particles[i];
+    pt.update(mouseX3D, mouseY3D, isVacuum, mouseVelX, mouseVelY, time, NO_FORCES, cursorSize, vacuumRadius);
+    pt.projectInto(cosY, sinY, cosX, sinX, canvasAspect, positions, i * 2);
+    venomValues[i] = pt.venomStrength;
   }
 
 
+  /* Published to networkgraph.js through the window, and rebuilt from scratch
+     every frame: a new array plus one new object per node. Its consumers read
+     it fresh each frame and hold no references across frames, so the array and
+     its objects are allocated once and refilled in place instead. */
+  window._networkMouseScreen = networkMouseScreen;
   window._networkTime = time;
-  window._networkMouseScreen = { x: mouseScreenX, y: mouseScreenY };
-  const projectedNetwork = [];
+  networkMouseScreen.x = mouseScreenX;
+  networkMouseScreen.y = mouseScreenY;
+
+  if (projectedNetwork.length !== networkCount) {
+    projectedNetwork.length = 0;
+    for (let i = 0; i < networkCount; i++) {
+      projectedNetwork.push({ x: 0, y: 0, isChild: false, parentIdx: 0, country: '', code: '' });
+    }
+  }
+
   for (let i = 0; i < networkCount; i++) {
-    networkParticles[i].update(time, mouseScreenX, mouseScreenY);
+    const np = networkParticles[i];
+    np.update(time, mouseScreenX, mouseScreenY);
     const idx = (logoParticleCount + i) * 2;
-    positions[idx] = networkParticles[i].x;
-    positions[idx + 1] = networkParticles[i].y;
-    projectedNetwork.push({
-      x: networkParticles[i].x,
-      y: networkParticles[i].y,
-      isChild: i >= 0 && networkParticles[i]._isChild,
-      parentIdx: networkParticles[i]._parentIdx,
-      country: networkParticles[i]._country || '',
-      code: networkParticles[i]._code || ''
-    });
+    positions[idx] = np.x;
+    positions[idx + 1] = np.y;
+
+    const slot = projectedNetwork[i];
+    slot.x = np.x;
+    slot.y = np.y;
+    slot.isChild = np._isChild;
+    slot.parentIdx = np._parentIdx;
+    slot.country = np._country || '';
+    slot.code = np._code || '';
   }
   window._networkProjected = projectedNetwork;
 

@@ -13,9 +13,6 @@ from django.conf import settings
 CACHE_DIR = Path(settings.BASE_DIR) / "media" / "cv" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Base-14 PDF font: on every machine, no embedding needed. All CV content is
-# Latin-only by policy (composer project titles are transliterated), so
-# Courier's WinAnsi-only glyph set is not a limitation here.
 FONT_MAP = {"bold": "Courier-Bold", "regular": "Courier"}
 
 
@@ -100,8 +97,6 @@ def _get_cv_data(version):
         ],
         "projects_commercial": commercial,
         "projects_personal": personal,
-        # Composer's personal-work list reads better as "WORKS" than "PROJECTS";
-        # only shown when there's no commercial split to disambiguate from.
         "projects_personal_label": "WORKS" if version == "composer" else "PERSONAL PROJECTS",
         "education": [
             (edu.title, edu.date, edu.url)
@@ -227,7 +222,6 @@ def _build_docx(data):
     section.top_margin = Cm(1.6)
     section.bottom_margin = Cm(1.0)
 
-    # Universally installed on Windows/Mac/most Linux distros — no substitution.
     font_name = "Courier New"
     secondary = RGBColor(0x33, 0x33, 0x33)
     black_c = RGBColor(0x00, 0x00, 0x00)
@@ -235,8 +229,6 @@ def _build_docx(data):
     def add_run(para, text, size=8.5, bold=False, color=black_c):
         run = para.add_run(text)
         run.font.name = font_name
-        # run.font.name only sets w:ascii/w:hAnsi; w:cs keeps Cyrillic on the
-        # same face instead of falling back to a theme font.
         run._element.rPr.rFonts.set(qn('w:cs'), font_name)
         run.font.size = Pt(size)
         run.bold = bold

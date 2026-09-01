@@ -1,9 +1,10 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}LAB — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/lab.jpg' %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
@@ -14,9 +15,9 @@
     <link rel="alternate" href="{{ site_url_nodashed }}/lab" />
 
     <meta name="title" content="LAB — Wiehr. Official Website">
+    <meta property="og:title" content="LAB — Wiehr. Official Website" />
     <meta property="vk:title" content="LAB — Wiehr. Official Website" />
     <meta name="twitter:title" content="LAB — Wiehr. Official Website" />
-    <meta property="og:title" content="LAB — Wiehr. Official Website" />
     <meta itemprop="name" content="LAB — Wiehr. Official Website" />
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="LAB — Wiehr. Official Website" />
@@ -43,9 +44,9 @@
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/lab.png' %}" />
 
-    <meta name="keywords" content="Wiehr, music projects, collaborations, electronic music, synthetic music, Serum, Serum 2, software engineering, Python, DevOps, React JS, portfolio, SOULOC8, schenkof, Macherata, Yauheni Kandratovich, Artist & Engineer" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Wiehr, music projects, collaborations, electronic music, synthetic music, Serum, Serum 2, software engineering, Python, DevOps, React JS, portfolio, SOULOC8, schenkof, Macherata, Yauheni Kandratovich, Artist & Engineer" />
 
     <script type="application/ld+json">
     {
@@ -92,7 +93,7 @@
                     {% endif %}
                 </div>
                 <div class="whatitwas">
-                    <span class="whaticlaimed">{{ item.title }}</span>
+                    <span class="whaticlaimed">{{ item.title_with_type }}</span>
                     <span class="whenitried">{{ item.get_year_range }}</span>
                 </div>
             </a>

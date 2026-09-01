@@ -3,25 +3,28 @@
 {% load compress %}
 
 {% block title %}{{ archive.year }} at ARCHIVE — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ archive.year }}{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/archive.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/archive/{{ archive.year }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/archive/{{ archive.year }}" />
 
     <meta name="title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website">
+    <meta property="og:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
     <meta property="vk:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
     <meta name="twitter:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
-    <meta property="og:title" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
     <meta itemprop="name" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="{{ archive.year }} at ARCHIVE — Wiehr. Official Website" />
 
+    {% with page_desc="Browse all globe, atlas, storage and lab releases from "|add:archive.year|add:" by Wiehr. Complete chronological archive of electronic music and creative projects." %}
     <meta name="description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
-    <meta property="og:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
-    <meta property="vk:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
-    <meta itemprop="description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
-    <meta name="twitter:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive." />
+    <meta property="og:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
+    <meta property="vk:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
+    <meta itemprop="description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
+    <meta name="twitter:description" content="Browse all globe, atlas, storage and lab releases from {{ archive.year }} by Wiehr. Complete chronological archive of electronic music and creative projects." />
+    {% endwith %}
 
     <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />
     <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/archive/{{ archive.year }}" />

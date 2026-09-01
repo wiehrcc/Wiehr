@@ -1,17 +1,9 @@
-# Wiehr Website V1.0 — the entire schema as a single migration.
-#
-# `replaces` lets a database that already applied 0001_initial and
-# 0002_v1_0 record this as applied without re-running anything; a fresh
-# install builds everything from here.
-
 import ckeditor.fields
 import django.core.validators
 from django.db import migrations, models
 
 
 def clear_dropped_preview_types(apps, schema_editor):
-    # 'audio' and 'image' left the preview_type choices; the column keeps
-    # whatever string it held, so blank those rows. No-op on a fresh install.
     Storage = apps.get_model('web', 'WiehrStorageModel')
     Storage.objects.filter(preview_type__in=['audio', 'image']).update(preview_type='')
 import django.db.migrations.operations.special
@@ -21,8 +13,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
-    replaces = [('web', '0001_initial'), ('web', '0002_v1_0')]
 
     dependencies = [
     ]

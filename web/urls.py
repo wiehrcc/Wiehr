@@ -31,6 +31,8 @@ urlpatterns = [
     path("storage/", views.storage_page, name="storage_page_slash"),
     path("storage/<str:slug>", views.storage_object_page, name="storage_object_page"),
     path("storage/<str:slug>/", views.storage_object_page, name="storage_object_page_slash"),
+    path("storage/<str:slug>/preview", views.storage_preview_download, name="storage_preview_download"),
+    path("storage/<str:slug>/preview/", views.storage_preview_download, name="storage_preview_download_slash"),
     path("storage/<str:slug>/download", views.storage_download, name="storage_download"),
     path("storage/<str:slug>/download/", views.storage_download, name="storage_download_slash"),
 

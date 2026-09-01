@@ -1,18 +1,19 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}GLOBE — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/globe.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe">
     <link rel="alternate" href="{{ site_url_nodashed }}/globe" />
 
     <meta name="title" content="GLOBE — Wiehr. Official Website">
+    <meta property="og:title" content="GLOBE — Wiehr. Official Website" />
     <meta property="vk:title" content="GLOBE — Wiehr. Official Website" />
     <meta name="twitter:title" content="GLOBE — Wiehr. Official Website" />
-    <meta property="og:title" content="GLOBE — Wiehr. Official Website" />
     <meta itemprop="name" content="GLOBE — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="GLOBE — Wiehr. Official Website" />
@@ -102,7 +103,7 @@
             artist: '{{ release.artist|escapejs }}',
             date: '{{ release.date|date:"Y-m-d" }}',
             slug: '{{ release.slug }}',
-            image_url: '{{ site_url_nodashed }}/media/{{ release.image }}',
+            image_url: '/media/{{ release.image }}',
             background_color: '{{ release.background_color|default:"#000000" }}'
         }{% if not forloop.last %},{% endif %}
         {% endfor %}

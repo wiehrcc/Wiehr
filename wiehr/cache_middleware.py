@@ -21,10 +21,6 @@ class StaticFilesCacheMiddleware:
                 if getattr(settings, 'ENV', 'DEV') == 'PROD':
                     response['Cache-Control'] = 'public, max-age=31536000, immutable'
                 else:
-                    # `immutable` tells the browser never to revalidate, so in
-                    # development every CSS/JS edit needed a manual hard reload
-                    # to show up. Revalidate instead — Last-Modified keeps it
-                    # to a cheap 304 when nothing changed.
                     response['Cache-Control'] = 'no-cache, must-revalidate'
         
         if request.path == '/':

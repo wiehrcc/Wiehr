@@ -1,0 +1,16 @@
+{% load static %}
+{% comment %}The tap-to-enlarge viewer, shared by /globe/<slug>, /atlas/<id>
+and /storage/<slug>. It was copied into all three, character for character
+except the ids, which is how /storage ended up on `modalClose`/`modalImage`
+while the other two used `lookawaynow`/`thebiggerpicture`.
+
+`modal_id`, `close_id` and `image_id` default to the names the JS on each page
+already listens for, so an include can drop in without touching the script.
+{% endcomment %}
+<div id="{{ modal_id|default:'zoomedinnow' }}" class="staringcontest">
+    <button class="staringcontest-close" id="{{ close_id|default:'lookawaynow' }}">
+        <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+    </button>
+    <img class="staringcontest-img" id="{{ image_id|default:'thebiggerpicture' }}"
+         alt="Full size preview" loading="eager" decoding="async" />
+</div>

@@ -5,22 +5,16 @@
 
 
 .proofiwasbusy {
-    /* Row height is derived from a full page of 5, never from how many rows a
-       slice actually holds — so a trailing 3-item slice renders blocks at
-       exactly the same size as a full one. --lab-pad must match the vertical
-       padding below. */
-    --lab-pad: 8rem;
+    --lab-pad: calc(var(--space-header) + var(--space-bottom) + var(--page-gutter) * 2);
     --lab-row: calc((100vh - var(--lab-pad)) / 5);
 
-    max-width: 820px;
-    width: 88%;
-    margin: 0 auto;
-    padding: 5rem 1.5rem 3rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* The page never scrolls (see the :has rule above) — it flips one slice at
-       a time. */
+
     min-height: 80vh;
     box-sizing: border-box;
 }
@@ -32,8 +26,6 @@
     gap: 0;
     flex: 1;
     min-height: 0;
-    /* Rows are a fixed height, so a short slice starts at the top instead of
-       filling or centring in the page. */
     justify-content: flex-start;
 }
 
@@ -41,19 +33,15 @@
 .onethingimade {
     display: flex;
     align-items: center;
-    gap: 1.75rem;
+    gap: 2.25rem;
     text-decoration: none;
     color: inherit;
     padding: 0.7rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     transition: opacity 0.15s ease;
-    /* Fixed height, not a share of the slice: a 3-item slice would otherwise
-       stretch its rows and render bigger blocks than a 5-item one. Growing is
-       off (flex: 0 0 auto) so the height is honoured exactly, and .onebatch
-       centres whatever rows exist. */
     flex: 0 0 auto;
     height: var(--lab-row);
-    max-height: 200px;
+    max-height: 260px;
     min-height: 0;
     box-sizing: border-box;
 }
@@ -86,10 +74,6 @@
 
 
 .itactuallymoves {
-    /* Sized from the row rather than a fixed width, so the thumbnail grows with
-       the block. align-self:stretch (not height:%) because a percentage height
-       does not resolve against a flex item with align-items:center — it falls
-       back to auto and the image's intrinsic width wins. */
     align-self: stretch;
     margin: 0.35rem 0;
     height: auto;
@@ -137,31 +121,17 @@
 
 
 @media (max-width: 640px) {
-    .proofiwasbusy {
-        max-width: 92%;
-        padding: 5rem 1rem 3rem;
-    }
-
     .onethingimade {
-        gap: 0.85rem;
-        padding: 0.85rem 0;
-        /* Desktop's row height is derived from the viewport so 5 large image
-           blocks fill the screen. On mobile the thumbnail is a small fixed
-           width instead (below), so that same height left 60-140px of dead
-           space in every row. Rows size to their content here, which also
-           keeps 5-item and 3-item slices matching automatically since each
-           row's content is identical regardless of how many rows there are. */
+        gap: 1.25rem;
+        padding: 1.25rem 0;
         height: auto;
         max-height: none;
     }
 
     .itactuallymoves {
-        /* Back to width-driven on small screens: rows are short enough that a
-           height-driven thumbnail would be tiny. align-self must be reset too,
-           or stretch overrides the aspect-ratio and distorts the image. */
         align-self: center;
         margin: 0;
-        width: 92px;
+        width: 132px;
         height: auto;
         max-height: none;
     }
@@ -183,13 +153,13 @@
 
 @media (max-width: 400px) {
     .onethingimade {
-        gap: 0.6rem;
+        gap: 0.9rem;
     }
 
     .itactuallymoves {
         align-self: center;
         margin: 0;
-        width: 71px;
+        width: 104px;
         height: auto;
         max-height: none;
     }

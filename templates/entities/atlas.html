@@ -1,18 +1,19 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}ATLAS — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/atlas.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/atlas">
     <link rel="alternate" href="{{ site_url_nodashed }}/atlas" />
 
     <meta name="title" content="ATLAS — Wiehr. Official Website">
+    <meta property="og:title" content="ATLAS — Wiehr. Official Website" />
     <meta property="vk:title" content="ATLAS — Wiehr. Official Website" />
     <meta name="twitter:title" content="ATLAS — Wiehr. Official Website" />
-    <meta property="og:title" content="ATLAS — Wiehr. Official Website" />
     <meta itemprop="name" content="ATLAS — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="ATLAS — Wiehr. Official Website" />

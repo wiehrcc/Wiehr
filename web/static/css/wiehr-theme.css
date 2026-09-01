@@ -2,31 +2,24 @@
 [data-wiehr-theme="light"] {
     --color-bg: hsla(0, 0%, 96%, 1);
     --color-text: hsla(210, 5%, 9%, 1);
-    --color-accent: hsla(56, 100%, 46%, 1);
-    --color-secondary: hsla(0, 100%, 34%, 1);
 }
 
 [data-wiehr-theme="dark"] {
     --color-bg: hsla(210, 5%, 9%, 1);
     --color-text: hsla(0, 0%, 92%, 1);
-    --color-accent: hsla(56, 100%, 46%, 1);
-    --color-secondary: hsla(0, 100%, 50%, 1);
 }
 
 html, body {
     background-color: var(--color-bg);
     color: var(--color-text);
+    overflow: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 #metaironic .top,
 #metaironic .bottom {
     transition: none !important;
-}
-
-html, body {
-    overflow: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
 html::-webkit-scrollbar,
@@ -38,12 +31,9 @@ body::-webkit-scrollbar,
 }
 
 #iwanttoeathealthyfood {
-    overflow: hidden !important;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
-
-.logo-responsive,
 #section-pleasesavemefromthis img {
     max-width: 80vw;
     max-height: 60vh;
@@ -53,16 +43,14 @@ body::-webkit-scrollbar,
 }
 
 @media (max-width: 768px) {
-    .logo-responsive,
-    #section-pleasesavemefromthis img {
+#section-pleasesavemefromthis img {
         max-width: 70vw;
         max-height: 50vh;
     }
 }
 
 @media (max-width: 480px) {
-    .logo-responsive,
-    #section-pleasesavemefromthis img {
+#section-pleasesavemefromthis img {
         max-width: 60vw;
         max-height: 40vh;
     }
@@ -70,20 +58,4 @@ body::-webkit-scrollbar,
 
 #wehavefollowinginmenu {
     will-change: opacity;
-}
-
-#wehavefollowinginmenu .menuimagesonobodyisconfused img {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    min-height: 48px;
-}
-
-@media (max-width: 768px) {
-    #wehavefollowinginmenu .menuimagesonobodyisconfused img {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
-        min-height: 32px;
-    }
 }

@@ -1,41 +1,53 @@
+/* Content-sized on purpose — no min-height.
+
+   `min-height: 100vh` here forced this wrapper to the full viewport, which
+   meant the page's own `align-content: safe center` had nothing left to
+   centre, and the card's header/bottom clearance margins then pushed the total
+   past 100vh and produced a scrollbar. Let the wrapper be as tall as the card
+   and the scroll container centres it exactly. */
 .onepassportstamp {
     width: 100%;
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 1rem 3rem;
 }
 
+/* A passport stamp, not a page-wide pane.
+
+   Standardising every page onto --page-frame swept this one up with the rest,
+   and it should not have been: the card is a fixed-aspect stamp with a flag,
+   a name and a couple of photographs. Given 640px to fill it stretched the
+   photo grid to match and the whole thing grew tall enough to scroll. The
+   clearances stay standard so it never collides with the chrome; the width
+   goes back to the card's own. */
 .theevidence {
     width: 100%;
     max-width: 420px;
-    border-radius: 0;
+    /* Symmetric clearance, so the card is EXACTLY centred.
+
+       `--space-header  auto  --space-bottom` are different numbers (the header
+       bar is taller than the footer marks), and unequal margins shift the card
+       off centre by the difference — 29px on a phone. Taking the larger of the
+       two for both sides keeps every clearance guarantee and centres it. */
+    margin: max(var(--space-header), var(--space-bottom)) auto;
+    /* And it can never grow tall enough to bring the scrollbar back. */
+    max-height: calc(100dvh - 2 * max(var(--space-header), var(--space-bottom)));
+    box-sizing: border-box;
     overflow: hidden;
-    background: rgba(244, 244, 244, 0.6);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid rgba(244, 244, 244, 0.3);
 }
 
-[data-wiehr-theme="dark"] .theevidence {
-    background: rgba(21, 22, 23, 0.6);
-    border: 1px solid rgba(244, 244, 244, 0.08);
-}
+/* No fill on the header or footer bands.
 
+   These carried a light grey wash that made sense when the card was its own
+   frosted panel; against the page backdrop it just reads as a grey box sitting
+   behind the photographs. The card is the photographs — everything else is
+   type on the page. */
 .theevidenceheader {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: rgba(244, 244, 244, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-[data-wiehr-theme="dark"] .theevidenceheader {
-    background: rgba(21, 22, 23, 0.4);
 }
 
 .whosecolorsthose {
@@ -84,13 +96,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.25rem;
-    background: rgba(244, 244, 244, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-[data-wiehr-theme="dark"] .theevidencefooter {
-    background: rgba(21, 22, 23, 0.4);
 }
 
 .exhibitnumber {

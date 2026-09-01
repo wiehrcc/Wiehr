@@ -1,9 +1,3 @@
-
-#iwanttoeathealthyfood:has(.everythingwedid) {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 .everythingwedid {
     display: flex;
     flex-direction: column;
@@ -11,14 +5,15 @@
     justify-content: center;
     min-height: 100vh;
     min-height: 100dvh;
-    padding: 6rem 1.5rem 4rem;
     box-sizing: border-box;
 }
 
 
 .ledgerofyears {
-    max-width: 620px;
-    width: 100%;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
 }
 
 .ledger {
@@ -96,10 +91,10 @@ a.oneyearline:last-child .ledgercell {
 
 
 .yearsworth {
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
 }
 
 .branchesofit {
@@ -225,17 +220,9 @@ a.reachforit:hover {
 }
 
 @media (max-width: 640px) {
-    .everythingwedid {
-        padding: 5rem 3rem 3rem;
-    }
-
-    .ledgerofyears {
-        width: 100%;
-    }
-
     .ledgercell {
         font-size: var(--font-size-light);
-        padding: 0.85rem 0.35rem;
+        padding: 0.85rem 0.25rem;
     }
 
     .whatitheld {
@@ -243,12 +230,14 @@ a.reachforit:hover {
     }
 
     .ledgerhead .ledgercell {
-        font-size: var(--font-size-tiny);
+        font-size: var(--font-size-micro);
+        letter-spacing: 0.08em;
     }
 
-    .yearsworth {
-        padding: 0 1rem;
+    .ledgerhead .whatitheld {
+        white-space: normal;
     }
+
 
     .whichyearagain {
         font-size: var(--font-size-medium);

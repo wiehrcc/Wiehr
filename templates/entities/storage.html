@@ -4,14 +4,16 @@
 
 {% block title %}STORAGE — Wiehr. Official Website{% endblock %}
 
+{% block backdrop %}{% static 'images/backdrop/storage.jpg' %}{% endblock %}
+
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage">
     <link rel="alternate" href="{{ site_url_nodashed }}/storage" />
 
     <meta name="title" content="STORAGE — Wiehr. Official Website">
+    <meta property="og:title" content="STORAGE — Wiehr. Official Website" />
     <meta property="vk:title" content="STORAGE — Wiehr. Official Website" />
     <meta name="twitter:title" content="STORAGE — Wiehr. Official Website" />
-    <meta property="og:title" content="STORAGE — Wiehr. Official Website" />
     <meta itemprop="name" content="STORAGE — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="STORAGE — Wiehr. Official Website" />
@@ -101,6 +103,7 @@
                 screen together anyway, so there is nothing to defer.{% endcomment %}
                 <img class="boxthumb" src="{{ cell.cover }}" alt="" decoding="async" aria-hidden="true">
                 {% endif %}
+                {% if cell.price %}<span class="boxprice">{{ cell.price }}</span>{% endif %}
                 <span class="boxlabel">{{ cell.id }}</span>
             </a>
             {% else %}

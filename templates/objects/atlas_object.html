@@ -1,27 +1,29 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ atlas_object.internal_id|default:atlas_object.country_title }}{% endblock %}
+
+{% block backdropmode %}{% if images %}art{% else %}mark{% endif %}{% endblock %}
+{% block backdrop %}{% if images %}/media/{{ images.0.image }}{% else %}{% static 'images/backdrop/atlas.jpg' %}{% endif %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}" />
 
     <meta name="title" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website">
+    <meta property="og:title" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
     <meta property="vk:title" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
     <meta name="twitter:title" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
-    <meta property="og:title" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
     <meta itemprop="name" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
 
     <meta name="description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
-    <meta property="og:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas." />
-    <meta property="vk:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas." />
-    <meta itemprop="description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas." />
-    <meta name="twitter:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas." />
+    <meta property="og:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
+    <meta property="vk:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
+    <meta itemprop="description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
+    <meta name="twitter:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
 
     <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas/{{ atlas_object.internal_id }}" />
     <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/atlas/{{ atlas_object.internal_id }}" />
@@ -40,9 +42,21 @@
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ image.image }}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ image.image }}" />
     {% endif %}{% endfor %}
+    {% if not images %}
+    {% comment %}No photographs uploaded for this country yet.{% endcomment %}
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta name="twitter:image:alt" content="{{ atlas_object.country_title|title }} at ATLAS — Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
+    {% endif %}
 
     <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="Wiehr" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="keywords" content="Wiehr, {{ atlas_object.country_title }}, {{ atlas_object.coordinates }}, photography, travel photography, geographic photography, photo collection, world travel, atlas, locations" />
 
@@ -94,7 +108,6 @@
     </script>
 
     {% compress css inline %}
-        <link rel="stylesheet" href="{% static 'css/wiehr-modules.css' %}">
         <link rel="stylesheet" href="{% static 'css/entities/atlas-object.css' %}">
     {% endcompress %}
     {% if images %}<script>window._atlasImagesLoading=true;</script>{% endif %}
@@ -102,17 +115,12 @@
 
 {% block content %}
     <h1 class="seoonly">{{ atlas_object.country_title }} — Atlas Photography by Wiehr</h1>
-    <div id="zoomedinnow" class="staringcontest">
-        <button class="staringcontest-close" id="lookawaynow">
-            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
-        </button>
-        <img class="staringcontest-img" id="thebiggerpicture" alt="Full size preview" loading="eager" decoding="async" />
-    </div>
+    {% include 'objects/_imagemodal.html' %}
 
     <div class="onepassportstamp">
         <div class="theevidence">
             <div class="theevidenceheader">
-                <img src="{{ site_url_nodashed }}{% static 'flags/' %}{{ atlas_object.country_code|lower }}.svg"
+                <img src="{% static 'flags/' %}{{ atlas_object.country_code|lower }}.svg"
                      alt="{{ atlas_object.country_title|upper }}"
                      class="whosecolorsthose"
                      loading="eager">
@@ -124,7 +132,7 @@
                 {% for image in images %}
                     {% if image.order != 0 %}
                     <div class="onesnapshot">
-                        <img src="{{ site_url_nodashed }}/media/{{ image.image }}"
+                        <img src="/media/{{ image.image }}"
                              alt="{{ atlas_object.country_title|upper }} Photo {{ image.order }}"
                              loading="lazy"
                              decoding="async"
