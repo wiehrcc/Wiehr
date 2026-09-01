@@ -1,15 +1,14 @@
 (function() {
     'use strict';
 
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 640;
-    const cores = navigator.hardwareConcurrency || 4;
-    const mem = navigator.deviceMemory || 4;
-    const COUNT = isMobile ? 40 : (cores >= 8 && mem >= 8 ? 140 : 90);
+    // Density and frame rate both come from the shared tier (js/howfastareyou.js)
+    // rather than a third private copy of the cores/memory/user-agent guess.
+    const Tier = window.WiehrTier;
+    const COUNT = Tier ? Tier.pick(140, 70, 30) : 90;
 
     let canvas, ctx;
     let particles = [];
-    let animationId = null;
-    let isVisible = !document.hidden;
+    let stopFrames = null;
 
     class DustPixel {
         constructor() {
@@ -47,17 +46,22 @@
         canvas.height = window.innerHeight;
     }
 
-    function animate() {
-        if (!isVisible) { animationId = null; return; }
+    // Read once per frame instead of once per frame *per particle* — this used
+    // to call getComputedStyle on every tick, which forces a style recalc.
+    let inkColor = null;
+    function readInk() {
+        inkColor = getComputedStyle(document.documentElement)
+            .getPropertyValue('--color-text')?.trim() || '#151617';
+    }
+
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const color = getComputedStyle(document.documentElement).getPropertyValue('--color-text')?.trim() || '#151617';
-        ctx.fillStyle = color;
+        ctx.fillStyle = inkColor;
         for (let i = 0; i < particles.length; i++) {
             particles[i].update();
-            particles[i].draw(color);
+            particles[i].draw(inkColor);
         }
         ctx.globalAlpha = 1;
-        animationId = requestAnimationFrame(animate);
     }
 
     function init() {
@@ -69,12 +73,18 @@
 
         for (let i = 0; i < COUNT; i++) particles.push(new DustPixel());
 
-        document.addEventListener('visibilitychange', function() {
-            isVisible = !document.hidden;
-            if (isVisible && !animationId) animate();
+        readInk();
+        // The theme toggle changes --color-text; nothing else does.
+        new MutationObserver(readInk).observe(document.documentElement, {
+            attributes: true, attributeFilter: ['data-wiehr-theme']
         });
 
-        animate();
+        // Tier.frame caps the rate and stops the loop while the tab is hidden.
+        stopFrames = Tier ? Tier.frame(draw) : (function () {
+            let id = null;
+            (function loop() { draw(); id = requestAnimationFrame(loop); })();
+            return function () { if (id) cancelAnimationFrame(id); };
+        })();
     }
 
     if (document.readyState === 'loading') {

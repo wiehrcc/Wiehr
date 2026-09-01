@@ -8,7 +8,6 @@
     overflow: hidden;
 }
 
-
 .viewport-section {
     position: absolute;
     top: 0;
@@ -28,24 +27,27 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
+    justify-content: safe center;
     visibility: visible;
     opacity: 1;
 }
 
-
 .viewport-section-content {
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 140px 30px 80px;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
     box-sizing: border-box;
+    max-height: calc(100dvh - var(--space-header) - var(--space-bottom));
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     overflow-wrap: break-word;
     word-wrap: break-word;
+
+    gap: 1.9rem;
 }
 
 .viewport-section-divider {
@@ -59,15 +61,15 @@
     opacity: 0.12;
 }
 
-
-/* .flipthrough menu-open hiding moved to entities/flipthrough.css so it applies
-   on every page that uses the nav, not just the ones loading this file. */
-
+.viewport-section .legal-section {
+    margin-bottom: 0;
+}
 
 .viewport-section h2 {
     font-size: clamp(1rem, 3.5vw, 1.5rem);
     font-weight: var(--font-weight-black, 900);
-    margin-bottom: 1rem;
+    line-height: var(--line-height-title, 1.15);
+    margin: 0 0 0.85rem;
     text-align: left;
     width: 100%;
 }
@@ -75,8 +77,8 @@
 .viewport-section h3 {
     font-size: clamp(0.875rem, 2.5vw, 1.125rem);
     font-weight: var(--font-weight-bold, 700);
-    margin-bottom: 0.75rem;
-    margin-top: 1rem;
+    line-height: var(--line-height-title, 1.15);
+    margin: 1.5rem 0 0.6rem;
     text-align: left;
     width: 100%;
 }
@@ -84,13 +86,18 @@
 .viewport-section p {
     font-size: clamp(0.8rem, 2.2vw, 1rem);
     font-weight: var(--font-weight-regular, 500);
-    line-height: var(--line-height-text, 1.2);
-    margin-bottom: .5rem;
+    line-height: var(--line-height-body, 1.6);
+    margin: 0 0 0.9rem;
     width: 100%;
 }
 
+.viewport-section p:last-child,
+.viewport-section .legal-section > *:last-child {
+    margin-bottom: 0;
+}
+
 .viewport-section ul {
-    margin-bottom: 1rem;
+    margin: 0;
     padding-left: 1.25rem;
     list-style: disc;
     width: 100%;
@@ -100,25 +107,19 @@
 .viewport-section li {
     font-size: clamp(0.75rem, 2.2vw, 0.95rem);
     font-weight: var(--font-weight-regular, 500);
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
+    line-height: var(--line-height-body, 1.6);
+    margin-bottom: 0.7rem;
+    padding-left: 0.2rem;
     text-align: left;
+}
+
+.viewport-section li:last-child {
+    margin-bottom: 0;
 }
 
 .viewport-section li strong {
     font-weight: var(--font-weight-bold, 700);
 }
-
-
-.viewport-last-updated {
-    text-align: center;
-    opacity: 0.5;
-    font-size: var(--font-size-thin, 0.625rem);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    width: 100%;
-}
-
 
 .viewport-section-continues {
     position: absolute;
@@ -143,38 +144,11 @@
     opacity: 0.5;
 }
 
-
-@media (max-width: 1024px) {
-    .viewport-section-content {
-        padding: 130px 25px 70px;
-    }
-}
-
-
-@media (max-width: 768px) {
-    .viewport-section-content {
-        padding: 120px 20px 60px;
-        max-width: calc(100% - 40px);
-    }
-}
-
-@media (max-width: 640px) {
-    .viewport-section-content {
-        padding: 100px 24px 50px 32px;
-        max-width: 100%;
-    }
-}
-
 @media (max-width: 480px) {
-    .viewport-section-content {
-        padding: 100px 16px 45px 28px;
-    }
-
     .viewport-section ul {
         padding-left: 1rem;
     }
 }
-
 
 .legal-page {
     width: 100%;
@@ -182,105 +156,6 @@
     min-height: 100dvh;
     position: relative;
 }
-
-
-.legal-content-scroll {
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 1rem;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.legal-content-scroll .legal-section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.legal-content-scroll .legal-section:last-child {
-    border-bottom: none;
-}
-
-.legal-content-scroll h2 {
-    font-size: clamp(0.875rem, 3vw, 1.25rem);
-    font-weight: var(--font-weight-bold, 700);
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.legal-content-scroll h3 {
-    font-size: clamp(0.75rem, 2.5vw, 1rem);
-    font-weight: var(--font-weight-medium, 500);
-    margin-bottom: 0.75rem;
-    margin-top: 1rem;
-    text-align: left;
-}
-
-.legal-content-scroll p {
-    font-size: clamp(0.7rem, 2vw, 0.875rem);
-    font-weight: var(--font-weight-light, 300);
-    line-height: var(--line-height-text, 1.2);
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.legal-content-scroll ul {
-    margin-bottom: 1rem;
-    padding-left: 1.25rem;
-    list-style: disc;
-}
-
-.legal-content-scroll li {
-    font-size: clamp(0.65rem, 2vw, 0.875rem);
-    font-weight: var(--font-weight-light, 300);
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
-    text-align: left;
-}
-
-.legal-content-scroll li strong {
-    font-weight: var(--font-weight-medium, 500);
-}
-
-.legal-content-scroll .last-updated {
-    text-align: center;
-    opacity: 0.5;
-    font-size: var(--font-size-thin, 0.625rem);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-}
-
-@media (max-width: 768px) {
-    .legal-content-scroll {
-        padding: 120px 20px 60px;
-        max-width: calc(100% - 40px);
-    }
-}
-
-@media (max-width: 640px) {
-    .legal-content-scroll {
-        padding: 110px 15px 50px;
-        max-width: calc(100% - 30px);
-    }
-}
-
-@media (max-width: 480px) {
-    .legal-content-scroll {
-        padding: 100px 12px 45px;
-    }
-
-    .legal-content-scroll ul {
-        padding-left: 1rem;
-    }
-}
-
-[data-wiehr-theme="dark"] .legal-content-scroll .legal-section {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
 
 @media print {
     .viewport-sections-container {

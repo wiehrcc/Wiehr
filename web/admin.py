@@ -5,7 +5,6 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from .models import *
 from wiehr import settings
-from ckeditor.widgets import CKEditorWidget
 
 
 def invert_hex_color(hex_color):
@@ -31,7 +30,8 @@ class TeamCampaignActionForm(ActionForm):
     campaign_body = forms.CharField(
         label='Message',
         required=True,
-        widget=CKEditorWidget(config_name='default', attrs={'placeholder': 'Main text'})
+        widget=forms.Textarea(attrs={'placeholder': 'Main text (HTML)', 'rows': 12,
+                                     'style': 'font-family:monospace;width:100%'})
     )
     campaign_button_text = forms.CharField(
         label='Button label',
@@ -67,7 +67,7 @@ class TeamCampaignForm(forms.Form):
     body = forms.CharField(
         label='Email Body',
         required=True,
-        widget=CKEditorWidget(config_name='default')
+        widget=forms.Textarea(attrs={'rows': 14, 'style': 'font-family:monospace;width:100%'})
     )
     button_text = forms.CharField(
         label='Button Text',
@@ -133,9 +133,9 @@ class WiehrLabObjectLinkInline(admin.TabularInline):
 
 @admin.register(WiehrLabModel)
 class WiehrLabModelAdmin(admin.ModelAdmin):
-    list_display = ('internal_id', 'title', 'r_media', 'order', 'role', 'release_type', 'start_year', 'end_year', 'slug', 'is_visible', 'created_at')
+    list_display = ('internal_id', 'title', 'project_type', 'r_media', 'order', 'role', 'release_type', 'start_year', 'end_year', 'slug', 'is_visible', 'created_at')
     list_filter = ('release_type', 'is_visible', 'start_year', 'end_year', 'created_at')
-    search_fields = ('internal_id', 'title', 'description', 'role', 'slug')
+    search_fields = ('internal_id', 'title', 'project_type', 'description', 'role', 'slug')
     readonly_fields = ('created_at', 'modified_at', 'r_media_large')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [WiehrLabObjectLinkInline]
@@ -147,7 +147,7 @@ class WiehrLabModelAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('📝 Basic Info', {
-            'fields': ('internal_id', 'title', 'slug', 'role', 'release_type')
+            'fields': ('internal_id', 'title', 'project_type', 'slug', 'role', 'release_type')
         }),
         ('📅 Years', {
             'fields': ('start_year', 'end_year', 'extra_archives'),
@@ -687,8 +687,8 @@ class LicenseInline(admin.TabularInline):
 
 @admin.register(WiehrStorageModel)
 class WiehrStorageModelAdmin(admin.ModelAdmin):
-    list_display = ('internal_id', 'title', 'file_type', 'year', 'order', 'access_type', 'download_count', 'is_visible', 'created_at')
-    list_filter = ('is_visible', 'access_type', 'file_type', 'year')
+    list_display = ('internal_id', 'title', 'file_type', 'price_display', 'year', 'order', 'access_type', 'download_count', 'is_visible', 'created_at')
+    list_filter = ('is_visible', 'access_type', 'currency', 'file_type', 'year')
     search_fields = ('internal_id', 'title', 'description', 'slug')
     readonly_fields = ('created_at', 'modified_at', 'file_size', 'download_count')
     prepopulated_fields = {'slug': ('title',)}
@@ -701,10 +701,24 @@ class WiehrStorageModelAdmin(admin.ModelAdmin):
             'fields': ('internal_id', 'title', 'slug', 'file_type', 'year', 'order')
         }),
         ('📄 Content', {
-            'fields': ('description', 'cover_image')
+            'fields': ('description', 'cover_image', 'license_covers'),
+            'description': 'License Covers is what section 1 of the license agreement lists — '
+                           'what this product actually consists of. Leave it empty and the '
+                           'agreement falls back to a generic line built from Title and File Type.'
         }),
         ('📁 File', {
-            'fields': ('file', 'file_size', 'download_count')
+            'fields': ('file', 'preview_file', 'file_size', 'download_count'),
+            'description': 'File is the real thing, released only to a valid key. '
+                           'Preview File is the free sample anyone can take without one — '
+                           'leave it empty and the DOWNLOAD PREVIEW button simply does not appear.'
+        }),
+        ('💵 Price & Contact', {
+            'fields': ('price', 'currency', 'contact_email', 'contact_telegram', 'purchase_url'),
+            'description': 'Nothing is sold on the site — there is no checkout. Price is shown so the '
+                           'ask is answered before anyone writes, and the two Contact fields are the '
+                           'GET FULL PACK buttons. The flow is: visitor takes the preview, writes to you, '
+                           'pays however you agree, and you create a License below in their name. Their '
+                           'key then unlocks File on the item page. Purchase URL is unused.'
         }),
         ('👁️ Preview', {
             'fields': ('preview_type', 'preview_url'),
@@ -726,8 +740,6 @@ class ShortenerAdmin(admin.ModelAdmin):
     list_display = ('short_url', 'r_long_url', 'full_url', 'times_followed', 'created_at')
     search_fields = ('short_url', 'full_url', 'long_url')
     list_filter = ('created_at',)
-    # short_url is editable so links can be named from the admin too;
-    # blank still falls back to a generated code on save.
     readonly_fields = ('full_url', 'times_followed', 'created_at')
     ordering = ('-created_at',)
     list_per_page = 50

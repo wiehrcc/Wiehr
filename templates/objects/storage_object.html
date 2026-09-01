@@ -3,7 +3,9 @@
 {% load compress %}
 
 {% block title %}{{ storage_object.title }} at STORAGE — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}{{ storage_object.internal_id|default:storage_object.title }}{% endblock %}
+
+{% block backdropmode %}{% if access_granted and storage_object.cover_image %}art{% else %}mark{% endif %}{% endblock %}
+{% block backdrop %}{% if access_granted and storage_object.cover_image %}{{ storage_object.cover_image.url }}{% else %}{% static 'images/backdrop/storage.jpg' %}{% endif %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}">
@@ -95,12 +97,7 @@
 
 {% block content %}
     <h2 class="seoonly">{{ storage_object.title }} — Digital Download at Storage by Wiehr</h2>
-    <div id="imgModal" class="staringcontest">
-        <button class="staringcontest-close" id="modalClose">
-            <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
-        </button>
-        <img class="staringcontest-img" id="modalImage" alt="Full size preview" loading="eager" decoding="async" />
-    </div>
+    {% include 'objects/_imagemodal.html' with modal_id='imgModal' close_id='modalClose' image_id='modalImage' %}
 
     {% if password_required %}
     <div class="onefileonly onefileonly--centered">
@@ -120,43 +117,94 @@
     {% elif access_granted %}
     <div class="onefileonly">
         <div class="fileguts">
-            <div class="filecoverart">
+            {% comment %}The cover is the play button, the way Lab's thumbnail is.
+
+            A separate PREVIEW button made three actions compete for one row,
+            which at 375px wrapped two of the three labels onto a second line
+            while the third stayed on one — the buttons lined up, the words did
+            not. Folding the preview into the artwork removes the third button
+            and matches an interaction the site already had.
+
+            With a video the cover opens it; without one it still opens the
+            image full-size, so `tapthis` is conditional rather than
+            unconditional.{% endcomment %}
+            <div class="filecoverart{% if storage_object.has_preview %} coverplays{% endif %}"
+                 {% if storage_object.has_preview %}id="coverplaysbutton"
+                 role="button" tabindex="0"
+                 aria-label="Play preview of {{ storage_object.title }}"{% endif %}>
                 {% if storage_object.cover_image %}
                 <img src="{{ storage_object.cover_image.url }}"
                      alt="{{ storage_object.title }}"
-                     class="tapthis"
+                     {% if not storage_object.has_preview %}class="tapthis"{% endif %}
                      loading="eager"
                      decoding="async"
                      fetchpriority="high"
                      onload="this.style.opacity='1'"
                      style="opacity:0;transition:opacity 0.3s ease-in-out;">
                 {% endif %}
+                {% if storage_object.has_preview %}
+                <span class="pretendplaybutton" aria-hidden="true"></span>
+                {% endif %}
             </div>
 
             <div class="filefacts">
                 <h1 class="filename">{{ storage_object.title }}</h1>
-                <span class="filecode">{{ storage_object.internal_id }}</span>
+                <span class="filecode">{{ storage_object.internal_id }}{% if storage_object.is_paid %} <span class="whatitcosts">{{ storage_object.price_display }}</span>{% endif %}</span>
                 {% if storage_object.description %}
                 <div class="filestory">{{ storage_object.description|safe|linebreaks }}</div>
                 {% endif %}
+                {% comment %}Nothing is sold here.
+
+                There is no checkout, because there is no business behind it.
+                The page's job is to let anyone try the thing, and to point the
+                people who want the whole thing at a human. So: a free preview
+                anyone can take, a way to reach me, and a key box for whoever
+                has already been given one.{% endcomment %}
                 <div class="whattodowithit">
-                    {% if storage_object.has_preview %}
-                    <button class="doonething peekatit" id="previewBtn" data-url="{{ storage_object.youtube_embed_url }}">PREVIEW</button>
-                    {% endif %}
-                    {% if storage_object.file %}
-                        {% if download_locked %}
-                        <span class="doonething doonething-locked">DOWNLOAD LOCKED</span>
-                        {% if license_key_required and not license_unlocked %}
-                        <button type="button" class="doonething" id="keyBtn">ENTER KEY</button>
+                    {% comment %}The same two slots either side of the gate.
+
+                    A valid key does not add a dialog on top of the page — it
+                    changes what the two buttons already there say. Left slot:
+                    the key box becomes the licence files. Right slot: the
+                    sample becomes the real thing. Nothing moves, nothing to
+                    dismiss, and the page reads as one state rather than as a
+                    page plus an announcement about it.{% endcomment %}
+                    {% if download_locked %}
+                        {% if license_key_required %}
+                        <button type="button" class="doonething" id="keyBtn">ENTER LICENSE KEY</button>
                         {% endif %}
-                        {% else %}
-                        <a href="/storage/{{ storage_object.slug }}/download" class="doonething">DOWNLOAD</a>
+                        {% if storage_object.has_preview_file %}
+                        <a href="/storage/{{ storage_object.slug }}/preview" class="doonething">DOWNLOAD PREVIEW</a>
+                        {% endif %}
+                    {% else %}
+                        {% if license_key_value %}
+                        <a href="/licensing?key={{ license_key_value|urlencode }}" class="doonething">GET LICENSE FILES</a>
+                        {% endif %}
+                        {% if storage_object.file %}
+                        <a href="/storage/{{ storage_object.slug }}/download" class="doonething">DOWNLOAD FULL PACK</a>
+                        {% elif storage_object.has_preview_file %}
+                        <a href="/storage/{{ storage_object.slug }}/preview" class="doonething">DOWNLOAD PREVIEW</a>
                         {% endif %}
                     {% endif %}
+
                     {% for link in storage_links %}
                     <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="doonething">{{ link.label }}</a>
                     {% endfor %}
                 </div>
+
+                {% if download_locked and storage_object.has_contact %}
+                <div class="knockonmydoor">
+                    <span class="knockonmydoorlabel">GET FULL PACK{% if storage_object.is_paid %} — {{ storage_object.price_display }}{% endif %}</span>
+                    <div class="knockonmydoorrow">
+                        {% if storage_object.contact_email %}
+                        <a href="mailto:{{ storage_object.contact_email }}?subject={{ storage_object.title|urlencode }}" class="doonething">EMAIL</a>
+                        {% endif %}
+                        {% if storage_object.contact_telegram %}
+                        <a href="{{ storage_object.contact_telegram }}" target="_blank" rel="noopener noreferrer" class="doonething">TELEGRAM</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
 
                 {% if license_key_required and license_unlocked %}
                 <div class="proofidownloaded">
@@ -210,7 +258,7 @@
     {% endif %}
 
     {% if storage_object.has_preview %}
-    <div id="previewModal" class="staringcontest">
+    <div id="previewModal" class="staringcontest" data-embed="{{ storage_object.youtube_embed_url }}">
         <button class="staringcontest-close" id="previewModalClose">
             <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
         </button>
@@ -280,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 <script>
 (function(){
-    var btn=document.getElementById('previewBtn');
+    var btn=document.getElementById('coverplaysbutton');
     var modal=document.getElementById('previewModal');
     if(!btn||!modal)return;
 
@@ -288,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var content=document.getElementById('previewContent');
 
     function openPreview(){
-        var url=btn.getAttribute('data-url');
+        var url=modal.getAttribute('data-embed');
         content.innerHTML='';
 
         var iframe=document.createElement('iframe');
@@ -310,6 +358,9 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     btn.addEventListener('click',openPreview);
+    btn.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();openPreview();}
+    });
     if(closeBtn)closeBtn.addEventListener('click',closePreview);
     modal.addEventListener('click',function(e){if(e.target===modal)closePreview()});
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.style.display==='flex')closePreview()});

@@ -1,9 +1,10 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}LAB — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/lab.jpg' %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
@@ -92,7 +93,7 @@
                     {% endif %}
                 </div>
                 <div class="whatitwas">
-                    <span class="whaticlaimed">{{ item.title }}</span>
+                    <span class="whaticlaimed">{{ item.title_with_type }}</span>
                     <span class="whenitried">{{ item.get_year_range }}</span>
                 </div>
             </a>

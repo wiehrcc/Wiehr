@@ -1,29 +1,15 @@
-/* body/#iwanttoeathealthyfood are locked to a fixed 100vh, overflow:hidden
-   shell site-wide (the paginated full-screen pages depend on it), so a long
-   description here was clipped with no way to scroll to it. Same override
-   /support and /licensing use to render as a normal, content-sized,
-   naturally scrollable page. */
-#iwanttoeathealthyfood:has(.onefileonly) {
-    /* wiehr-theme.css locks this element to overflow:hidden !important, so a
-       plain override can never win regardless of specificity. */
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-
-.onefileonly {
-    max-width: 480px;
-    width: 80%;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-}
-
 .onefileonly--centered {
     align-items: center;
+}
+
+/* The card is capped at the viewport and the cover is the part that gives.
+
+   A fixed cover height only fits the description it was measured against; one
+   more line of copy and the last button drops below the fold again. Capping
+   the card and letting the cover flex-shrink means the text always wins the
+   argument, whatever its length, on whatever screen. */
+.onefileonly {
+    max-height: calc(100dvh - var(--space-header) - var(--space-bottom));
 }
 
 .fileguts {
@@ -32,17 +18,55 @@
     align-items: flex-start;
     gap: 1rem;
     width: 100%;
+    min-height: 0;
+}
+
+.filefacts {
+    flex: 0 0 auto;
+}
+
+/* The cover yields height so the words fit.
+
+   At 480px wide and its own aspect ratio the cover alone ate more than half a
+   phone screen, and a description of any length pushed the buttons below the
+   fold — on a page whose whole job is to get you to those buttons. It is now
+   capped in *viewport* height rather than only in width, so it shrinks on
+   short screens instead of the text being pushed off one.
+
+   Cropping is fine here: the covers are full-bleed artwork with nothing to
+   read, and the image opens full-size in the modal on tap. */
+/* Always a square, and the square is what gives.
+
+   Capping only the height let a wide cover keep its width and get cropped to a
+   letterbox — the artwork is composed square, so that is a real disfigurement,
+   not a crop. Driving the box off `height` with `aspect-ratio: 1` means width
+   follows height, so it stays square at every size, and `flex: 0 1 auto` still
+   lets it shrink when the text needs the room. */
+/* The cover needs to be a positioning context once a badge sits on top of it,
+   and to say it is clickable when it is. */
+.coverplays {
+    position: relative;
+    cursor: pointer;
+}
+
+.coverplays:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
 }
 
 .filecoverart {
-    width: 100%;
-    max-width: 480px;
-    align-self: left;
+    aspect-ratio: 1 / 1;
+    height: min(30dvh, 360px);
+    width: auto;
+    max-width: 100%;
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .filecoverart img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     object-fit: cover;
     box-shadow: 0 8px 32px rgba(21, 22, 23, 0.12), 0 2px 8px rgba(21, 22, 23, 0.06);
@@ -63,27 +87,8 @@
     width: 100%;
 }
 
-.filename {
-    font-size: var(--font-size-large);
-    font-weight: var(--font-weight-black, 900);
-    margin: 0;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-}
-
-.filecode {
-    font-size: var(--font-size-thin);
-    opacity: 0.35;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: var(--font-weight-bold, 700);
-}
-
 .filestory {
-    font-size: var(--font-size-thin);
     font-weight: var(--font-weight-regular, 400);
-    line-height: 1.5;
-    opacity: 0.7;
     margin-top: .5rem;
 }
 
@@ -130,6 +135,32 @@
     padding-top: 0.5rem;
 }
 
+/* The second row: where to go when you want the whole thing.
+
+   Kept visually subordinate to the row above it — that row is what you can do
+   right now, on your own, and this one is "write to a person and wait". The
+   label carries the price so the ask is answered before the click. */
+.knockonmydoor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 100%;
+    padding-top: 0.75rem;
+}
+
+.knockonmydoorlabel {
+    font-size: var(--font-size-tiny);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.4;
+}
+
+.knockonmydoorrow {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
 .doonething {
     flex: 1;
     display: flex;
@@ -171,7 +202,6 @@
     color: var(--color-bg);
 }
 
-
 .provewhoyouare {
     display: flex;
     flex-direction: column;
@@ -209,8 +239,6 @@
     max-width: 300px;
 }
 
-/* Was password-only, so the license-key field (type="text") fell through to
-   the browser default and looked nothing like the rest of the site. */
 .provewhoyouareform input[type="password"],
 .provewhoyouareform input[type="text"] {
     padding: 0.75rem 1rem;
@@ -258,13 +286,6 @@
     opacity: 0.7;
 }
 
-
-.peekatit {
-    cursor: pointer;
-    font-family: var(--font-family, monospace);
-}
-
-
 .thepeek {
     display: flex;
     align-items: center;
@@ -272,23 +293,6 @@
     max-width: 90vw;
     max-height: 80vh;
 }
-
-.doonething-locked {
-    cursor: not-allowed;
-    opacity: 0.35;
-}
-
-.doonething-locked:hover {
-    background: rgba(0, 0, 0, 0.02);
-    color: var(--color-text, #000);
-    opacity: 0.35;
-}
-
-[data-wiehr-theme="dark"] .doonething-locked:hover {
-    background: rgba(244, 244, 244, 0.02);
-    color: var(--color-text);
-}
-
 
 .showmeyourpapers {
     display: flex;
@@ -354,20 +358,6 @@
     opacity: 0.85;
 }
 
-.showmeyourpapershint {
-    font-size: var(--font-size-micro);
-    opacity: 0.4;
-    font-style: italic;
-}
-
-.showmeyourpapershint a {
-    color: inherit;
-    font-weight: var(--font-weight-bold, 700);
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-}
-
-
 .proofidownloaded {
     display: flex;
     flex-direction: column;
@@ -401,20 +391,8 @@
     user-select: all;
 }
 
-
 @media (max-width: 640px) {
-    .onefileonly {
-        /* was 80%, which threw away a fifth of an already narrow screen */
-        max-width: none;
-        width: 92%;
-        padding: 4rem 0 2rem;
-        gap: 0.75rem;
-    }
-
     .filecoverart {
-        /* A square cover at full width used to fill most of the fold and push
-           every word of the description below it. Capped so the title and the
-           opening lines land on the first screen. */
         max-height: 34vh;
         max-width: 34vh;
     }
@@ -425,14 +403,7 @@
         margin: 0 auto;
     }
 
-    .filename {
-        font-size: var(--font-size-standard);
-    }
-
     .filestory {
-        font-size: var(--font-size-thin);
-        line-height: 1.6;
-        opacity: 0.8;
         margin-top: 0.25rem;
     }
 
@@ -441,7 +412,7 @@
         padding: 0.75rem 0.5rem;
     }
 
-                .showmeyourpapersrow {
+    .showmeyourpapersrow {
         flex-direction: column;
     }
 
@@ -457,4 +428,14 @@
     .showmeyourpapersrow .checkitnow {
         border-top: none;
     }
+}
+
+.whatitcosts {
+    display: inline-block;
+    margin-left: 0.45rem;
+    padding: 0.15rem 0.4rem;
+    color: var(--color-bg, #f4f4f4);
+    background: var(--color-text, #161718);
+    letter-spacing: 0.08em;
+    opacity: 1;
 }

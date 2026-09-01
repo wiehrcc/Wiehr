@@ -38,7 +38,6 @@
     text-transform: uppercase;
 }
 
-
 .progressbarisnotworking {
     width: min(360px, 80vw);
     font-family: var(--font-family, monospace);
@@ -48,7 +47,6 @@
     flex-direction: column;
     align-items: center;
 }
-
 
 .asciiprogressbar {
     display: flex;
@@ -85,7 +83,6 @@
     justify-content: center;
 }
 
-
 .loading-block {
     width: 12px;
     height: 12px;
@@ -109,7 +106,6 @@
     opacity: 1;
 }
 
-
 .percentagedisplay {
     width: 100%;
     text-align: center;
@@ -118,16 +114,6 @@
     font-size: var(--font-size-thin, 12px);
     opacity: 0.7;
 }
-
-
-.progressstatsrow {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-    opacity: 0.5;
-    font-size: calc(var(--font-size-thin, 12px) * 0.9);
-}
-
 
 .noisecanvasoverlay {
     position: absolute;
@@ -138,7 +124,6 @@
     pointer-events: none;
     opacity: 0.6;
 }
-
 
 @media (max-width: 640px) {
     .loadinglogoisthere {
@@ -181,7 +166,6 @@
     }
 }
 
-
 [data-wiehr-theme="dark"] .moneyruinseverything {
     background: var(--color-bg, hsla(210, 5%, 9%, 1));
 }
@@ -189,11 +173,6 @@
 [data-wiehr-theme="dark"] .statusmessageisimportant,
 [data-wiehr-theme="dark"] .progressbarisnotworking {
     color: var(--color-text, hsla(0, 0%, 96%, 1));
-}
-
-[data-wiehr-theme="dark"] .progressblock,
-[data-wiehr-theme="dark"] .emptyblock {
-    background: var(--color-text, hsla(0, 0%, 96%, 1));
 }
 
 [data-wiehr-theme="dark"] .loadinglogoisthere {

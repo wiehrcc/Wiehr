@@ -506,8 +506,12 @@ function getPerformanceTier() {
   }
 
   if (isMobile) {
-    if (cores >= 8 && mem >= 6) return 2;
-    if (cores >= 4 && mem >= 4) return 3;
+    // Safari implements no deviceMemory at all, so `mem` falls back to 2 and
+    // both tests below used to fail — every iPhone landed in tier 4, the
+    // worst. An unknown memory size is not evidence of a small one.
+    const memKnown = !!navigator.deviceMemory;
+    if (cores >= 8 && (!memKnown || mem >= 6)) return 2;
+    if (cores >= 4 && (!memKnown || mem >= 4)) return 3;
     return 4;
   }
 
@@ -523,18 +527,27 @@ function buildTargets() {
   const tier = getPerformanceTier();
   perfTier = tier;
 
-  // Sampling is the pixel stride over the mask, so it drives detail directly.
-  // Tier 1/2 machines now step every pixel and tier 3 every two, roughly
-  // doubling the dot count and resolving coastlines that used to read as blobs.
   const sampling = tier <= 2 ? 1 : tier === 3 ? 2 : 3;
 
   swapInterval = tier === 1 ? 150 : tier === 2 ? 250 : tier === 3 ? 500 : 1000;
 
-
-  // Random thinning fought the finer sampling above, so it is relaxed to match:
-  // keep more of what the denser stride finds instead of discarding a quarter.
   const complexityThin = svgComplexity > 10000 ? 0.75 : svgComplexity > 5000 ? 0.88 : 1.0;
-  const desktopThin = Math.min(1.0, (isMobile ? 0.85 : 1.0) * complexityThin * 1.35);
+  /* Mobile carries a further 25% off the dot count, on top of the sampling
+     step. This is the heaviest thing on the page and a phone is where that
+     costs the most; the logo reads the same at this density.
+
+     The mobile factors sit OUTSIDE the clamp deliberately. Folded in, they
+     land under a Math.min(1.0, ...) that the current logo happens to clear
+     (25069 chars, so complexityThin is 0.75) — but a simpler logo pushes the
+     product over 1.0, the clamp swallows the difference, and the mobile
+     reduction quietly becomes 14% or nothing at all. Out here the 25% is 25%
+     whatever the artwork does. */
+  const base = Math.min(1.0, (isMobile ? 0.85 : 1.0) * complexityThin * 1.35);
+  /* The tier's saving lands here rather than on the frame rate — fewer dots to
+     integrate and draw, at full speed, instead of the same dots at half. */
+  const T = window.WiehrTier;
+  const tierThin = T ? T.pick(1.0, 0.7, 0.45) : 0.7;
+  const desktopThin = (isMobile ? base * 0.75 : base) * tierThin;
 
   for (let y = 0; y < mask.height; y += sampling) {
     for (let x = 0; x < mask.width; x += sampling) {
@@ -659,8 +672,6 @@ let lastSwapTime = 0;
 let time = 0;
 let cursorSize = 0.04;
 let cursorSizeTarget = 0.04;
-// Timestamp of the current press. The vacuum's reach grows the longer it is
-// held, so keeping the button down eventually pulls every dot into one point.
 let vacuumStart = 0;
 const VACUUM_GROWTH_PER_SEC = 0.55;
 const VACUUM_MAX_RADIUS = 3.0;
@@ -798,7 +809,20 @@ window.resumeWebGL = function() {
 };
 
 let lastFrameTime = 0;
-const FRAME_INTERVAL = (isMobile && perfTier >= 3) ? 30 : 0; 
+
+/* 60fps ceiling, and deliberately NOT the tier's frame cap.
+
+   Every particle here is integrated per FRAME, not per second — the spring is
+   `vx += dx * force; vx *= 0.88; x += vx`, once per render. Frame rate is
+   therefore the animation's clock: capping a phone to the tier's 30fps ran the
+   whole logo at exactly half speed, which is what "slowmo" was. It was not the
+   dot count.
+
+   So the frame budget on this one comes off the density instead (see
+   tierThin in buildTargets), which cuts real work per frame without touching
+   the speed anything moves at. The 60 ceiling still spares a 144Hz monitor
+   from integrating 144 steps a second. */
+const FRAME_INTERVAL = 1000 / 60 - 4;
 
 function render(timestamp = 0) {
   if (!isVisible || isPaused || !isLogoSectionVisible) {
@@ -829,8 +853,11 @@ function render(timestamp = 0) {
 
   cursorSize += (cursorSizeTarget - cursorSize) * 0.1;
 
+  /* Reuse the arrays. `= []` here allocated one array per particle per frame —
+     tens of thousands of throwaway objects a second, and the GC pauses that
+     buys are exactly the stutter you feel on a phone. */
   for (let i = 0; i < logoParticleCount; i++) {
-    particles[i].neighbors = [];
+    particles[i].neighbors.length = 0;
   }
 
   const neighborCheckProb = perfTier === 1 ? 0.08 : perfTier === 2 ? 0.05 : 0.02;
@@ -866,9 +893,6 @@ function render(timestamp = 0) {
       vacuumRadius = 0.15 + Math.min(outsideDist * 0.8, 0.6);
     }
 
-    // Keep holding and the field keeps widening, so a long press sweeps the
-    // whole map into a single point instead of stalling at whatever happened
-    // to be inside the initial radius.
     if (vacuumStart) {
       const held = (performance.now() - vacuumStart) / 1000;
       vacuumRadius = Math.min(vacuumRadius + held * VACUUM_GROWTH_PER_SEC, VACUUM_MAX_RADIUS);

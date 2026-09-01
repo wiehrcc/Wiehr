@@ -1,0 +1,167 @@
+:root {
+    --backdrop-blur: blur(7px);
+
+    --backdrop-filter: invert(1) contrast(0.92) var(--backdrop-blur);
+    --backdrop-opacity: 0.15;
+
+    --backdrop-art-filter: grayscale(1) contrast(0.45) brightness(1.55) blur(16px);
+    --backdrop-art-opacity: 0.075;
+
+    --menu-veil: rgba(244, 244, 244, 0.52);
+    --menu-preview-opacity: 0.375;
+}
+
+[data-wiehr-theme="dark"] {
+    --backdrop-filter: contrast(1.05) var(--backdrop-blur);
+    --backdrop-opacity: 0.18;
+
+    --backdrop-art-filter: grayscale(1) contrast(0.5) brightness(0.75) blur(16px);
+    --backdrop-art-opacity: 0.12;
+
+    --menu-veil: rgba(21, 22, 23, 0.6);
+    --menu-preview-opacity: 0.34;
+}
+
+
+.whatliesbeneath {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    animation: backdroparrives 1.4s ease both;
+}
+
+/* No transform animation here, deliberately.
+
+   This element is bigger than the viewport (inset: -6vmax) and carries a
+   full-screen `filter: invert() contrast() blur()`. A `transform` animation on
+   a filtered element cannot be handed to the compositor — the filter has to be
+   re-rasterised at the new scale on every single frame. `marksettles` was a
+   2.4s scale, so every page load spent 2.4 seconds re-running a full-screen
+   invert+blur at 60fps, right at the moment the page is trying to appear. That
+   is the load-time stutter.
+
+   The parent's opacity fade stays: opacity IS compositor-only, so it costs
+   nothing and the backdrop still arrives rather than snapping in. */
+.themarkbehind {
+    position: absolute;
+    inset: -6vmax;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: var(--backdrop-opacity);
+    filter: var(--backdrop-filter);
+}
+
+.themarkbehind[data-backdrop="art"] {
+    opacity: var(--backdrop-art-opacity);
+    filter: var(--backdrop-art-filter);
+}
+
+@keyframes backdroparrives {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+
+.whatareyouinterestedin {
+    background: var(--menu-veil);
+}
+
+/* Blur radius is the one number that really moves GPU cost here — the kernel
+   grows with it, and this veil is the full viewport. 26 -> 16 is close to
+   invisible side by side and materially cheaper to composite. */
+.whatareyouinterestedin.awake {
+    backdrop-filter: blur(16px) grayscale(1);
+    -webkit-backdrop-filter: blur(16px) grayscale(1);
+}
+
+.wherewewouldgo {
+    position: absolute;
+    inset: -6vmax;
+    z-index: 0;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: var(--backdrop-filter);
+    opacity: 0;
+    /* Opacity only, for the reason given on .themarkbehind above: this is
+       another oversized, filtered element, and a 1s scale on it meant a full
+       -screen invert+blur re-rasterised every frame for a full second each
+       time the pointer crossed a menu row. */
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+
+.wherewewouldgo.showingitself {
+    opacity: var(--menu-preview-opacity);
+}
+
+.pickyourdestination {
+    position: relative;
+    z-index: 1;
+}
+
+.treeofalloptions {
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+    background-color: var(--glass-bg);
+    background-image: var(--glass-tint);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow:
+        var(--glass-shadow),
+        inset 0 1px 0 var(--glass-edge),
+        inset 0 -1px 0 var(--glass-underedge);
+}
+
+/* The glass only exists while the menu is open.
+
+   The overlay is hidden with `visibility: hidden`, not `display: none`, so
+   this pane stayed in the paint tree on every page of the site — 640x585 of
+   live backdrop-filter, blurring the page behind a menu nobody had opened.
+   backdrop-filter is not free when invisible: it forces a backdrop root and
+   its own compositing layer, which also costs everything painted behind it,
+   including both full-screen canvases on the index page.
+
+   Scoping it to .awake is the whole fix. */
+.whatareyouinterestedin.awake .treeofalloptions {
+    backdrop-filter: var(--glass-blur-plain);
+    -webkit-backdrop-filter: var(--glass-blur-plain);
+    backdrop-filter: var(--glass-refraction);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .treeofalloptions {
+        background: var(--glass-bg-flat);
+    }
+
+    .whatareyouinterestedin {
+        background: var(--color-bg, #F4F4F4);
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .whatliesbeneath,
+    .themarkbehind {
+        animation: none;
+    }
+
+    .wherewewouldgo {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+
+    .wherewewouldgo.showingitself {
+        transform: none;
+    }
+}
+
+
+@media (max-width: 640px) {
+    .treeofalloptions {
+        padding: 1rem 1.1rem;
+    }
+}

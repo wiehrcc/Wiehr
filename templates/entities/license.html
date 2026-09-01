@@ -3,7 +3,8 @@
 {% load compress %}
 
 {% block title %}License Verification — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}LICENSE{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/license.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing">
@@ -28,21 +29,25 @@
     <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
     <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
 
-    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
     <meta name="twitter:image:alt" content="License Verification" />
-    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
 
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="keywords" content="Wiehr, license verification, storage license key, digital asset license">
-    <meta name="robots" content="noindex, follow">
+    {% comment %}Indexable on purpose. This page is the public answer to "is
+    this key real?", which is exactly the sort of thing someone searches for
+    after being handed a licence. It carries no private data of its own — a
+    key only resolves if it is genuine, and without one the page is a form.
+    {% endcomment %}
 
     <script type="application/ld+json">
     {

@@ -4,6 +4,8 @@
 
 {% block title %}STORAGE — Wiehr. Official Website{% endblock %}
 
+{% block backdrop %}{% static 'images/backdrop/storage.jpg' %}{% endblock %}
+
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage">
     <link rel="alternate" href="{{ site_url_nodashed }}/storage" />
@@ -101,6 +103,7 @@
                 screen together anyway, so there is nothing to defer.{% endcomment %}
                 <img class="boxthumb" src="{{ cell.cover }}" alt="" decoding="async" aria-hidden="true">
                 {% endif %}
+                {% if cell.price %}<span class="boxprice">{{ cell.price }}</span>{% endif %}
                 <span class="boxlabel">{{ cell.id }}</span>
             </a>
             {% else %}

@@ -133,10 +133,6 @@
         return v ? v.pop() : '';
     }
 
-    // The hidden country/code fields were only ever filled by clicking a
-    // suggestion, so typing "Slovakia" and hitting enter submitted an empty
-    // country and the record landed with no location at all. Resolve whatever
-    // is actually in the visible input against the country list instead.
     function resolveTypedCountry() {
         if (!locationInput) return null;
         var typed = (locationInput.value || '').trim().toLowerCase();
@@ -146,7 +142,6 @@
                 return { country: COUNTRIES[i][0], code: COUNTRIES[i][1] };
             }
         }
-        // Fall back to a unique prefix match, so "slovak" still resolves.
         var hits = [];
         for (var j = 0; j < COUNTRIES.length; j++) {
             if (COUNTRIES[j][0].toLowerCase().indexOf(typed) === 0) hits.push(COUNTRIES[j]);
@@ -155,8 +150,6 @@
         return hits.length === 1 ? { country: hits[0][0], code: hits[0][1] } : null;
     }
 
-    // Also resolve on blur so the field visibly corrects itself to the
-    // canonical name before submit.
     if (locationInput) {
         locationInput.addEventListener('blur', function() {
             var hit = resolveTypedCountry();
@@ -186,7 +179,7 @@
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
                 body: JSON.stringify({ email: email, country: country, country_code: countryCode })
             }).then(function(r) { return r.json(); }).then(function(data) {
-                if (status) status.textContent = data.message || 'You are visible now.';
+                if (status) status.textContent = data.message || 'You are in the network now.';
                 form.reset();
                 if (countryField) countryField.value = '';
                 if (countryCodeField) countryCodeField.value = '';
@@ -195,11 +188,9 @@
                     counter.textContent = data.visible_listeners;
                 }
 
-                // Immediate: the server already dropped its locations cache in
-                // the same request, so there is nothing to wait for.
                 if (window._reloadNetwork) window._reloadNetwork();
             }).catch(function() {
-                if (status) status.textContent = 'You are visible now.';
+                if (status) status.textContent = 'You are in the network now.';
                 form.reset();
             });
         });
@@ -314,8 +305,19 @@
         }
     }
 
+    /* Frame budget from the shared tier — see js/howfastareyou.js. */
+    var NET_FRAME_MS = (window.WiehrTier && window.WiehrTier.fps)
+        ? 1000 / window.WiehrTier.fps - 4 : 0;   // -4: see frame() in howfastareyou.js
+    var netLastFrameAt = 0;
+
     function drawFrame(now) {
         now = now || 0;
+
+        if (NET_FRAME_MS && now - netLastFrameAt < NET_FRAME_MS) {
+            networkAnimId = requestAnimationFrame(drawFrame);
+            return;
+        }
+        netLastFrameAt = now;
 
         var w = networkCanvas.width;
         var h = networkCanvas.height;

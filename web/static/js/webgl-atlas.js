@@ -11,9 +11,6 @@
         { id: 'north_america', name: 'N. America', latMin: 15, latMax: 72, lonMin: -170, lonMax: -50 },
         { id: 'south_america', name: 'S. America', latMin: -56, latMax: 15, lonMin: -85, lonMax: -30 },
         { id: 'oceania', name: 'Oceania', latMin: -50, latMax: 0, lonMin: 100, lonMax: 180 },
-        // Unlike the rest, this one is defined by membership: its box overlaps
-        // Europe's (lon 25-42), so without the allowlist western Russia
-        // resolved as Europe and Ukraine/the Baltics resolved as Russia.
         { id: 'russia', name: 'Russia & CIS', latMin: 40, latMax: 78, lonMin: 19, lonMax: 180,
           countries: ['russia', 'belarus', 'kazakhstan', 'ukraine', 'moldova', 'armenia',
                       'azerbaijan', 'georgia', 'kyrgyzstan', 'tajikistan', 'turkmenistan',
@@ -44,8 +41,15 @@
 
     function computeWorldView() {
         const asp = (canvas ? canvas.width / canvas.height : window.innerWidth / window.innerHeight) || 1.8;
-        const latSpan = 360 / asp;
-        return { lonMin: -180, lonMax: 180, latMin: 15 - latSpan / 2, latMax: 15 + latSpan / 2 };
+        const zoomIn = window.innerWidth <= 640 ? 1.5 : 1;
+        const lonSpan = 360 / zoomIn;
+        const latSpan = (360 / asp) / zoomIn;
+        return {
+            lonMin: -lonSpan / 2,
+            lonMax: lonSpan / 2,
+            latMin: 15 - latSpan / 2,
+            latMax: 15 + latSpan / 2
+        };
     }
     let WORLD_VIEW = { lonMin: -180, lonMax: 180, latMin: -75, latMax: 85 };
     let currentView = { ...WORLD_VIEW };
@@ -62,8 +66,6 @@
 
 
     function getRegionIdx(lat, lon, countryKey) {
-        // A country on a region's allowlist claims its polygons outright, so
-        // Russia never leaks into Europe just because Moscow sits west of 42E.
         if (countryKey) {
             for (let i = 0; i < REGIONS.length; i++) {
                 const r = REGIONS[i];
@@ -73,7 +75,6 @@
         }
         for (let i = 0; i < REGIONS.length; i++) {
             const r = REGIONS[i];
-            // Allowlisted regions only ever match via that list.
             if (r.countries) continue;
             if (lat >= r.latMin && lat <= r.latMax && lon >= r.lonMin && lon <= r.lonMax) return i;
         }
@@ -121,16 +122,11 @@
             geoIsHiRes = true;
             buildCountryRegionMap();
             buildLocationDots();
-            // Hi-res multiplies the point count ~10x, so re-budget.
             computeRegionStride();
         };
         document.head.appendChild(s);
     }
 
-    // A country is not a place. France's mainland is in Europe and French
-    // Guiana is in South America, so a single region per country meant hovering
-    // Europe lit up a landmass on the other side of the Atlantic. Regions are
-    // resolved per polygon, by where that polygon actually sits.
     function buildCountryRegionMap() {
         countryRegionMap = {};
         polygonRegionMap = {};
@@ -147,13 +143,10 @@
                 if (poly.lat.length > biggestLen) { biggestLen = poly.lat.length; biggestIdx = i; }
             }
             polygonRegionMap[key] = perPoly;
-            // The country's nominal region stays the one its largest landmass
-            // falls in — used for labels and country lookup, not for drawing.
             countryRegionMap[key] = perPoly[biggestIdx];
         }
     }
 
-    // Does this country have any polygon in the given region?
     function countryTouchesRegion(key, ri) {
         const list = polygonRegionMap[key];
         if (!list) return false;
@@ -209,9 +202,6 @@
     function findRegionAt(px, py) {
         const { lat, lon } = screenToLatLon(px, py);
 
-        // Whatever landmass is under the cursor decides the region. This is the
-        // only way an allowlisted region can be hit, and it is also what makes
-        // hovering French Guiana give South America rather than Europe.
         if (geoData) {
             for (const key of Object.keys(geoData)) {
                 const r = geoData[key];
@@ -226,7 +216,6 @@
             }
         }
 
-        // Open water / empty land falls back to the geographic boxes.
         for (let i = 0; i < REGIONS.length; i++) {
             const r = REGIONS[i];
             if (r.countries) continue;
@@ -276,11 +265,6 @@
         return (h / 1000) * Math.PI * 2;
     }
 
-    // Region mode used to draw every point of every polygon (stride 1). At
-    // hi-res that is 27k points across 244 polygons for Russia & CIS versus a
-    // few thousand for a compact region — same stride, wildly different cost,
-    // which is why the big ones stuttered. Budget the points instead and let
-    // the stride fall out of how complex the region actually is.
     const REGION_POINT_BUDGET = 7000;
     let regionStrideBase = 1;
 
@@ -299,7 +283,6 @@
 
     function strideForLonSpan(lonSpan) {
         if (currentMode !== 'region') return 10;
-        // Zooming in shows less at once, so spend the budget on detail again.
         const zoomRelief = Math.max(1, Math.min(4, 140 / Math.max(lonSpan, 1)));
         return Math.max(1, Math.round(regionStrideBase / zoomRelief));
     }
@@ -741,8 +724,19 @@
     }
 
 
-    function render() {
+    /* Frame budget from the shared tier — see js/howfastareyou.js. */
+    const ATLAS_FRAME_MS = (window.WiehrTier && window.WiehrTier.fps)
+        ? 1000 / window.WiehrTier.fps - 4 : 0;   // -4: see frame() in howfastareyou.js
+    let atlasLastFrameAt = 0;
+
+    function render(now) {
         if (!isVisible) { requestAnimationFrame(render); return; }
+
+        if (ATLAS_FRAME_MS) {
+            if (now - atlasLastFrameAt < ATLAS_FRAME_MS) { requestAnimationFrame(render); return; }
+            atlasLastFrameAt = now;
+        }
+
         time += 0.016;
 
         currentView.lonMin += (targetView.lonMin - currentView.lonMin) * LERP_SPEED;
@@ -790,27 +784,11 @@
                 const isActive = activeCountries.has(key);
                 const hasLocation = locationCountryMap.hasOwnProperty(key);
 
-                // The fill masks the terrain, so heavier alpha means LESS detail
-                // and a hover highlight is simply an unfilled (alpha 0) shape.
-                // Three levels, kept far enough apart to stay legible:
-                //   0.00  hovered  - full terrain, the strongest state
-                //   0.55  neutral  - the map's default
-                //   0.72  listener - flatter than neutral, so it reads as
-                //                    marked, but nowhere near the old 0.94,
-                //                    which turned a country the size of Russia
-                //                    into a solid white void.
-                // Listener countries must stay well clear of 0 or hovering them
-                // produces no visible change at all.
                 const maskStyle = (isActive || hasLocation)
                     ? (isDark ? 'rgba(21,22,23,0.72)' : 'rgba(255,255,255,0.72)')
                     : (isDark ? 'rgba(21,22,23,0.55)' : 'rgba(255,255,255,0.55)');
 
                 if (isHighlighted) {
-                    // The fill is a mask over the terrain, so a highlight is an
-                    // unfilled hole. Mask every polygon EXCEPT the ones in the
-                    // hovered region — otherwise the rest of a partly-matching
-                    // country (all of Russia, say) is left unmasked and reads
-                    // as highlighted too.
                     ctx.fillStyle = maskStyle;
                     drawCountryPath(r, stride, key, hoveredRegion, true);
                     ctx.fill();

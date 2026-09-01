@@ -3,7 +3,6 @@
 
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 <head>
     
@@ -22,6 +21,7 @@
         <link rel="stylesheet" href="{% static 'css/wiehr-theme.css' %}">
         <link rel="stylesheet" href="{% static 'css/waitforitall.css' %}">
         <link rel="stylesheet" href="{% static 'css/nothingisalitwithoutthis.css' %}">
+        <link rel="stylesheet" href="{% static 'css/whatliesbeneath.css' %}">
     {% endcompress %}
 
     {% block extra_css %}{% endblock %}
@@ -29,6 +29,12 @@
     <script>
     (function(){'use strict';var L='light',D='dark',K='wiehr-theme';function g(){return localStorage.getItem(K)||L}function a(t){document.documentElement.setAttribute('data-wiehr-theme',t);var b=t===D?'#151617':'#F4F4F4';document.documentElement.style.setProperty('background',b,'important');if(document.body){document.body.style.setProperty('background',b,'important');document.body.style.color=t===D?'#f4f4f4':'#151617'}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t===D?'#151617':'#f4f4f4';var i=document.getElementById('lightnessicon');if(i)i.style.filter=t===D?'invert(1)':'none'}function toggle(){var c=g(),n=c===L?D:L;localStorage.setItem(K,n);a(n);return n}a(g());if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){a(g())})}window.WiehrTheme={get:g,set:function(t){localStorage.setItem(K,t);a(t)},toggle:toggle,LIGHT:L,DARK:D}})();
 </script>
+
+    {% comment %}Device tier, decided once and stamped on <html> before first
+    paint so the stylesheets below can react to it without a flash. Synchronous
+    and ahead of everything else on purpose — every animated module reads
+    window.WiehrTier for its frame loop and its density.{% endcomment %}
+    <script src="{% static 'js/howfastareyou.js' %}"></script>
 
     {% block head %}
     {% endblock %}
@@ -86,7 +92,22 @@
     }
     </script>
 </head>
-<body class="loading" data-breadcrumb-label="{% block breadcrumb_label %}{% endblock %}">
+<body class="loading">
+    {% comment %}Every page names what sits behind it, so no page is a bare
+    colour. Entity pages point at their own greyscale mark in images/backdrop/
+    (built from the OG card in images/seo/); item pages point at the thing the
+    item actually is — a cover, a still, a photograph — and declare
+    backdropmode "art" so it is desaturated rather than inverted.
+
+    This is also what makes the liquid glass work: the refraction filter needs
+    an edge behind the pane to bend, and a flat page colour has none. See
+    whatliesbeneath.css.{% endcomment %}
+    <div class="whatliesbeneath" aria-hidden="true">
+        <div class="themarkbehind"
+             data-backdrop="{% block backdropmode %}mark{% endblock %}"
+             style="background-image:url('{% block backdrop %}{% static 'images/backdrop/network.jpg' %}{% endblock %}')"></div>
+    </div>
+
     <canvas id="floatingdustcanvas" class="floatingdustcanvas" aria-hidden="true"></canvas>
     <div id="moneyruinseverythingoverlay" class="moneyruinseverything"></div>
 
@@ -100,42 +121,97 @@
                 <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="7" result="noise"/>
                 <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
             </filter>
+
+            {% comment %}Real refraction, not a bevel drawn to look like one.
+
+            A straight line crossing behind real glass visibly bends — that is
+            what sells the iOS reference even over a near-white photo, more
+            than any tint. feDisplacementMap does exactly that to a
+            backdrop-filter: broad, low-frequency turbulence (a few large
+            waves, not fine grain) pushed through a wide Gaussian blur so the
+            warp reads as one smooth lens rather than noise, then applied as
+            the actual pixel displacement.
+
+            Chromium-only: backdrop-filter ignores an unsupported function
+            inside its value list, which invalidates the whole declaration, so
+            the CSS declares a plain blur() first and this filter second —
+            browsers that cannot use url() here simply never reach the second
+            line and keep the plain blur.{% endcomment %}
+            <filter id="wiehr-liquid-glass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="7" result="warp"/>
+                <feGaussianBlur in="warp" stdDeviation="10" result="warpsoft"/>
+                <feDisplacementMap in="SourceGraphic" in2="warpsoft" scale="46" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
         </defs>
     </svg>
 
-    <a href="/" class="wilogoatleft noiseonhover" aria-label="Wiehr">
-        <img src="{% static 'images/entities/wiehr_text_logo.svg' %}" alt="Wiehr" width="80" height="16">
-    </a>
+    {% comment %}One header, not two floating chips. The logo and the breadcrumb
+    were separate fixed elements that happened to be level with each other; as
+    one bar they are a single piece of glass spanning the page, which is also
+    the only version where "aligned with the logo and the menu" means anything
+    on the pane below.{% endcomment %}
+    <header class="acrossthetop" id="acrossthetop">
+        <a href="/" class="wilogoatleft noiseonhover" aria-label="Wiehr">
+            <img src="{% static 'images/entities/wiehr_text_logo.svg' %}" alt="Wiehr" width="80" height="16">
+        </a>
 
-    <nav class="youarehere" id="youarehere" aria-label="Breadcrumb">
-        <div class="youarehereitem">
-            <button class="labyrinthopenseverything noiseonhover" id="labyrinthopenseverything" aria-label="Menu">
-                <img src="{% static 'images/entities/labyrinth.svg' %}" alt="Menu" class="labyrinthicon" width="20" height="20">
-            </button>
-        </div>
-    </nav>
+        <nav class="youarehere" id="youarehere" aria-label="Breadcrumb">
+            <div class="youarehereitem">
+                <button class="labyrinthopenseverything noiseonhover" id="labyrinthopenseverything" aria-label="Menu">
+                    <img src="{% static 'images/entities/labyrinth.svg' %}" alt="Menu" class="labyrinthicon" width="20" height="20">
+                </button>
+            </div>
+        </nav>
+    </header>
 
     <div class="whatareyouinterestedin" id="whatareyouinterestedin">
+        {% comment %}Filled in on hover with the backdrop of the route under
+        the cursor, so the menu shows you where you would be going rather than
+        only naming it. The overlay itself is now glass over the page instead
+        of an opaque sheet, so this reads as something seen through it.
+        {% endcomment %}
+        <div class="wherewewouldgo" id="wherewewouldgo" aria-hidden="true"></div>
         <div class="pickyourdestination">
+            {% comment %}One pane, not three. The routes, the legal links and
+            the language/theme knobs are all "the menu", so they live in the
+            same piece of glass instead of a tree floating above two chips
+            pinned to opposite corners of the viewport.
+
+            .bottomofeverything only ever appeared while the menu was open —
+            the JS reveals it in openMenu and nowhere else — so being fixed to
+            the viewport was never buying it anything.{% endcomment %}
             <div class="treeofalloptions">
                 <div class="routesforyou"></div>
+
+                <div class="bottomofeverything" id="bottomofeverything">
+                    {% comment %}Two pairs, one rule apiece: the legal pages,
+                    then the two pages about the work rather than in it. They
+                    were full rows in the route tree above, which spent two of
+                    nine slots on the least-visited destinations. They keep
+                    their hover backdrops — the preview binds to
+                    [data-routebackdrop] anywhere inside the overlay.{% endcomment %}
+                    <div class="lastresortlinks">
+                        <a href="/privacy" class="lastresortlink"
+                           data-routebackdrop="{% static 'images/backdrop/legal.jpg' %}">PRIVACY</a>
+                        <a href="/terms" class="lastresortlink"
+                           data-routebackdrop="{% static 'images/backdrop/legal.jpg' %}">TERMS</a>
+                        <span class="lastresortsplit" aria-hidden="true">|</span>
+                        <a href="/licensing" class="lastresortlink"
+                           data-routebackdrop="{% static 'images/backdrop/license.jpg' %}">LICENSING</a>
+                        <a href="/support" class="lastresortlink"
+                           data-routebackdrop="{% static 'images/backdrop/support.jpg' %}">SUPPORT</a>
+                    </div>
+                    <div class="whichknobs">
+                        <button class="lightordarkness noiseonhover" id="lightordarkness" aria-label="Toggle theme">
+                            <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" id="lightnessicon" width="16" height="16">
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="bottomofeverything" id="bottomofeverything">
-        <div class="lastresortlinks">
-            <a href="/licensing" class="lastresortlink">LICENSING</a>
-            <a href="/support" class="lastresortlink">SUPPORT</a>
-            <span class="lastresortsep" aria-hidden="true">|</span>
-            <a href="/privacy" class="lastresortlink">PRIVACY</a>
-            <a href="/terms" class="lastresortlink">TERMS</a>
-        </div>
-        <button class="lightordarkness noiseonhover" id="lightordarkness" aria-label="Toggle theme">
-            <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" id="lightnessicon" width="16" height="16">
-        </button>
-    </div>
 
-    <div class="versionmark" id="versionmark">V1.0</div>
+    <div class="versionmark" id="versionmark">V1.1</div>
     <div class="copyrightmark" id="copyrightmark">© 2025 — 2125 Wiehr</div>
 
     <div id="iwanttoeathealthyfood">

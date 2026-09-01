@@ -1,9 +1,10 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% block title %}WHO ARE YOU — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/whoareyou.jpg' %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
@@ -84,25 +85,21 @@
             <img src="{% static 'images/live/whoareyou.gif' %}" alt="Wiehr" loading="eager" decoding="async" fetchpriority="high" draggable="false" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease-in-out;">
         </div>
 
-        <div class="allthatisleft">
-            <div class="wordsaboutnothing">
-                <p>Identifying myself as <span class="iamastring">6FruWhmivKNoqxq+NOikKDMwKsRc0gaQ4lWMY0uw93Y=</span>.</p>
-                <p>Not represented by any institution. Not belong to any ideology, race, sex and don't translate political views.</p>
-            </div>
-        </div>
+        {% comment %}One run of prose, no section labels.
 
-        <div class="ifyouinsist">
-            <p>If you want to work with me:
-                <a href="/composer" class="onewaytohireme">Composer</a>
-                <span class="thinlinebetweenjobs">/</span>
-                <a href="/engineer" class="onewaytohireme">Engineer</a>
-            </p>
-            <p>For clearance, contact label:
-                <a href="mailto:igor@labelnisha.com">igor@labelnisha.com</a>
-            </p>
-            <p>For any other inquires, send email to
-                <a href="mailto:hello@wiehr.cc?subject=Zero">hello@wiehr.cc</a>
-            </p>
+        The page was three labelled blocks — Q&A / HIRE ME / CONTACT — which
+        is a lot of chrome for six sentences, and the labels said less than the
+        sentences under them. The hire links and the two addresses now sit
+        inside the sentences that introduce them, so there is nothing to read
+        past to reach the point.{% endcomment %}
+        <div class="wordsaboutnothing">
+            <p>Identifying myself as <span class="iamastring">6FruWhmivKNoqxq+NOikKDMwKsRc0gaQ4lWMY0uw93Y=</span>.</p>
+
+            <p>Not represented by any institution. Not belong to any ideology, race, sex and don't translate political views.</p>
+
+            <p>You can hire me as a <a href="/engineer" class="inlinelink">Software Engineer</a> or a <a href="/composer" class="inlinelink">Music Composer</a>.</p>
+
+            <p>For clearance, contact <a href="mailto:igor@labelnisha.com" class="inlinelink">igor@labelnisha.com</a>. For other inquiries, contact <a href="mailto:hello@wiehr.cc?subject=Zero" class="inlinelink">hello@wiehr.cc</a>.</p>
         </div>
     </div>
 {% endblock %}
