@@ -1,21 +1,22 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
-{% block title %}ATLAS — Wiehr. Official Website{% endblock %}
+{% block title %}atlas. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/atlas.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/atlas">
     <link rel="alternate" href="{{ site_url_nodashed }}/atlas" />
 
-    <meta name="title" content="ATLAS — Wiehr. Official Website">
-    <meta property="vk:title" content="ATLAS — Wiehr. Official Website" />
-    <meta name="twitter:title" content="ATLAS — Wiehr. Official Website" />
-    <meta property="og:title" content="ATLAS — Wiehr. Official Website" />
-    <meta itemprop="name" content="ATLAS — Wiehr. Official Website">
+    <meta name="title" content="atlas. — Wiehr. Official Website">
+    <meta property="og:title" content="atlas. — Wiehr. Official Website" />
+    <meta property="vk:title" content="atlas. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="atlas. — Wiehr. Official Website" />
+    <meta itemprop="name" content="atlas. — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="ATLAS — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="atlas. — Wiehr. Official Website" />
 
     <meta name="description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
     <meta property="og:description" content="Photography collections from around the world by Wiehr. Explore locations on an interactive map." />
@@ -85,7 +86,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">Atlas — Wiehr. Official Website</h1>
+    <h1 class="seoonly">atlas. — Wiehr. Official Website</h1>
     <h2 class="seoonly">Photography collections from around the world by Wiehr on an interactive atlas</h2>
     <div id="flatearththeory">
         <canvas id="tracingmysteps"></canvas>

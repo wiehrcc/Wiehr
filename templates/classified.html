@@ -2,7 +2,9 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}CLASSIFIED. Wiehr{% endblock %}
+{% block title %}classified. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/labyrinth.jpg' %}{% endblock %}
 
 {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 
@@ -11,15 +13,35 @@
         <link rel="stylesheet" href="{% static 'css/entities/youcannotseethis.css' %}">
     {% endcompress %}
 
-    <meta name="description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
-    <meta property="og:description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
-    <meta name="twitter:description" content="This page is classified. Wait for release at CLASSIFIED — Wiehr. Official Website." />
-    <meta property="og:url" content="{{ site_url_nodashed }}/" />
-    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta name="title" content="classified. — Wiehr. Official Website">
+    <meta property="og:title" content="classified. — Wiehr. Official Website" />
+    <meta property="vk:title" content="classified. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="classified. — Wiehr. Official Website" />
+    <meta itemprop="name" content="classified. — Wiehr. Official Website">
+    <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="Wiehr. Official Website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@wiehrcc" />
+
+    <meta name="description" content="This page is classified. Wait for release at classified. — Wiehr. Official Website." />
+    <meta property="og:description" content="This page is classified. Wait for release at classified. — Wiehr. Official Website." />
+    <meta property="vk:description" content="This page is classified. Wait for release at classified. — Wiehr. Official Website." />
+    <meta itemprop="description" content="This page is classified. Wait for release at classified. — Wiehr. Official Website." />
+    <meta name="twitter:description" content="This page is classified. Wait for release at classified. — Wiehr. Official Website." />
+
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/" />
+
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta name="twitter:image:alt" content="Wiehr. Official Website" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/network.png' %}" />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
 {% endblock %}
 
 {% block content %}

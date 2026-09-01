@@ -1,0 +1,24 @@
+.whatliesbeneath,
+.wherewewouldgo {
+    display: none;
+}
+
+.whatareyouinterestedin {
+    background: var(--color-bg);
+}
+
+.pickyourdestination {
+    position: relative;
+    z-index: 1;
+}
+
+.treeofalloptions {
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+    .treeofalloptions {
+        padding: 1rem 1.1rem;
+    }
+}

@@ -1,15 +1,8 @@
-
-
-#iwanttoeathealthyfood:has(.sellingmyself) {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 .sellingmyself {
-    max-width: 480px;
-    width: 80%;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 5rem;
+    width: var(--page-frame);
+    margin: var(--space-header) auto var(--space-bottom);
+    padding: var(--page-gutter);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -54,11 +47,6 @@
     opacity: 0.4;
     margin: 0;
     padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-[data-wiehr-theme="dark"] .pitchlabel {
-    border-bottom-color: rgba(244, 244, 244, 0.08);
 }
 
 .storyisell p {
@@ -83,7 +71,7 @@
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    font-size: var(--font-size-thin, 13px);
+    font-size: var(--font-size-thin);
 }
 
 .whatyouget {
@@ -161,19 +149,11 @@
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: none;
     background: none;
     color: var(--color-text);
     opacity: 0.6;
     transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-
-[data-wiehr-theme="dark"] .onepaperformat {
-    border-color: rgba(244, 244, 244, 0.12);
-}
-
-.onepaperformat:not(:first-child) {
-    border-left: none;
 }
 
 .onepaperformat:hover {
@@ -196,7 +176,7 @@
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    border: 1px solid var(--color-text);
+    border: none;
     background: var(--color-text);
     color: var(--color-bg);
     text-decoration: none;
@@ -210,8 +190,6 @@
 
 @media (max-width: 640px) {
     .sellingmyself {
-        max-width: 88%;
-        padding: 5rem 1rem 4rem;
         gap: 1.1rem;
     }
 

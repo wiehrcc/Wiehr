@@ -64,8 +64,6 @@ def archive_page(request):
         if current_url != target_url:
             return redirect(target_url)
 
-    # Oldest first on the index (2025 -> 2125); a single year's own page lists
-    # its items newest first instead.
     archives = list(WiehrArchiveModel.objects.filter(is_visible=True).order_by('year'))
 
     page_size = 10
@@ -82,8 +80,6 @@ def archive_page(request):
 
 
 def archive_object_page(request, slug):
-    # The route is <int:slug>, so a non-numeric year never reaches this view —
-    # it 404s at resolution instead of hitting the ORM and raising ValueError.
     archive = WiehrArchiveModel.objects.filter(year=slug, is_visible=True).first()
     if not archive:
         raise Http404("No archive for that year")
@@ -97,10 +93,6 @@ def archive_object_page(request, slug):
         if current_url != target_url:
             return redirect(target_url)
 
-    # A year's own page runs newest first, the opposite of the index's oldest-
-    # first year list. `order` is a manual curation field rather than a date, so
-    # it cannot lead here — sorting by it put the newest storage item last.
-    # It stays as the tiebreaker for items sharing a timestamp.
     globe_items = WiehrGlobeModel.objects.filter(
         is_visible=True, year=archive.year,
     ).order_by('-date', '-order')
@@ -116,19 +108,19 @@ def archive_object_page(request, slug):
     ).order_by('-created_at', '-order')
 
     groups = [
-        ('GLOBE', 'images/entities/globe.svg', [
+        ('globe.', 'images/entities/globe.svg', [
             {'url': f'/globe/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in globe_items
         ]),
-        ('ATLAS', 'images/entities/atlas.svg', [
+        ('atlas.', 'images/entities/atlas.svg', [
             {'url': f'/atlas/{i.internal_id}', 'number': i.internal_id, 'title': i.country_title}
             for i in atlas_items
         ]),
-        ('STORAGE', 'images/entities/storage.svg', [
+        ('storage.', 'images/entities/storage.svg', [
             {'url': f'/storage/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in storage_items
         ]),
-        ('LAB', 'images/entities/lab.svg', [
+        ('lab.', 'images/entities/lab.svg', [
             {'url': f'/lab/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in lab_items
         ]),
@@ -162,9 +154,13 @@ def _archive_object_sections(groups, per_section=10):
     for label, icon, items in groups:
         if not items:
             continue
+        if count >= per_section:
+            sections.append(current)
+            current = []
+            count = 0
         current.append({'is_header': True, 'label': label, 'icon': icon})
         for item in items:
-            if count == per_section:
+            if count >= per_section:
                 sections.append(current)
                 current = [{'is_header': True, 'label': label, 'icon': icon}]
                 count = 0
@@ -299,7 +295,7 @@ def lab_page(request):
 
     lab_list = WiehrLabModel.objects.filter(
         is_visible=True
-    ).prefetch_related('links').order_by('order', '-start_year')
+    ).prefetch_related('links').order_by('-order', 'start_year')
 
     section_size = 5
     sections = []
@@ -372,6 +368,7 @@ def storage_page(request):
                 'filled': True,
                 'locked': item.access_type == 'password',
                 'cover': item.cover_image.url if item.cover_image else '',
+                'price': item.price_display,
             })
         else:
             grid_cells.append({'id': cell_id, 'filled': False})
@@ -403,6 +400,7 @@ def storage_object_page(request, slug):
     password_required = False
     license_key_required = False
     license_unlocked = False
+    just_unlocked = False
     auto_issue_required = False
     auto_issue_unlocked = False
     access_granted = False
@@ -439,7 +437,12 @@ def storage_object_page(request, slug):
             ).exists()
             if valid:
                 license_unlocked = True
+                just_unlocked = True
                 request.session[f'storage_license_unlock_{storage_obj.id}'] = True
+                # The key itself, not just the fact of it: the unlocked panel
+                # links to /licensing?key=... so the buyer can pull their own
+                # agreement, and that needs the actual value back.
+                request.session[f'storage_license_key_{storage_obj.id}'] = entered_key
             else:
                 error_message = 'Invalid or inactive license key for this item.'
 
@@ -478,6 +481,8 @@ def storage_object_page(request, slug):
 
     download_locked = (license_key_required and not license_unlocked) or (auto_issue_required and not auto_issue_unlocked)
 
+    license_key_value = request.session.get(f'storage_license_key_{storage_obj.id}', '') if license_unlocked else ''
+
     storage_links = storage_obj.links.all() if access_granted else []
 
     context = {
@@ -487,6 +492,8 @@ def storage_object_page(request, slug):
         'password_required': password_required,
         'license_key_required': license_key_required,
         'license_unlocked': license_unlocked,
+        'license_key_value': license_key_value,
+        'just_unlocked': just_unlocked,
         'auto_issue_required': auto_issue_required,
         'auto_issue_unlocked': auto_issue_unlocked,
         'download_locked': download_locked,
@@ -498,6 +505,25 @@ def storage_object_page(request, slug):
     }
 
     return render(request, 'objects/storage_object.html', context)
+
+
+def storage_preview_download(request, slug):
+    """The free sample. Deliberately ungated.
+
+    The whole point of the preview is that someone who has not paid, not
+    written to anyone and not been issued a key can still hear the thing, so
+    this checks nothing except that a preview file exists. It does not touch
+    download_count either - that counts sales of the real file.
+    """
+    storage_obj = WiehrStorageModel.objects.filter(slug=slug, is_visible=True).first()
+    if not storage_obj or not storage_obj.preview_file:
+        return redirect("/storage")
+
+    return FileResponse(
+        storage_obj.preview_file.open('rb'),
+        as_attachment=True,
+        filename=storage_obj.preview_file.name.split('/')[-1],
+    )
 
 
 def storage_download(request, slug):
@@ -787,8 +813,6 @@ SHORTENER_SESSION_KEY = 'shortener_authed'
 def shortener_page(request):
     settings_row = ShortenerSettings.load()
 
-    # Once the password checks out it is remembered on the session, so the
-    # field is only ever filled in on the first visit from that browser.
     authed = request.session.get(SHORTENER_SESSION_KEY) is True
 
     created = None
@@ -796,9 +820,6 @@ def shortener_page(request):
     gate_error = None
 
     if request.method == 'POST' and not authed:
-        # Gate submission. Nothing else on the page is reachable until this
-        # passes, so it is handled on its own and ends in a redirect (PRG)
-        # so a refresh never re-posts the password.
         password = (request.POST.get('password') or '').strip()
 
         ip = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR', '0')
@@ -834,8 +855,6 @@ def shortener_page(request):
 
         if not error:
             if code:
-                # A name is explicit intent, so never silently hand back some
-                # older random code for the same destination.
                 taken = Shortener.objects.filter(short_url__iexact=code).first()
                 if taken and taken.long_url != long_url:
                     error = f'The name {code} already points somewhere else.'
@@ -859,11 +878,9 @@ def shortener_page(request):
 
 
 def short_redirect(request, short_url):
-    # Codes are stored uppercase; match case-insensitively so /s/support and
-    # /s/SUPPORT both land.
     shortener = Shortener.objects.filter(short_url__iexact=short_url).first()
     if not shortener:
-        return redirect('/s')
+        return redirect('/')
 
     Shortener.objects.filter(pk=shortener.pk).update(times_followed=F('times_followed') + 1)
     return redirect(shortener.long_url)
@@ -914,14 +931,6 @@ def terms_page(request):
         'site_url_nodashed': settings.SITE_URL_NODASHED,
     }
     return render(request, 'legal/terms.html', context)
-
-
-def support_page(request):
-    context = {
-        'site_url_nodashed': settings.SITE_URL_NODASHED,
-    }
-    return render(request, 'entities/support.html', context)
-
 
 
 def disconnect(request, token=None):
@@ -983,8 +992,6 @@ def api_subscribe(request):
     country = (data.get('country') or '').strip()
     country_code = (data.get('country_code') or '').strip().upper()[:2]
 
-    # This is the only signup path now that /connect is gone, so it carries the
-    # validation the retired TeamSubscriptionForm used to provide.
     try:
         validate_email(email)
     except ValidationError:
@@ -1059,28 +1066,22 @@ def api_network_locations(request):
 
 
 SEO_EXCLUDED_PATHS = {
-    # Live but deliberately unindexed. (The /code, /sound and /connect legacy
-    # routes were removed outright, so they no longer resolve at all. The
-    # background-audio system was removed too, so /static/sound/ is gone.)
     '/disconnect', '/admin',
     '/ads.txt', '/robots.txt', '/sitemap.xml', '/llms.txt',
-    '/licensing',
     '/s',
+    '/privacy', '/terms',
 }
 
 SEO_ASSET_PREFIXES = ('/static/', '/media/')
 
-# Assets crawlers need to render the site, and asset dirs that are noise.
 SEO_ALLOWED_ASSET_PATHS = ('/static/css/', '/static/js/', '/static/font/', '/media/')
 SEO_DISALLOWED_PATHS = (
-    '/admin/', '/api/', '/s/', '/disconnect/', '/licensing/',
+    '/admin/', '/api/', '/s/', '/disconnect/',
     '/static/favicon/', '/static/images/platforms/',
 )
 
-# Rate-limited file endpoints — never worth a crawler's (or our) budget.
 SEO_EXCLUDED_SUFFIXES = ('/download',)
 
-# Per-bot overrides. Everything not listed inherits the wildcard group.
 SEO_BOT_RULES = {
     'Nutch':           {'allow': [], 'disallow': ['/'], 'crawl_delay': None},
     'adsbot-google':   {'allow': ['/'], 'disallow': None, 'crawl_delay': None},
@@ -1115,7 +1116,6 @@ def seo_public_paths():
         for entry in patterns:
             route = str(getattr(entry.pattern, '_route', '') or '')
             if isinstance(entry, URLResolver):
-                # The root urlconf include()s web.urls, so recurse.
                 walk(entry.url_patterns, prefix + route)
                 continue
             if not isinstance(entry, URLPattern):
@@ -1236,9 +1236,7 @@ def sitemap_xml(request):
         {'loc': '/composer',  'changefreq': 'monthly', 'priority': '0.9'},
         {'loc': '/engineer',  'changefreq': 'monthly', 'priority': '0.9'},
         {'loc': '/whoareyou', 'changefreq': 'monthly', 'priority': '0.8'},
-        {'loc': '/support',  'changefreq': 'monthly', 'priority': '0.6'},
-        {'loc': '/privacy',   'changefreq': 'yearly',  'priority': '0.3'},
-        {'loc': '/terms',     'changefreq': 'yearly',  'priority': '0.3'},
+        {'loc': '/licensing', 'changefreq': 'monthly', 'priority': '0.5'},
     ]
     for page in static_pages:
         add_url(page['loc'], page['changefreq'], page['priority'])
@@ -1259,7 +1257,10 @@ def sitemap_xml(request):
         stamp = project.modified_at or project.created_at
         add_url(f'/lab/{project.slug}', 'yearly', '0.6', stamp.strftime('%Y-%m-%d'))
 
-    for storage_item in WiehrStorageModel.objects.filter(is_visible=True).exclude(access_type='password').order_by('-order'):
+    # 'link' means "anyone with the URL" — i.e. deliberately unlisted, so it has
+    # no more business in a sitemap than a password-gated item does.
+    for storage_item in WiehrStorageModel.objects.filter(is_visible=True).exclude(
+            access_type__in=('password', 'link')).order_by('-order'):
         stamp = storage_item.modified_at or storage_item.created_at
         add_url(f'/storage/{storage_item.slug}', 'monthly', '0.6', stamp.strftime('%Y-%m-%d'))
 

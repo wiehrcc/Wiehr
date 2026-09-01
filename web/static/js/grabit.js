@@ -1,8 +1,6 @@
 (function () {
     'use strict';
 
-    // Delegated so it covers .grabit buttons on any page, including any
-    // rendered after load.
     function flash(btn) {
         var was = btn.getAttribute('data-label') || btn.textContent;
         btn.setAttribute('data-label', was);
@@ -27,8 +25,6 @@
     }
 
     function copy(text, btn) {
-        // navigator.clipboard needs a secure context. 127.0.0.1 counts, a LAN
-        // IP does not, so keep the textarea path as a fallback.
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text)
                 .then(function () { flash(btn); })

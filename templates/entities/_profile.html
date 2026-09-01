@@ -1,12 +1,15 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
 {% comment %}
 Shared body for the two hire pages. /engineer and /composer
 differ only in their head/SEO blocks and the config dict fed from the view.
 {% endcomment %}
+
+{% comment %}Both hire pages share the one mark, the same way they share the
+one OG card.{% endcomment %}
+{% block backdrop %}{% static 'images/backdrop/hire.jpg' %}{% endblock %}
 
 {% block extra_css %}
     {% compress css inline %}

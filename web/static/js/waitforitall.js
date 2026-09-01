@@ -21,21 +21,17 @@
     let totalResources = 0;
     let isComplete = false;
 
+    /* The tier is decided once in js/howfastareyou.js, which runs before this
+       file. This used to be a fourth private copy of the cores/memory/UA
+       guess, and it disagreed with the others: it put every phone in the
+       bottom bucket. All that is left here is the density that follows. */
     function detectPerformance() {
-        const cores = navigator.hardwareConcurrency || 4;
-        const memory = navigator.deviceMemory || 4;
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const Tier = window.WiehrTier;
+        const name = Tier ? Tier.name : 'mid';
 
-        if (isMobile || cores < 4 || memory < 4) {
-            CONFIG.particleCount = 300;
-            CONFIG.minDuration = 500;
-            return 'low';
-        } else if (cores >= 8 && memory >= 8) {
-            CONFIG.particleCount = 1200;
-            return 'high';
-        }
-        CONFIG.particleCount = 600;
-        return 'medium';
+        CONFIG.particleCount = Tier ? Tier.pick(1200, 550, 250) : 550;
+
+        return name === 'mid' ? 'medium' : name;
     }
 
     class Particle {
@@ -195,10 +191,18 @@
 
     function simulateLoading() {
         startTime = Date.now();
+        /* A weaker device gets a SHORTER splash, not a longer one.
+
+           This read the other way round — `low` was held on CONFIG.maxDuration,
+           2.5 seconds — so the slowest machines sat on the loading screen three
+           times as long as the fastest ones and the whole site felt like it was
+           lagging before a single page pixel had drawn. The splash is
+           decoration; it is the first thing to give up when there is less to
+           spend. */
         const performance = detectPerformance();
-        const duration = performance === 'high' ? CONFIG.minDuration : 
-                        performance === 'medium' ? CONFIG.minDuration + 400 : 
-                        CONFIG.maxDuration;
+        const duration = performance === 'low' ? 500 :
+                        performance === 'medium' ? CONFIG.minDuration :
+                        CONFIG.minDuration + 200;
 
         function step() {
             if (isComplete) return;

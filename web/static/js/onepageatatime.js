@@ -106,10 +106,6 @@
 
             if (Math.abs(delta) > 30 && timeDelta > 50) {
                 e.preventDefault();
-                // delta > 0 means the finger moved up, i.e. the same intent as
-                // scrolling down: advance. This matched handleWheel's sign but
-                // was applied inverted, so swiping up went backwards — and did
-                // nothing at all on the first slice.
                 if (delta > 0 && current < slices.length - 1) goTo(current + 1);
                 else if (delta < 0 && current > 0) goTo(current - 1);
                 touchStartY = touchEndY;

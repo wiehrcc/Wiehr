@@ -13,7 +13,6 @@
 - [Composer](https://wiehr.cc/composer): Composer profile — bio, credits, rates, and a downloadable one-pager CV
 - [Engineer](https://wiehr.cc/engineer): Engineer profile — bio, credits, rates, and a downloadable one-pager CV
 - [Who Are You](https://wiehr.cc/whoareyou): Artist statement and contact
-- [Support](https://wiehr.cc/support): Support Wiehr on Ko-fi
 - [Privacy](https://wiehr.cc/privacy): Privacy Policy and data protection
 - [Terms](https://wiehr.cc/terms): Terms of Service
 

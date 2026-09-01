@@ -27,20 +27,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'compressor',
-    'ckeditor',
     'htmlmin',
     
     'web',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'wiehr.cache_middleware.StaticFilesCacheMiddleware',
-    # WhiteNoise serves /static/ straight from STATIC_ROOT, which means every
-    # edit needs a collectstatic before it shows up. Only mount it on PROD;
-    # locally the staticfiles finders serve the source files live (see urls.py).
     *(['whitenoise.middleware.WhiteNoiseMiddleware'] if ENV == 'PROD' else []),
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +59,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'web.context_processors.site_context',
             ],
         },
     },
@@ -111,13 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 TIME_ZONE = 'UTC'
-USE_I18N = True
+USE_I18N = False
 USE_TZ = True
-LANGUAGE_CODE = 'en-us'
-
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale'),
-]
+LANGUAGE_CODE = 'en'
 
 DATE_FORMAT = 'd.m.Y'
 DATE_INPUT_FORMATS = ('%d.%m.%Y', )
@@ -202,18 +195,6 @@ else:
     HTML_MINIFY = True
 
 MEDIA_FULL = f"{SITE_URL}{MEDIA_URL}"
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['|', 'Bold', 'Italic', 'Underline', 'Blockquote', 'Strike'],
-            ['NumberedList', 'BulletedList', '|', 'Outdent', 'Indent', '|', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink'],
-            ['RemoveFormat', '-', 'Preview', 'Maximize']
-        ],
-    },
-}
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

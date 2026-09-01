@@ -109,10 +109,38 @@
             probe.style.position = 'absolute';
             document.body.appendChild(probe);
             const style = window.getComputedStyle(probe);
-            const paddingTop = parseFloat(style.paddingTop) || 140;
-            const paddingBottom = parseFloat(style.paddingBottom) || 80;
+            const reserved =
+                (parseFloat(style.marginTop) || 0) +
+                (parseFloat(style.marginBottom) || 0) +
+                (parseFloat(style.paddingTop) || 0) +
+                (parseFloat(style.paddingBottom) || 0) +
+                (parseFloat(style.borderTopWidth) || 0) +
+                (parseFloat(style.borderBottomWidth) || 0);
             document.body.removeChild(probe);
-            return vh - paddingTop - paddingBottom - CONFIG.safetyMargin;
+            return vh - reserved - CONFIG.safetyMargin;
+        }
+
+        getColumnGap() {
+            const probe = document.createElement('div');
+            probe.className = 'viewport-section-content';
+            probe.style.cssText = 'visibility:hidden;position:absolute';
+            document.body.appendChild(probe);
+            const gap = parseFloat(window.getComputedStyle(probe).rowGap) || 0;
+            document.body.removeChild(probe);
+            return gap;
+        }
+
+        getContentWidth() {
+            const probe = document.createElement('div');
+            probe.className = 'viewport-section-content';
+            probe.style.cssText = 'visibility:hidden;position:absolute';
+            document.body.appendChild(probe);
+            const style = window.getComputedStyle(probe);
+            const inner = probe.clientWidth -
+                (parseFloat(style.paddingLeft) || 0) -
+                (parseFloat(style.paddingRight) || 0);
+            document.body.removeChild(probe);
+            return Math.max(160, Math.round(inner));
         }
 
         sliceContent() {
@@ -120,11 +148,23 @@
             if (sourceElements.length === 0) return;
 
             const availableHeight = this.getAvailableHeight();
+            const columnGap = this.getColumnGap();
+            const contentWidth = this.getContentWidth();
+
+            const measureHost = document.createElement('div');
+            measureHost.className = 'viewport-section';
+            measureHost.style.cssText =
+                'position:absolute;left:-99999px;top:0;visibility:hidden;' +
+                'display:block;height:auto;width:' + contentWidth + 'px;';
+
             const tempContainer = document.createElement('div');
-            const contentWidth = Math.min(640, this.container.offsetWidth);
-            tempContainer.style.cssText = 'position:absolute;visibility:hidden;width:' + 
-                contentWidth + 'px;padding:0 30px;box-sizing:border-box;';
-            document.body.appendChild(tempContainer);
+            tempContainer.className = 'viewport-section-content';
+            tempContainer.style.cssText =
+                'width:100%;max-width:none;margin:0;padding:0;border:0;' +
+                'max-height:none;overflow:visible;';
+
+            measureHost.appendChild(tempContainer);
+            document.body.appendChild(measureHost);
 
             let currentSection = {
                 elements: [],
@@ -139,7 +179,8 @@
                 const clone = element.cloneNode(true);
                 tempContainer.innerHTML = '';
                 tempContainer.appendChild(clone);
-                const elementHeight = tempContainer.offsetHeight;
+                const elementHeight = tempContainer.offsetHeight +
+                    (currentSection.elements.length ? columnGap : 0);
 
                 const label = element.dataset.viewportLabel || null;
                 const icon = element.dataset.viewportIcon || null;
@@ -197,7 +238,7 @@
                 this.sections.push(currentSection);
             }
 
-            document.body.removeChild(tempContainer);
+            document.body.removeChild(measureHost);
             this.renderSections();
         }
 
@@ -358,16 +399,6 @@
                 const contentEl = document.createElement('div');
                 contentEl.className = 'viewport-section-content';
 
-                if (index === 0) {
-                    const lastUpdated = this.container.querySelector('.last-updated');
-                    if (lastUpdated) {
-                        const updatedEl = document.createElement('p');
-                        updatedEl.className = 'viewport-last-updated';
-                        updatedEl.textContent = lastUpdated.textContent;
-                        contentEl.appendChild(updatedEl);
-                    }
-                }
-
                 if (Array.isArray(section.elements)) {
                     section.elements.forEach(html => {
                         const wrapper = document.createElement('div');
@@ -496,10 +527,6 @@
             if (Math.abs(delta) > 30 && timeDelta > 50) {
                 e.preventDefault();
 
-                // delta > 0 means the finger moved up, i.e. the same intent as
-                // scrolling down: advance. handleWheel already treats a positive
-                // deltaY as "next"; this was applied inverted, so swiping up went
-                // backwards — and did nothing at all on the first section.
                 if (delta > 0 && this.currentIndex < this.sections.length - 1) {
                     this.goToSection(this.currentIndex + 1);
                 } else if (delta < 0 && this.currentIndex > 0) {

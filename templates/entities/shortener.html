@@ -2,8 +2,9 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}Shortener — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}SHORTENER{% endblock %}
+{% block title %}shortener. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/shortener.jpg' %}{% endblock %}
 
 {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 
@@ -11,13 +12,13 @@
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s">
     <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/s" />
 
-    <meta name="title" content="Shortener — Wiehr. Official Website">
-    <meta property="og:title" content="Shortener — Wiehr. Official Website" />
-    <meta property="vk:title" content="Shortener — Wiehr. Official Website" />
-    <meta name="twitter:title" content="Shortener — Wiehr. Official Website" />
-    <meta itemprop="name" content="Shortener — Wiehr. Official Website">
+    <meta name="title" content="shortener. — Wiehr. Official Website">
+    <meta property="og:title" content="shortener. — Wiehr. Official Website" />
+    <meta property="vk:title" content="shortener. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="shortener. — Wiehr. Official Website" />
+    <meta itemprop="name" content="shortener. — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="Shortener — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="shortener. — Wiehr. Official Website" />
 
     {% with page_desc="Wiehr link shortener — turn a long URL into a wiehr.cc/s short link." %}
     <meta name="description" content="{{ page_desc }}" />
@@ -39,7 +40,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
-    <meta name="twitter:image:alt" content="Shortener — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="shortener. — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/shortener.png' %}" />
 
@@ -52,7 +53,7 @@
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/s/#page",
-      "name": "Shortener — Wiehr",
+      "name": "shortener. — Wiehr",
       "description": "Wiehr link shortener.",
       "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/s",
       "isPartOf": {
@@ -70,7 +71,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">Link Shortener — Wiehr. Official Website</h1>
+    <h1 class="seoonly">Link shortener. — Wiehr. Official Website</h1>
 
     {% if not authed %}
     <div class="knockknock" id="shortenerGate">

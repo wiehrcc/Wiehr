@@ -1,21 +1,22 @@
 {% extends 'nothingmattersalikebase.html' %}
 {% load static %}
 {% load compress %}
-{% load i18n %}
 
-{% block title %}GLOBE — Wiehr. Official Website{% endblock %}
+{% block title %}globe. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/globe.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe">
     <link rel="alternate" href="{{ site_url_nodashed }}/globe" />
 
-    <meta name="title" content="GLOBE — Wiehr. Official Website">
-    <meta property="vk:title" content="GLOBE — Wiehr. Official Website" />
-    <meta name="twitter:title" content="GLOBE — Wiehr. Official Website" />
-    <meta property="og:title" content="GLOBE — Wiehr. Official Website" />
-    <meta itemprop="name" content="GLOBE — Wiehr. Official Website">
+    <meta name="title" content="globe. — Wiehr. Official Website">
+    <meta property="og:title" content="globe. — Wiehr. Official Website" />
+    <meta property="vk:title" content="globe. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="globe. — Wiehr. Official Website" />
+    <meta itemprop="name" content="globe. — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="GLOBE — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="globe. — Wiehr. Official Website" />
 
     <meta name="description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
     <meta property="og:description" content="Explore all music releases by Wiehr on an interactive 3D globe. Stream, read lyrics, and watch videos." />
@@ -85,7 +86,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">Globe — Wiehr. Official Website</h1>
+    <h1 class="seoonly">globe. — Wiehr. Official Website</h1>
     <h2 class="seoonly">Explore all music releases by Wiehr on an interactive 3D globe</h2>
     <div id="itsasmallworldafterall">
         <canvas id="spinmedizzy"></canvas>
@@ -102,7 +103,7 @@
             artist: '{{ release.artist|escapejs }}',
             date: '{{ release.date|date:"Y-m-d" }}',
             slug: '{{ release.slug }}',
-            image_url: '{{ site_url_nodashed }}/media/{{ release.image }}',
+            image_url: '/media/{{ release.image }}',
             background_color: '{{ release.background_color|default:"#000000" }}'
         }{% if not forloop.last %},{% endif %}
         {% endfor %}

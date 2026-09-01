@@ -1,8 +1,5 @@
 import io
 
-# Base-14 PDF font: on every machine, no embedding needed. licensee_name is
-# always the buyer's passport-transliterated Latin name, so Courier's
-# WinAnsi-only glyph set is not a limitation here.
 PDF_FONT_REGULAR = 'Courier'
 PDF_FONT_BOLD = 'Courier-Bold'
 
@@ -10,38 +7,54 @@ PDF_FONT_BOLD = 'Courier-Bold'
 def _ensure_pdf_fonts():
     return True
 
-FONT_FAMILY_BLOCK = """DIGITAL FONT STYLES (with glitch effects):
-• Thin
-• Medium
-• Black
-
-ANALOG FONT STYLES (without glitch effects):
-• Light
-• Regular
-• Bold
-
-CHARACTER SETS INCLUDED:
-• Basic Latin (ASCII)
-• Latin-1 Supplement
-• Cyrillic
-• Cyrillic Supplement
-
-SUPPORTED CODEPAGES:
-• Latin 1 (Windows 1252)
-• Cyrillic (Windows 1251)
-• Macintosh Character Set (US Roman)
-
-FILE FORMATS COVERED:
-• TrueType Font (.ttf)
-• OpenType Font (.otf)
-• Web Open Font Format (.woff, .woff2)
-• Any future font formats developed"""
-
 RULE = "=" * 80
+
+
+def _covered_block(licence):
+    """What section 1 lists, taken from the product itself.
+
+    A licence is a promise about a specific thing, so the description of that
+    thing belongs to the thing. Falls back to a generic line built from the
+    title and file type rather than to another product's spec sheet.
+    """
+    product = getattr(licence, 'product_storage', None)
+
+    if product is not None:
+        covers = (product.license_covers or '').strip()
+        if covers:
+            return covers
+        file_type = (product.file_type or '').strip()
+        lead = f"{product.title} — {file_type}" if file_type else product.title
+    else:
+        lead = licence.get_product_display()
+
+    return (
+        lead
+        + ", in all formats, styles and variations"
+        + "\ndistributed by the Licensor under this product name."
+    )
 
 
 def _section(number, title):
     return f"{RULE}\n{number}. {title}\n{RULE}"
+
+
+def _clean(text):
+    """Normalise line endings and drop characters no PDF font can draw.
+
+    Admin textareas submit CRLF - the HTML spec says they must - so anything
+    typed into `license_covers` arrives with a stray carriage return on every
+    line. The PDF builder splits on newlines and hands what is left to Courier,
+    which has no glyph for a carriage return and draws .notdef: a black box at
+    the end of every line. The DOCX and .txt outputs carried the same debris,
+    less visibly.
+
+    Cleaned here rather than on the field, so it holds for every row already
+    stored and every future source of the text, not only admin edits made from
+    now on.
+    """
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    return ''.join(ch for ch in text if ch == '\n' or ord(ch) >= 32)
 
 
 def build_agreement_text(licence):
@@ -70,7 +83,7 @@ def build_agreement_text(licence):
         "",
         f"This license applies to {product} in all formats, styles, and variations:",
         "",
-        FONT_FAMILY_BLOCK,
+        _covered_block(licence),
         "",
         _section(2, f"GRANT OF {license_type.upper()}"),
         "",
@@ -84,7 +97,7 @@ def build_agreement_text(licence):
         "• Client work and freelance services",
         "• Branding, logos, and corporate identity",
         "• Posters, albums, book covers, and packaging",
-        "• Websites and web font embedding",
+        "• Websites, web embedding, and online distribution",
         "• Applications, games, and software development",
         "• Video production, motion graphics, and broadcast media",
         "• 3D modeling and digital content creation",
@@ -241,7 +254,7 @@ def build_agreement_text(licence):
         "For license verification, contact Wiehr at hello@wiehr.cc",
     ]
 
-    return "\n".join(parts)
+    return _clean("\n".join(parts))
 
 
 def build_agreement_pdf(licence):

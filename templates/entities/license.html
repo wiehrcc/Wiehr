@@ -2,20 +2,21 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}License Verification — Wiehr. Official Website{% endblock %}
-{% block breadcrumb_label %}LICENSE{% endblock %}
+{% block title %}licensing. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/license.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing">
     <link rel="alternate" href="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
 
-    <meta name="title" content="License Verification — Wiehr. Official Website">
-    <meta property="vk:title" content="License Verification — Wiehr. Official Website" />
-    <meta name="twitter:title" content="License Verification — Wiehr. Official Website" />
-    <meta property="og:title" content="License Verification — Wiehr. Official Website" />
-    <meta itemprop="name" content="License Verification — Wiehr. Official Website">
+    <meta name="title" content="licensing. — Wiehr. Official Website">
+    <meta property="og:title" content="licensing. — Wiehr. Official Website" />
+    <meta property="vk:title" content="licensing. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="licensing. — Wiehr. Official Website" />
+    <meta itemprop="name" content="licensing. — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="License Verification — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="licensing. — Wiehr. Official Website" />
 
     <meta name="description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
     <meta property="og:description" content="Verify a Wiehr License key — confirm which digital asset it was issued for and when." />
@@ -28,28 +29,32 @@
     <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
     <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" />
 
-    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
     <meta name="twitter:image:alt" content="License Verification" />
-    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
-    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/legal.png' %}" />
+    <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
+    <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/license.png' %}" />
 
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="keywords" content="Wiehr, license verification, storage license key, digital asset license">
-    <meta name="robots" content="noindex, follow">
+    {% comment %}Indexable on purpose. This page is the public answer to "is
+    this key real?", which is exactly the sort of thing someone searches for
+    after being handed a licence. It carries no private data of its own — a
+    key only resolves if it is genuine, and without one the page is a form.
+    {% endcomment %}
 
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing/#page",
-      "name": "License Verification — Wiehr",
+      "name": "licensing. — Wiehr",
       "description": "Verify a Wiehr License key.",
       "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing",
       "isPartOf": {
@@ -59,6 +64,16 @@
       }
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
+        { "@type": "ListItem", "position": 2, "name": "License Verification", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/licensing" }
+      ]
+    }
+    </script>
 
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/license.css' %}">
@@ -66,7 +81,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">License Verification — Wiehr. Official Website</h1>
+    <h1 class="seoonly">licensing. — Wiehr. Official Website</h1>
     <div class="proveit">
         <header class="proveithead">
             <h2 class="whatisthis">License Verification</h2>

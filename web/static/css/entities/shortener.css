@@ -14,17 +14,12 @@
 .makeitshortrow .thekeyitself {
     flex: 1;
     min-width: 0;
-    border-right: none;
 }
 
 .thatwentbadly {
     font-size: var(--font-size-thin);
     opacity: 0.65;
-    color: #c00;
-}
-
-[data-wiehr-theme="dark"] .thatwentbadly {
-    color: #ff6b6b;
+    color: var(--color-error);
 }
 
 
@@ -33,11 +28,6 @@
     flex-direction: column;
     gap: 0.35rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-[data-wiehr-theme="dark"] .whatelseismade {
-    border-top-color: rgba(244, 244, 244, 0.08);
 }
 
 .oneshortlink {
@@ -46,18 +36,9 @@
     align-items: baseline;
     gap: 0.75rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     color: inherit;
     text-decoration: none;
     transition: opacity 0.15s ease;
-}
-
-[data-wiehr-theme="dark"] .oneshortlink {
-    border-bottom-color: rgba(244, 244, 244, 0.04);
-}
-
-.oneshortlink:last-child {
-    border-bottom: none;
 }
 
 .oneshortlink:hover {
@@ -89,14 +70,6 @@
     .makeitshortrow {
         flex-direction: column;
         gap: 0.5rem;
-    }
-
-    .makeitshortrow .thekeyitself {
-        border-right: 1px solid rgba(0, 0, 0, 0.15);
-    }
-
-    [data-wiehr-theme="dark"] .makeitshortrow .thekeyitself {
-        border-right-color: rgba(244, 244, 244, 0.15);
     }
 
     .oneshortlink {
@@ -184,7 +157,7 @@
 
 .knockknockwrong {
     font-family: var(--font-family, monospace);
-    color: #c00;
+    color: var(--color-error);
     font-size: var(--font-size-thin);
     margin: 0;
 }
@@ -203,21 +176,21 @@
     background: transparent;
     font-size: var(--font-size-small);
     font-family: var(--font-family, monospace);
-    color: var(--color-text, #000);
+    color: var(--color-text);
     text-align: center;
     letter-spacing: 0.1em;
 }
 
 .knockknockform button {
     padding: 0.75rem 1.5rem;
-    background: var(--color-text, #000);
+    background: var(--color-text);
     border: none;
     cursor: pointer;
     transition: opacity 0.15s ease;
 }
 
 .knockknockform button span {
-    color: var(--color-bg, #F4F4F4);
+    color: var(--color-bg);
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);

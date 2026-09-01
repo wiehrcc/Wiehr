@@ -2,19 +2,21 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}STORAGE — Wiehr. Official Website{% endblock %}
+{% block title %}storage. — Wiehr. Official Website{% endblock %}
+
+{% block backdrop %}{% static 'images/backdrop/storage.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage">
     <link rel="alternate" href="{{ site_url_nodashed }}/storage" />
 
-    <meta name="title" content="STORAGE — Wiehr. Official Website">
-    <meta property="vk:title" content="STORAGE — Wiehr. Official Website" />
-    <meta name="twitter:title" content="STORAGE — Wiehr. Official Website" />
-    <meta property="og:title" content="STORAGE — Wiehr. Official Website" />
-    <meta itemprop="name" content="STORAGE — Wiehr. Official Website">
+    <meta name="title" content="storage. — Wiehr. Official Website">
+    <meta property="og:title" content="storage. — Wiehr. Official Website" />
+    <meta property="vk:title" content="storage. — Wiehr. Official Website" />
+    <meta name="twitter:title" content="storage. — Wiehr. Official Website" />
+    <meta itemprop="name" content="storage. — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="STORAGE — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="storage. — Wiehr. Official Website" />
 
     <meta name="description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
     <meta property="og:description" content="Digital storage and downloads by Wiehr. Themes, fonts, presets, tools, and other digital assets available for free." />
@@ -34,7 +36,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
-    <meta name="twitter:image:alt" content="STORAGE — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="storage. — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/storage.png' %}" />
 
@@ -88,7 +90,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">Storage — Wiehr. Official Website</h1>
+    <h1 class="seoonly">storage. — Wiehr. Official Website</h1>
     <h2 class="seoonly">Digital storage and downloads by Wiehr — themes, fonts, presets, and tools</h2>
     <div class="digitalhoarder">
         <div class="allmystuff">
@@ -101,6 +103,7 @@
                 screen together anyway, so there is nothing to defer.{% endcomment %}
                 <img class="boxthumb" src="{{ cell.cover }}" alt="" decoding="async" aria-hidden="true">
                 {% endif %}
+                {% if cell.price %}<span class="boxprice">{{ cell.price }}</span>{% endif %}
                 <span class="boxlabel">{{ cell.id }}</span>
             </a>
             {% else %}
