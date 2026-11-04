@@ -26,7 +26,6 @@ function resizeCanvas() {
 
   const content = document.getElementById('content') || document.getElementById('whatareyouinterestedin');
 
-
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.width = '100%';
@@ -36,7 +35,6 @@ function resizeCanvas() {
   canvas.style.left = '0';
   canvas.style.zIndex = '1';
 
-
   if (gl) {
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
@@ -44,9 +42,7 @@ function resizeCanvas() {
 
 resizeCanvas();
 
-
 let isLogoSectionVisible = true;
-
 
 const initialSection = document.querySelector('.anchor-section[style*="display: block"]');
 if (initialSection && initialSection.id !== 'section-pleasesavemefromthis') {
@@ -56,11 +52,9 @@ if (initialSection && initialSection.id !== 'section-pleasesavemefromthis') {
 let lastCanvasWidth = 0;
 let lastCanvasHeight = 0;
 
-
 function forceCanvasReset() {
   const targetWidth = window.innerWidth;
   const targetHeight = window.innerHeight;
-
 
   if (lastCanvasWidth === targetWidth && lastCanvasHeight === targetHeight) {
     return;
@@ -69,18 +63,15 @@ function forceCanvasReset() {
   lastCanvasWidth = targetWidth;
   lastCanvasHeight = targetHeight;
 
-
   canvas.width = targetWidth;
   canvas.height = targetHeight;
   canvas.style.width = targetWidth + 'px';
   canvas.style.height = targetHeight + 'px';
 
-
   if (gl) {
     gl.viewport(0, 0, targetWidth, targetHeight);
   }
 }
-
 
 window.addEventListener('sectionchange', (e) => {
   if (e.detail) {
@@ -102,10 +93,8 @@ window.addEventListener('sectionchange', (e) => {
       isLogoSectionVisible = true;
       canvas.style.display = 'block';
 
-
       lastCanvasWidth = 0;
       lastCanvasHeight = 0;
-
 
       forceCanvasReset();
       setTimeout(forceCanvasReset, 50);
@@ -120,7 +109,6 @@ window.addEventListener('sectionchange', (e) => {
   }
 });
 
-
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && isLogoSectionVisible) {
     lastCanvasWidth = 0;
@@ -128,7 +116,6 @@ document.addEventListener('visibilitychange', () => {
     setTimeout(forceCanvasReset, 100);
   }
 });
-
 
 let resizeTimeout = null;
 window.addEventListener('resize', () => {
@@ -141,20 +128,17 @@ window.addEventListener('resize', () => {
   }, 100);
 });
 
-
 const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 3000"><path d="M1063.3,2651.4l42.9,3.5v89.3h-90.6v85.2l-46.2,3.5v81.7H876.5V2834H831v80H738.8v-80.7H691.5v80.4l-45.3,5.9V3000H368.1V2832.2H276.9V2661.1H137.2v-84.9h-45c-1.2,26.4-2.4,53-3.6,81.6H45.9v-81L0,2572.4v-88.2l43-4.8v-81.5h92.4V2225.8H412V2055.6h45.6v81.1h48.5v-82.1h91.1v-85.8h94v-84.5l44.3-3.9V1718.9H369.8V1539.6H550.9V1371.1l45.4-4.9v-75l-43.5-3.5v-81.2H460.1v81.1h-91v-83.1H277.6v-90.8l41.2-4.5v-83.1H460.3V942.5l45.5-4.7V856.9h91.1v80.3h94.3V855h91.2V771.3l45.3-4.7V691.9l-44-3.9V607l-44.1-4.5V520.1H600V433.3H507.4V349.1H370V170.9l41.4-3.6c1.1-26.4,2.3-53,3.6-82.5H597.3V0h47.1V81.4h92.7V253.8H875.5v85.3h91.1v84l47.3,5.1v81.5h45.8V428.4h230.8v82.3H1430v85.6h91.6v84.5h92.3V599.9h47V683h138V859.8H1711c-1.4,29.5-2.6,56.1-4,84.7l-43.1,4.5v162.4h90v340.3H1845v-80.8h47v82.8h138.6v85.1h140.3v83.6l45.4,4.9v80.4l44.9,5.6v173l-43.7,5.4v80.6l-44.2,4.5v246.8h134.6v-82.9h45.7v82h92.8V2056.2h46.7v81.4H2539v-82.4l48.5-3.4v-82.3h229.3v82.6h93v85.8H3000v178.8h-88.3v84.7h-92.9V2488H2634.6v85.4H2218v170.5h-92.8v86.7h-93.1v169.2H1846.8v-79.5l-45.5-5.9V2746.7H1615.8v-85.5H1153.7V2577h-90.4Zm690.2-856.5v-82.4l45-3.5v-74.3H1617.3v73.9l44.8,5v81.3Zm-2.2,685.4V2319.5h-40.6v160.8ZM1848,2308h88.8v-74.5H1848ZM971,2575.9v77.3l40.5-1.8v-75.5Z"/></svg>
 `
-
 const svgComplexity = svg.length;
-const maskSize = isMobile ? 60 : 120;
+const maskSize = isMobile ? 64 : 128;
 const mask = document.createElement("canvas");
 mask.width = maskSize;
 mask.height = maskSize;
 
 const mctx = mask.getContext("2d", { willReadFrequently: true });
 mctx.imageSmoothingEnabled = false;
-
 
 const img = new Image();
 const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
@@ -183,12 +167,10 @@ img.onerror = () => {
   URL.revokeObjectURL(url);
 };
 
-
 let particles = [];
 let COUNT = 0;
 let positions, posBuf;
 let venomValues, venomBuf;
-
 
 let networkParticles = [];
 let networkCount = 0;
@@ -450,17 +432,7 @@ class Particle {
     this.z += this.vz;
   }
 
-  /* The hot path: no trig, no object.
-
-     getProjected3D below recomputes cos/sin of the SAME two rotation angles
-     for every particle - four trig calls per particle per frame, when the
-     angles change once per frame - and returns a fresh {x, y, scale} that is
-     read twice and thrown away. At a thousand particles and 60fps that is a
-     quarter of a million redundant trig calls and sixty thousand short-lived
-     objects a second, which is GC pressure disguised as maths.
-
-     This takes the trig already done for the frame and writes the result
-     straight into the position buffer. */
+  
   projectInto(cosY, sinY, cosX, sinX, canvasAspect, out, idx) {
     const x1 = this.x * cosY - this.z * sinY;
     const z1 = this.x * sinY + this.z * cosY;
@@ -522,7 +494,6 @@ function getPerformanceTier() {
   const cores = navigator.hardwareConcurrency || 2;
   const mem = navigator.deviceMemory || 2;
 
-
   let gpuTier = 2;
   const debugExt = gl.getExtension('WEBGL_debug_renderer_info');
   if (debugExt) {
@@ -539,9 +510,9 @@ function getPerformanceTier() {
   }
 
   if (isMobile) {
-    // Safari implements no deviceMemory at all, so `mem` falls back to 2 and
-    // both tests below used to fail — every iPhone landed in tier 4, the
-    // worst. An unknown memory size is not evidence of a small one.
+    
+    
+    
     const memKnown = !!navigator.deviceMemory;
     if (cores >= 8 && (!memKnown || mem >= 6)) return 2;
     if (cores >= 4 && (!memKnown || mem >= 4)) return 3;
@@ -565,19 +536,9 @@ function buildTargets() {
   swapInterval = tier === 1 ? 150 : tier === 2 ? 250 : tier === 3 ? 500 : 1000;
 
   const complexityThin = svgComplexity > 10000 ? 0.75 : svgComplexity > 5000 ? 0.88 : 1.0;
-  /* Mobile carries a further 25% off the dot count, on top of the sampling
-     step. This is the heaviest thing on the page and a phone is where that
-     costs the most; the logo reads the same at this density.
-
-     The mobile factors sit OUTSIDE the clamp deliberately. Folded in, they
-     land under a Math.min(1.0, ...) that the current logo happens to clear
-     (25069 chars, so complexityThin is 0.75) — but a simpler logo pushes the
-     product over 1.0, the clamp swallows the difference, and the mobile
-     reduction quietly becomes 14% or nothing at all. Out here the 25% is 25%
-     whatever the artwork does. */
+  
   const base = Math.min(1.0, (isMobile ? 0.85 : 1.0) * complexityThin * 1.35);
-  /* The tier's saving lands here rather than on the frame rate — fewer dots to
-     integrate and draw, at full speed, instead of the same dots at half. */
+  
   const T = window.WiehrTier;
   const tierThin = T ? T.pick(1.0, 0.7, 0.45) : 0.7;
   const desktopThin = (isMobile ? base * 0.75 : base) * tierThin;
@@ -606,7 +567,6 @@ function buildTargets() {
   }
 }
 
-
 const pointSize = '2.0';
 const vs = `#version 300 es
 precision highp float;
@@ -627,8 +587,9 @@ void main() {
 }
 `;
 
-
 function getParticleColor() {
+  const accent = document.documentElement.getAttribute('data-wiehr-accent');
+  if (accent === 'blood') return [0.686, 0.0, 0.0]; // #af0000
   const theme = document.documentElement.getAttribute('data-wiehr-theme');
   return theme === 'dark' ? [0.92, 0.92, 0.92] : [0.0, 0.0, 0.0];
 }
@@ -644,7 +605,6 @@ function compile(type, src) {
   }
   return s;
 }
-
 
 let program, vao;
 
@@ -683,12 +643,10 @@ function initGL() {
   gl.enableVertexAttribArray(venomLoc);
   gl.vertexAttribPointer(venomLoc, 1, gl.FLOAT, false, 0, 0);
 
-
   window._wiehrColorLoc = gl.getUniformLocation(program, "uColor");
   const c = getParticleColor();
   gl.uniform3f(window._wiehrColorLoc, c[0], c[1], c[2]);
 }
-
 
 let mouseX = null;
 let mouseY = null;
@@ -810,11 +768,9 @@ document.addEventListener('touchend', () => {
   mouseVelY = 0;
 });
 
-
 let animationId = null;
 let isVisible = true;
 let isPaused = false;
-
 
 if (typeof document.hidden !== "undefined") {
   document.addEventListener("visibilitychange", () => {
@@ -825,10 +781,6 @@ if (typeof document.hidden !== "undefined") {
   });
 }
 
-
-/* Registered, not assigned. This used to overwrite window.pauseWebGL outright,
-   which silently discarded the hook floatingdust.js had already published from
-   an earlier <script>. See WiehrLoops in howfastareyou.js. */
 if (window.WiehrLoops) {
   window.WiehrLoops.add(
     function () {
@@ -849,21 +801,8 @@ if (window.WiehrLoops) {
 
 let lastFrameTime = 0;
 
-/* 60fps ceiling, and deliberately NOT the tier's frame cap.
-
-   Every particle here is integrated per FRAME, not per second — the spring is
-   `vx += dx * force; vx *= 0.88; x += vx`, once per render. Frame rate is
-   therefore the animation's clock: capping a phone to the tier's 30fps ran the
-   whole logo at exactly half speed, which is what "slowmo" was. It was not the
-   dot count.
-
-   So the frame budget on this one comes off the density instead (see
-   tierThin in buildTargets), which cuts real work per frame without touching
-   the speed anything moves at. The 60 ceiling still spares a 144Hz monitor
-   from integrating 144 steps a second. */
 const FRAME_INTERVAL = 1000 / 60 - 4;
 
-// Allocated once, reused every frame. See the render loop below.
 const NO_FORCES = [];
 const projectedNetwork = [];
 const networkMouseScreen = { x: 0, y: 0 };
@@ -874,7 +813,6 @@ function render(timestamp = 0) {
     return;
   }
 
-
   if (FRAME_INTERVAL > 0 && timestamp - lastFrameTime < FRAME_INTERVAL) {
     animationId = requestAnimationFrame(render);
     return;
@@ -883,7 +821,6 @@ function render(timestamp = 0) {
 
   gl.clearColor(0.0, 0.0, 0.0, 0.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
-
 
   if (window._wiehrColorLoc) {
     const c = getParticleColor();
@@ -897,9 +834,7 @@ function render(timestamp = 0) {
 
   cursorSize += (cursorSizeTarget - cursorSize) * 0.1;
 
-  /* Reuse the arrays. `= []` here allocated one array per particle per frame —
-     tens of thousands of throwaway objects a second, and the GC pauses that
-     buys are exactly the stutter you feel on a phone. */
+  
   for (let i = 0; i < logoParticleCount; i++) {
     particles[i].neighbors.length = 0;
   }
@@ -943,9 +878,7 @@ function render(timestamp = 0) {
     }
   }
 
-  /* Everything that is constant for the frame, computed once for the frame.
-     canvasAspect was being recomputed inside the loop, and the empty array
-     literal allocated one throwaway array per particle per frame. */
+  
   const canvasAspect = canvas.width / canvas.height;
   const cosY = Math.cos(rotationY);
   const sinY = Math.sin(rotationY);
@@ -959,11 +892,7 @@ function render(timestamp = 0) {
     venomValues[i] = pt.venomStrength;
   }
 
-
-  /* Published to networkgraph.js through the window, and rebuilt from scratch
-     every frame: a new array plus one new object per node. Its consumers read
-     it fresh each frame and hold no references across frames, so the array and
-     its objects are allocated once and refilled in place instead. */
+  
   window._networkMouseScreen = networkMouseScreen;
   window._networkTime = time;
   networkMouseScreen.x = mouseScreenX;

@@ -2,10 +2,9 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}{{ lab_object.title }} at lab. — Wiehr. Official Website{% endblock %}
+{% block title %}{{ lab_object.title }} at Lab — Wiehr. Official Website{% endblock %}
 
-{% block backdropmode %}{% if lab_object.media %}art{% else %}mark{% endif %}{% endblock %}
-{% block backdrop %}{% if lab_object.backdrop_url %}{{ lab_object.backdrop_url }}{% else %}{% static 'images/backdrop/lab.jpg' %}{% endif %}{% endblock %}
+{% block backdrop %}{% static 'images/backdrop/lab.jpg' %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
@@ -15,13 +14,13 @@
     <link rel="canonical" href="{{ site_url_nodashed }}/lab/{{ lab_object.slug }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/lab/{{ lab_object.slug }}" />
 
-    <meta name="title" content="{{ lab_object.title }} at lab. — Wiehr. Official Website">
-    <meta property="og:title" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
-    <meta property="vk:title" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
-    <meta name="twitter:title" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
-    <meta itemprop="name" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
+    <meta name="title" content="{{ lab_object.title }} at Lab — Wiehr. Official Website">
+    <meta property="og:title" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
+    <meta property="vk:title" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
 
     {% with project_excerpt=lab_object.description|safe|striptags|truncatewords:30 %}
         <meta name="description" content="{{ project_excerpt }}" />
@@ -46,9 +45,7 @@
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ lab_object.media.url }}" />
     {% else %}
-    {% comment %}No artwork on this item yet — fall back to the labyrinth mark
-    so a shared link still previews as something rather than a blank card.
-    {% endcomment %}
+    
     <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta property="og:image:type" content="image/png" />
@@ -56,7 +53,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
-    <meta name="twitter:image:alt" content="{{ lab_object.title }} at lab. — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="{{ lab_object.title }} at Lab — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     {% endif %}

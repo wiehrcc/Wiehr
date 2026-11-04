@@ -108,19 +108,19 @@ def archive_object_page(request, slug):
     ).order_by('-created_at', '-order')
 
     groups = [
-        ('globe.', 'images/entities/globe.svg', [
+        ('Globe', 'images/entities/globe.svg', [
             {'url': f'/globe/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in globe_items
         ]),
-        ('atlas.', 'images/entities/atlas.svg', [
+        ('Atlas', 'images/entities/atlas.svg', [
             {'url': f'/atlas/{i.internal_id}', 'number': i.internal_id, 'title': i.country_title}
             for i in atlas_items
         ]),
-        ('storage.', 'images/entities/storage.svg', [
+        ('Storage', 'images/entities/storage.svg', [
             {'url': f'/storage/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in storage_items
         ]),
-        ('lab.', 'images/entities/lab.svg', [
+        ('Lab', 'images/entities/lab.svg', [
             {'url': f'/lab/{i.slug}', 'number': i.internal_id, 'title': i.title}
             for i in lab_items
         ]),
@@ -556,6 +556,7 @@ PROFILE_VERSIONS = {
     'engineer': {
         'path': '/engineer',
         'kind': 'Engineer',
+        'role': 'engineer',
         'name': 'Yauheni (Eugene) Kandratovich',
         'headline': 'Lead Software Engineer | Python • AWS • DevOps • AI',
         'subject': 'Engineer',
@@ -570,6 +571,7 @@ PROFILE_VERSIONS = {
     'composer': {
         'path': '/composer',
         'kind': 'Composer',
+        'role': 'composer',
         'name': 'Wiehr',
         'headline': 'Music Composer / Sound Designer / Production / Mixing / Mastering',
         'subject': 'Composer',
@@ -726,15 +728,43 @@ def whoareyou_page(request):
         canonical_base = get_canonical_base()
         host = request.get_host()
         scheme = 'https' if request.is_secure() else 'http'
-        current_url = f'{scheme}://{host}/whoareyou'
-        target_url = f'{canonical_base}/whoareyou'
+        current_url = f'{scheme}://{host}/about'
+        target_url = f'{canonical_base}/about'
         if current_url != target_url:
             return redirect(target_url)
 
+    engineer_cfg = PROFILE_VERSIONS['engineer']
+    composer_cfg = PROFILE_VERSIONS['composer']
+
     context = {
         'site_url_nodashed': settings.SITE_URL_NODASHED,
+        'engineer': engineer_cfg,
+        'composer': composer_cfg,
+        'engineer_download_url': '/engineer/download',
+        'composer_download_url': '/composer/download',
     }
     return render(request, 'entities/whoareyou.html', context)
+
+
+def rates_page(request):
+    import io as _io
+    from .rates_builder import get_rates_pdf
+
+    if os.environ.get('ENV') != 'DEV':
+        canonical_base = get_canonical_base()
+        host = request.get_host()
+        scheme = 'https' if request.is_secure() else 'http'
+        current_url = f'{scheme}://{host}/rates'
+        target_url = f'{canonical_base}/rates'
+        if current_url != target_url:
+            return redirect(target_url)
+
+    pdf_bytes = get_rates_pdf()
+    return FileResponse(
+        _io.BytesIO(pdf_bytes),
+        content_type='application/pdf',
+        filename='Wiehr_Rates.pdf',
+    )
 
 
 def license_page(request):
@@ -945,6 +975,7 @@ def disconnect(request, token=None):
             subscription.is_disconnected = True
             subscription.disconnected_at = timezone.now()
             subscription.save()
+            cache.delete("network_locations_v1")
             message = "You have been disconnected."
         except Team.DoesNotExist:
             message = "Invalid disconnection link."
@@ -957,6 +988,7 @@ def disconnect(request, token=None):
                     subscription.is_disconnected = True
                     subscription.disconnected_at = timezone.now()
                     subscription.save()
+                    cache.delete("network_locations_v1")
                     message = "You have been disconnected."
                 except Team.DoesNotExist:
                     message = "Email not found in our list."
@@ -1233,9 +1265,8 @@ def sitemap_xml(request):
         {'loc': '/atlas',     'changefreq': 'weekly',  'priority': '0.9'},
         {'loc': '/storage',   'changefreq': 'weekly',  'priority': '0.9'},
         {'loc': '/lab',       'changefreq': 'weekly',  'priority': '0.9'},
-        {'loc': '/composer',  'changefreq': 'monthly', 'priority': '0.9'},
-        {'loc': '/engineer',  'changefreq': 'monthly', 'priority': '0.9'},
-        {'loc': '/whoareyou', 'changefreq': 'monthly', 'priority': '0.8'},
+        {'loc': '/about',     'changefreq': 'monthly', 'priority': '0.8'},
+        {'loc': '/rates',     'changefreq': 'monthly', 'priority': '0.7'},
         {'loc': '/licensing', 'changefreq': 'monthly', 'priority': '0.5'},
     ]
     for page in static_pages:

@@ -1,10 +1,4 @@
-/* Content-sized on purpose — no min-height.
 
-   `min-height: 100vh` here forced this wrapper to the full viewport, which
-   meant the page's own `align-content: safe center` had nothing left to
-   centre, and the card's header/bottom clearance margins then pushed the total
-   past 100vh and produced a scrollbar. Let the wrapper be as tall as the card
-   and the scroll container centres it exactly. */
 .onepassportstamp {
     width: 100%;
     display: flex;
@@ -12,14 +6,6 @@
     justify-content: center;
 }
 
-/* A passport stamp, not a page-wide pane.
-
-   Standardising every page onto --page-frame swept this one up with the rest,
-   and it should not have been: the card is a fixed-aspect stamp with a flag,
-   a name and a couple of photographs. Given 640px to fill it stretched the
-   photo grid to match and the whole thing grew tall enough to scroll. The
-   clearances stay standard so it never collides with the chrome; the width
-   goes back to the card's own. */
 .theevidence {
     width: 100%;
     max-width: 720px;
@@ -27,12 +13,6 @@
     box-sizing: border-box;
 }
 
-/* No fill on the header or footer bands.
-
-   These carried a light grey wash that made sense when the card was its own
-   frosted panel; against the page backdrop it just reads as a grey box sitting
-   behind the photographs. The card is the photographs — everything else is
-   type on the page. */
 .theevidenceheader {
     display: flex;
     align-items: center;
@@ -90,7 +70,6 @@
 }
 
 .exhibitnumber {
-    font-size: var(--font-size-small);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -100,7 +79,7 @@
 .whereexactly {
     display: inline-flex;
     align-items: center;
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-micro);
     font-weight: 600;
     font-family: var(--font-family, monospace);
     letter-spacing: 0.04em;

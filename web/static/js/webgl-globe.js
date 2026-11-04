@@ -4,26 +4,22 @@
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 640;
 
-    /* Three densities, not two. This file used to read the old two-state
-       performance flag, where every phone was `low`; with the tiers a modern
-       phone is `mid`, so a binary check would have handed it the full 300x150
-       grid. `pick` gives the middle its own numbers instead. */
+    
     const Tier = window.WiehrTier;
     const pick = Tier ? Tier.pick.bind(Tier)
                       : function (h, m, l) { return isMobile ? l : h; };
     const isLowPerf = Tier ? Tier.is('low') : isMobile;
 
-    const GRID_COLS = pick(300, 230, 180);
-    const GRID_ROWS = pick(150, 115, 90);
-    const OCEAN_COLS = pick(220, 165, 120);
-    const OCEAN_ROWS = pick(110, 85, 60);
-    const NOISE_COUNT = pick(400, 280, 200);
+    const GRID_COLS = pick(200, 140, 80);
+    const GRID_ROWS = pick(100, 70, 40);
+    const OCEAN_COLS = pick(150, 100, 50);
+    const OCEAN_ROWS = pick(75, 50, 25);
+    const NOISE_COUNT = pick(250, 150, 60);
     const POINT_SIZE = pick(2.5, 2.2, 2.0);
     const CUBE_SIZE = pick(38.0, 33.0, 28.0);
 
-    /* Frame budget. The globe is the heaviest thing on the site; capping it is
-       what keeps a phone cool without touching how it looks. */
-    const FRAME_MS = (Tier && Tier.fps) ? 1000 / Tier.fps - 4 : 0;  // -4: see frame() in howfastareyou.js
+    
+    const FRAME_MS = (Tier && Tier.fps) ? 1000 / Tier.fps - 4 : 0;  
     let lastFrameAt = 0;
     const GLOBE_RADIUS = 0.45;
 
@@ -33,14 +29,7 @@
         : (isLowPerf ? 1.6 : 1.4);
     const ZOOM_MAX = Math.max(isLowPerf ? 3.5 : 3.0, ZOOM_DEFAULT * 1.6);
 
-    /* How far one pixel of drag turns the globe, as a function of zoom.
-
-       This used to be `0.75 + (targetZoom / ZOOM_MAX) * 0.25`, which grows
-       with zoom — so the further in you went, the FASTER the globe spun under
-       your finger, and picking out a single country meant fighting it. Zoomed
-       in, the same angular step covers more screen, so the angle per pixel has
-       to shrink, not grow. Inverse to zoom, clamped so it stays usable at both
-       ends of the range. */
+    
     function dragSensitivity() {
         return Math.max(0.3, Math.min(1.25, ZOOM_DEFAULT / targetZoom));
     }
@@ -75,13 +64,11 @@
     let isVisible = true;
     let hoveredDot = -1;
 
-
     const TILT_LIMIT = Math.PI / 2 - 0.09;
 
     function clampTilt(value) {
         return Math.max(-TILT_LIMIT, Math.min(TILT_LIMIT, value));
     }
-
 
     const landVS = `#version 300 es
         precision highp float;
@@ -109,7 +96,6 @@
         }
     `;
 
-
     const oceanVS = `#version 300 es
         precision highp float;
         in vec3 aPosition;
@@ -135,7 +121,6 @@
             fragColor = vec4(gray, gray, gray, vAlpha);
         }
     `;
-
 
     const noiseVS = `#version 300 es
         precision highp float;
@@ -165,7 +150,6 @@
         }
     `;
 
-
     const cubeVS = `#version 300 es
         precision highp float;
         in vec2 aPosition;
@@ -191,7 +175,7 @@
         void main() {
             vec2 p = gl_PointCoord - 0.5;
             vec2 ap = abs(p);
-            float hw = 0.45, hh = 0.30;
+            float hw = 0.45, hh = 0.45;
             float dist = max(ap.x / hw, ap.y / hh);
             float outerGlow = smoothstep(1.0, 0.5, dist) * 0.12;
             if (ap.x > hw || ap.y > hh) {
@@ -210,8 +194,8 @@
             float scanY = sin(vRotation * 2.0) * hh * 0.7;
             float scanLine = smoothstep(0.01, 0.0, abs(p.y - scanY)) * 0.35;
             scanLine *= step(ap.x, hw - edgeW * 2.0);
-            float fill = 0.08;
-            float alpha = bracket * 0.9 + centerDot * 0.7 + scanLine + fill + outerGlow;
+            float fill = 0.04;
+            float alpha = bracket * 0.55 + centerDot * 0.45 + scanLine * 0.6 + fill + outerGlow * 0.6;
             if (uHovered > 0.5) {
                 fill = 0.22;
                 bracket = bracket > 0.0 ? 1.0 : 0.0;
@@ -223,7 +207,6 @@
             }
         }
     `;
-
 
     const lineVS = `#version 300 es
         precision highp float;
@@ -327,16 +310,13 @@
 
     function project(x, y, z, rx, ry, zm) {
 
-
         const cy = Math.cos(ry), sy = Math.sin(ry);
         let x1 = x * cy - z * sy;
         let z1 = x * sy + z * cy;
 
-
         const cx = Math.cos(rx), sx = Math.sin(rx);
         let y1 = y * cx - z1 * sx;
         let z2 = y * sx + z1 * cx;
-
 
         const camDist = zm;
         const zOffset = z2 + camDist;
@@ -344,7 +324,6 @@
         const scale = fov / Math.max(zOffset, 0.1);
         let px = x1 * scale;
         let py = y1 * scale;
-
 
         const w = canvas.width || 1;
         const h = canvas.height || 1;
@@ -372,7 +351,6 @@
         return null;
     }
 
-
     function generateLand() {
         landPoints = [];
         for (let row = 0; row < GRID_ROWS; row++) {
@@ -392,7 +370,6 @@
         landData = new Float32Array(landPoints.length * 4);
     }
 
-
     function generateOcean() {
         oceanPoints = [];
         for (let row = 0; row < OCEAN_ROWS; row++) {
@@ -411,7 +388,6 @@
         oceanData = new Float32Array(oceanPoints.length * 4);
     }
 
-
     function generateNoise() {
         noiseParticles = [];
         for (let i = 0; i < NOISE_COUNT; i++) {
@@ -428,7 +404,6 @@
         noiseData = new Float32Array(noiseParticles.length * 4);
     }
 
-
     function generateBelarusBorder() {
         belarusBorder = [];
 
@@ -443,18 +418,15 @@
         }
     }
 
-
     function generateDots() {
         dotPositions = [];
         dotColors = [];
         dotData = [];
 
-
         const belarusPos = latLonToXYZ(BELARUS.lat, BELARUS.lon, GLOBE_RADIUS + 0.03);
         dotPositions.push({ x: belarusPos.x, y: belarusPos.y, z: belarusPos.z, isBelarus: true });
         dotColors.push(1, 1, 1);
         dotData.push({ url: null, idx: 0 });
-
 
         if (typeof releases !== 'undefined') {
             releases.forEach((r, i) => {
@@ -519,7 +491,6 @@
             gl.ONE, gl.ONE_MINUS_SRC_ALPHA
         );
 
-
         landVAO = gl.createVertexArray();
         gl.bindVertexArray(landVAO);
         landBuffer = gl.createBuffer();
@@ -532,7 +503,6 @@
         gl.enableVertexAttribArray(lD);
         gl.vertexAttribPointer(lD, 1, gl.FLOAT, false, 16, 12);
 
-
         oceanVAO = gl.createVertexArray();
         gl.bindVertexArray(oceanVAO);
         oceanBuffer = gl.createBuffer();
@@ -544,7 +514,6 @@
         gl.vertexAttribPointer(oPos, 3, gl.FLOAT, false, 16, 0);
         gl.enableVertexAttribArray(oA);
         gl.vertexAttribPointer(oA, 1, gl.FLOAT, false, 16, 12);
-
 
         noiseVAO = gl.createVertexArray();
         gl.bindVertexArray(noiseVAO);
@@ -560,7 +529,6 @@
         gl.vertexAttribPointer(nSize, 1, gl.FLOAT, false, 16, 8);
         gl.enableVertexAttribArray(nA);
         gl.vertexAttribPointer(nA, 1, gl.FLOAT, false, 16, 12);
-
 
         if (dotData.length > 0) {
             cubeVAO = gl.createVertexArray();
@@ -582,7 +550,6 @@
             gl.vertexAttribPointer(cRot, 1, gl.FLOAT, false, 28, 24);
         }
 
-
         if (lineData.length > 0) {
 
             const maxLineSegments = lineData.length * 12;
@@ -595,7 +562,6 @@
             gl.enableVertexAttribArray(liPos);
             gl.vertexAttribPointer(liPos, 2, gl.FLOAT, false, 8, 0);
         }
-
 
         if (belarusBorder.length > 0) {
             belarusVAO = gl.createVertexArray();
@@ -623,7 +589,6 @@
             gl.viewport(0, 0, canvas.width, canvas.height);
         }
     }
-
 
     function setupInteraction() {
         canvas.addEventListener('mousedown', e => {
@@ -676,7 +641,6 @@
             const zoomSpeed = 0.0022 * targetZoom;
             targetZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetZoom + e.deltaY * zoomSpeed));
         }, { passive: false });
-
 
         canvas.addEventListener('touchstart', e => {
             e.preventDefault();
@@ -753,11 +717,10 @@
         time += 0.016;
         if (autoRotate) targetRotation.y += 0.0005 * (ZOOM_DEFAULT / Math.max(zoom, ZOOM_MIN));
 
-        const lerpSpeed = isDragging ? 0.25 : 0.08;
+        const lerpSpeed = isDragging ? 0.35 : 0.15;
         rotation.x += (targetRotation.x - rotation.x) * lerpSpeed;
         rotation.y += (targetRotation.y - rotation.y) * lerpSpeed;
-        zoom += (targetZoom - zoom) * 0.1;
-
+        zoom += (targetZoom - zoom) * 0.18;
 
         let landCount = 0;
         for (let i = 0; i < landPoints.length; i++) {
@@ -771,7 +734,6 @@
                 landCount++;
             }
         }
-
 
         let oceanCount = 0;
         for (let i = 0; i < oceanPoints.length; i++) {
@@ -787,7 +749,6 @@
                 oceanCount++;
             }
         }
-
 
         for (let i = 0; i < noiseParticles.length; i++) {
             const n = noiseParticles[i];
@@ -806,7 +767,6 @@
             noiseData[i * 4 + 3] = alpha;
         }
 
-
         const cubeBuf = new Float32Array(dotPositions.length * 7);
         const projectedDots = [];
         for (let i = 0; i < dotPositions.length; i++) {
@@ -823,7 +783,6 @@
             cubeBuf[i * 7 + 5] = size;
             cubeBuf[i * 7 + 6] = cubeRot;
         }
-
 
         const maxSegments = lineData.length * 12;
         const lineBuf = new Float32Array(maxSegments * 4);
@@ -843,7 +802,6 @@
             }
         }
 
-
         const belarusBuf = new Float32Array(belarusBorder.length * 2 * 2);
         let belarusLineCount = 0;
         for (let i = 0; i < belarusBorder.length; i++) {
@@ -860,13 +818,11 @@
             }
         }
 
-
         const isDark = document.documentElement.getAttribute('data-wiehr-theme') === 'dark';
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         var darkVal = isDark ? 1.0 : 0.0;
-
 
         gl.useProgram(oceanProgram);
         gl.uniform1f(gl.getUniformLocation(oceanProgram, 'uPointSize'), POINT_SIZE);
@@ -876,7 +832,6 @@
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, oceanData);
         gl.drawArrays(gl.POINTS, 0, oceanCount);
 
-
         gl.useProgram(landProgram);
         gl.uniform1f(gl.getUniformLocation(landProgram, 'uPointSize'), POINT_SIZE);
         gl.uniform1f(gl.getUniformLocation(landProgram, 'uIsDark'), darkVal);
@@ -884,7 +839,6 @@
         gl.bindBuffer(gl.ARRAY_BUFFER, landBuffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, landData);
         gl.drawArrays(gl.POINTS, 0, landCount);
-
 
         if (lineVAO && lineSegCount > 0) {
             gl.useProgram(lineProgram);
@@ -895,7 +849,6 @@
             gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineBuf.subarray(0, lineSegCount * 4));
             gl.drawArrays(gl.LINES, 0, lineSegCount * 2);
         }
-
 
         if (belarusVAO && belarusLineCount > 0) {
             gl.useProgram(lineProgram);
@@ -911,7 +864,6 @@
             }
         }
 
-
         if (cubeVAO && dotData.length > 1) {
             gl.useProgram(cubeProgram);
             for (let i = 1; i < dotPositions.length; i++) {
@@ -924,7 +876,6 @@
                 gl.drawArrays(gl.POINTS, 0, 1);
             }
         }
-
 
         gl.useProgram(noiseProgram);
         gl.uniform1f(gl.getUniformLocation(noiseProgram, 'uIsDark'), darkVal);

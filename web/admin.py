@@ -278,7 +278,7 @@ class WiehrGlobeModelAdmin(admin.ModelAdmin):
             'description': 'Enter coordinates in format: 054° 03\' 28.7" N 008° 22\' 44.3" W'
         }),
         ('🎨 Design', {
-            'fields': ('background_color', 'r_color_preview_large', 'image', 'r_image_large')
+            'fields': ('background_color', 'r_color_preview_large', 'bpm', 'image', 'r_image_large')
         }),
         ('🔗 Links', {
             'fields': ('listen_url', 'lyrics_url', 'watch_url', 'pdf_file')

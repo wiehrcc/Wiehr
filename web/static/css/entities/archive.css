@@ -8,7 +8,6 @@
     box-sizing: border-box;
 }
 
-
 .ledgerofyears {
     width: var(--page-frame);
     margin: var(--space-header) auto var(--space-bottom);
@@ -58,7 +57,6 @@
     width: 1%;
 }
 
-
 .ledgerhead .ledgercell {
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
@@ -78,7 +76,6 @@ a.oneyearline:hover {
     font-size: var(--font-size-thin);
     font-family: var(--font-family, monospace);
 }
-
 
 .yearsworth {
     width: var(--page-frame);
@@ -226,7 +223,6 @@ a.reachforit:hover {
     .ledgerhead .whatitheld {
         white-space: normal;
     }
-
 
     .whichyearagain {
         font-size: var(--font-size-medium);

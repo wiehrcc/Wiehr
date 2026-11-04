@@ -2,20 +2,19 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website{% endblock %}
+{% block title %}{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website{% endblock %}
 
-{% block backdropmode %}art{% endblock %}
-{% block backdrop %}/media/data/images/{{ release.wid|default:release.slug }}@640.jpg{% endblock %}
+{% block backdrop %}{% static 'images/backdrop/globe.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe/{{ release.slug }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/globe/{{ release.slug }}" />
 
-    <meta name="title" content="{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website">
-    <meta property="og:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website" />
-    <meta property="vk:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website" />
-    <meta name="twitter:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website" />
-    <meta itemprop="name" content="{{ release.display_release_title|default:release.title }} by Wiehr at globe. — Wiehr. Official Website">
+    <meta name="title" content="{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website">
+    <meta property="og:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website" />
+    <meta property="vk:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="{{ release.title }}" />
 
@@ -127,9 +126,6 @@
       ]
     }
     </script>
-
-    {% compress css inline %}
-    {% endcompress %}
 
 {% endblock %}
 {% block content %}

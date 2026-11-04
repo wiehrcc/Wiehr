@@ -2,36 +2,38 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}who are you? — Wiehr. Official Website{% endblock %}
+{% block title %}About — Wiehr. Official Website{% endblock %}
 
 {% block backdrop %}{% static 'images/backdrop/whoareyou.jpg' %}{% endblock %}
 
 {% block head %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/whoareyou.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/storage-object.css' %}">
+        <link rel="stylesheet" href="{% static 'css/entities/profile.css' %}">
     {% endcompress %}
 
-    <link rel="canonical" href="{{ site_url_nodashed }}/whoareyou">
-    <link rel="alternate" href="{{ site_url_nodashed }}/whoareyou" />
+    <link rel="canonical" href="{{ site_url_nodashed }}/about">
+    <link rel="alternate" href="{{ site_url_nodashed }}/about" />
 
-    <meta name="title" content="who are you? — Wiehr. Official Website">
-    <meta property="og:title" content="who are you? — Wiehr. Official Website" />
-    <meta property="vk:title" content="who are you? — Wiehr. Official Website" />
-    <meta name="twitter:title" content="who are you? — Wiehr. Official Website" />
-    <meta itemprop="name" content="who are you? — Wiehr. Official Website" />
+    <meta name="title" content="About — Wiehr. Official Website">
+    <meta property="og:title" content="About — Wiehr. Official Website" />
+    <meta property="vk:title" content="About — Wiehr. Official Website" />
+    <meta name="twitter:title" content="About — Wiehr. Official Website" />
+    <meta itemprop="name" content="About — Wiehr. Official Website" />
     <meta property="og:site_name" content="Wiehr" />
     <meta property="og:image:alt" content="Wiehr — Electronic Composer & Engineer" />
 
-    <meta name="description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
-    <meta property="og:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
-    <meta property="vk:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
-    <meta itemprop="description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
-    <meta name="twitter:description" content="Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions." />
+    <meta name="description" content="Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach." />
+    <meta property="og:description" content="Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach." />
+    <meta property="vk:description" content="Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach." />
+    <meta itemprop="description" content="Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach." />
+    <meta name="twitter:description" content="Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach." />
 
-    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
-    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
-    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
-    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" />
+    <meta property="og:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/about" />
+    <meta property="vk:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/about" />
+    <meta name="twitter:url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/about" />
+    <meta itemprop="url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/about" />
 
     <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
     <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/whoareyou.png' %}" />
@@ -54,14 +56,14 @@
       "@type": "Person",
       "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/#person",
       "name": "Wiehr",
-      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou",
-      "description": "Wiehr. Not represented by any institution or organization. No ideology, no politics. Work inquiries, licensing and contact instructions.",
+      "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/about",
+      "description": "Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach.",
       "knowsAbout": ["Electronic Music", "Sound Design", "Mixing", "Mastering", "Software Engineering", "DevOps", "Data Engineering"],
       "jobTitle": "Composer & Engineer",
       "sameAs": [],
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou"
+        "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/about"
       }
     }
     </script>
@@ -71,7 +73,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/" },
-        { "@type": "ListItem", "position": 2, "name": "Who Are You", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/whoareyou" }
+        { "@type": "ListItem", "position": 2, "name": "About", "item": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/about" }
       ]
     }
     </script>
@@ -80,23 +82,92 @@
 {% block content %}
     <h1 class="seoonly">Wiehr — Electronic Composer &amp; Multidisciplinary Artist</h1>
 
-    <div class="nobodyknowsme">
-        <div class="proofofexistence">
-            <img src="{% static 'images/live/whoareyou.gif' %}" alt="Wiehr" loading="eager" decoding="async" fetchpriority="high" draggable="false" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease-in-out;">
-        </div>
+    <div class="onefileonly">
+        <div class="fileguts">
+            <div class="filecoverart">
+                <img src="{% static 'images/live/whoareyou.gif' %}" alt="Wiehr" loading="eager" decoding="async" fetchpriority="high" draggable="false" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease-in-out;">
+            </div>
 
-        {% comment %}One run of prose, no section labels.
+            <div class="filefacts">
+                <h1 class="filename">Yauheni 'Wiehr' Kandratovich</h1>
 
-        The page was three labelled blocks — Q&A / HIRE ME / CONTACT — which
-        is a lot of chrome for six sentences, and the labels said less than the
-        sentences under them. The hire links and the two addresses now sit
-        inside the sentences that introduce them, so there is nothing to read
-        past to reach the point.{% endcomment %}
-        <div class="wordsaboutnothing">
-            <p>Wiehr is not represented by any institution, not belong to any ideology/race/sex and don't translate political views.</p>
-            <p>Job: <a href="/engineer" class="inlinelink">Software Engineer</a> / <a href="/composer" class="inlinelink">Music Composer</a>.</p>
-            <p>Clearance: <a href="mailto:igor@labelnisha.com" class="inlinelink">igor@labelnisha.com</a>.</p>
-            <p>Inquiries: <a href="mailto:hello@wiehr.cc?subject=Zero" class="inlinelink">hello@wiehr.cc</a>.</p>
+                <section class="aboutsection">
+                    <div class="aboutlines">
+                        <p>Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music.</p>
+                    </div>
+                </section>
+
+                <section class="aboutsection">
+                    <h2 class="aboutsectionlabel">Contact</h2>
+                    <div class="whattodowithit">
+                        <a href="/rates" class="doonething">RATES & INFO</a>
+                        <a href="mailto:igor@labelnisha.com" class="doonething">CLEARANCE</a>
+                        <a href="mailto:hello@wiehr.cc?subject=Zero" class="doonething">INQUIRIES</a>
+                    </div>
+                </section>
+
+                <section class="aboutsection">
+                    <h2 class="aboutsectionlabel">CV</h2>
+                    <div class="aboutlines">
+                        <div class="aboutcvrow">
+                            <span class="aboutcvlabel">Type</span>
+                            <div class="pickyourpoison" id="aboutcvtype">
+                                <button class="onepaperformat chosen" data-role="engineer">Software Engineer</button>
+                                <button class="onepaperformat" data-role="composer">Music Composer</button>
+                            </div>
+                        </div>
+                        <div class="aboutcvrow">
+                            <span class="aboutcvlabel">Format</span>
+                            <div class="pickyourpoison" id="aboutcvfmt">
+                                <button class="onepaperformat chosen" data-fmt="pdf">PDF</button>
+                                <button class="onepaperformat" data-fmt="docx">DOCX</button>
+                                <button class="onepaperformat" data-fmt="txt">TXT</button>
+                            </div>
+                        </div>
+                        <a href="{{ engineer_download_url }}?fmt=pdf" class="doonething" id="aboutcvdownload">Download</a>
+                    </div>
+                </section>
+            </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var typeOpts = document.querySelectorAll('#aboutcvtype .onepaperformat');
+    var fmtOpts = document.querySelectorAll('#aboutcvfmt .onepaperformat');
+    var dlBtn = document.getElementById('aboutcvdownload');
+    if (!dlBtn) return;
+
+    var bases = {
+        engineer: '{{ engineer_download_url }}',
+        composer: '{{ composer_download_url }}'
+    };
+    var currentRole = 'engineer';
+    var currentFmt = 'pdf';
+
+    function updateLink() {
+        dlBtn.href = bases[currentRole] + '?fmt=' + currentFmt;
+    }
+
+    typeOpts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            typeOpts.forEach(function(o) { o.classList.remove('chosen'); });
+            opt.classList.add('chosen');
+            currentRole = opt.getAttribute('data-role');
+            updateLink();
+        });
+    });
+
+    fmtOpts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            fmtOpts.forEach(function(o) { o.classList.remove('chosen'); });
+            opt.classList.add('chosen');
+            currentFmt = opt.getAttribute('data-fmt');
+            updateLink();
+        });
+    });
+})();
+</script>
 {% endblock %}

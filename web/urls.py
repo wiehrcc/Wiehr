@@ -36,16 +36,14 @@ urlpatterns = [
     path("storage/<str:slug>/download", views.storage_download, name="storage_download"),
     path("storage/<str:slug>/download/", views.storage_download, name="storage_download_slash"),
 
-    path("whoareyou", views.whoareyou_page, name="whoareyou_page"),
-    path("whoareyou/", views.whoareyou_page, name="whoareyou_page_slash"),
+    path("about", views.whoareyou_page, name="about_page"),
+    path("about/", views.whoareyou_page, name="about_page_slash"),
 
-    path("engineer", views.engineer_page, name="engineer_page"),
-    path("engineer/", views.engineer_page, name="engineer_page_slash"),
+    path("rates", views.rates_page, name="rates_page"),
+    path("rates/", views.rates_page, name="rates_page_slash"),
     path("engineer/download", views.engineer_download, name="engineer_download"),
     path("engineer/download/", views.engineer_download, name="engineer_download_slash"),
 
-    path("composer", views.composer_page, name="composer_page"),
-    path("composer/", views.composer_page, name="composer_page_slash"),
     path("composer/download", views.composer_download, name="composer_download"),
     path("composer/download/", views.composer_download, name="composer_download_slash"),
 

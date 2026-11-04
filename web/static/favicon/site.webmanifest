@@ -11,6 +11,13 @@
   "theme_color": "#151617",
   "background_color": "#151617",
   "prefer_related_applications": false,
+  "id": "/",
+  "shortcuts": [
+    {"name": "Globe", "short_name": "Globe", "url": "/globe"},
+    {"name": "Atlas", "short_name": "Atlas", "url": "/atlas"},
+    {"name": "Lab", "short_name": "Lab", "url": "/lab"},
+    {"name": "Storage", "short_name": "Storage", "url": "/storage"}
+  ],
   "icons": [
     {
       "src": "/static/favicon/favicon-16x16.png",

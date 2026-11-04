@@ -22,6 +22,10 @@ class StaticFilesCacheMiddleware:
                     response['Cache-Control'] = 'public, max-age=31536000, immutable'
                 else:
                     response['Cache-Control'] = 'no-cache, must-revalidate'
+        elif getattr(settings, 'ENV', 'DEV') != 'PROD':
+            content_type = response.get('Content-Type', '')
+            if 'text/html' in content_type:
+                response['Cache-Control'] = 'no-store, no-cache, must-revalidate'
         
         if request.path == '/':
             links = [

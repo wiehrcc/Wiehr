@@ -2,13 +2,6 @@
 {% load static %}
 {% load compress %}
 
-{% comment %}
-Shared body for the two hire pages. /engineer and /composer
-differ only in their head/SEO blocks and the config dict fed from the view.
-{% endcomment %}
-
-{% comment %}Both hire pages share the one mark, the same way they share the
-one OG card.{% endcomment %}
 {% block backdrop %}{% static 'images/backdrop/hire.jpg' %}{% endblock %}
 
 {% block extra_css %}
@@ -20,6 +13,11 @@ one OG card.{% endcomment %}
 {% block content %}
     <div class="sellingmyself">
         <h2 class="seoonly">{% block seo_heading %}{% endblock %}</h2>
+
+        <div class="pickyourpoison" id="roletumbler">
+            <a href="/engineer" class="onepaperformat{% if config.role == 'engineer' %} chosen{% endif %}">SOFTWARE ENGINEER</a>
+            <a href="/composer" class="onepaperformat{% if config.role == 'composer' %} chosen{% endif %}">MUSIC COMPOSER</a>
+        </div>
 
         <header class="whoisthisguy">
             <h1 class="nameonthecheque">{{ config.name }}</h1>
@@ -47,9 +45,13 @@ one OG card.{% endcomment %}
         </section>
 
         <section class="anotherpitch">
-            <h2 class="pitchlabel">Inquires</h2>
+            <h2 class="pitchlabel">Contact</h2>
             <div class="knockhere">
-                <span class="knockarrow">—</span>
+                <span class="knockarrow">CLEARANCE:</span>
+                <a href="mailto:igor@labelnisha.com" class="knockloud">igor@labelnisha.com</a>
+            </div>
+            <div class="knockhere">
+                <span class="knockarrow">INQUIRIES:</span>
                 <a href="mailto:hello@wiehr.cc?subject={{ config.subject }}" class="knockloud">hello@wiehr.cc</a>
                 <span class="knockhint">subject: {{ config.subject }}</span>
             </div>

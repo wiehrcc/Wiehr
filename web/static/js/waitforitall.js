@@ -21,10 +21,7 @@
     let totalResources = 0;
     let isComplete = false;
 
-    /* The tier is decided once in js/howfastareyou.js, which runs before this
-       file. This used to be a fourth private copy of the cores/memory/UA
-       guess, and it disagreed with the others: it put every phone in the
-       bottom bucket. All that is left here is the density that follows. */
+    
     function detectPerformance() {
         const Tier = window.WiehrTier;
         const name = Tier ? Tier.name : 'mid';
@@ -123,7 +120,6 @@
             percentText.textContent = displayPercent + '%';
         }
 
-
         const filledCount = Math.floor(progress * CONFIG.blockCount);
         blocks.forEach((block, index) => {
             if (index < filledCount) {
@@ -156,7 +152,6 @@
                 }
             });
         }
-
 
         const resources = performance.getEntriesByType('resource');
         totalResources = Math.max(resources.length + totalImages, 1);
@@ -191,14 +186,7 @@
 
     function simulateLoading() {
         startTime = Date.now();
-        /* A weaker device gets a SHORTER splash, not a longer one.
-
-           This read the other way round — `low` was held on CONFIG.maxDuration,
-           2.5 seconds — so the slowest machines sat on the loading screen three
-           times as long as the fastest ones and the whole site felt like it was
-           lagging before a single page pixel had drawn. The splash is
-           decoration; it is the first thing to give up when there is less to
-           spend. */
+        
         const performance = detectPerformance();
         const duration = performance === 'low' ? 500 :
                         performance === 'medium' ? CONFIG.minDuration :
@@ -249,7 +237,6 @@
         const overlay = document.getElementById('moneyruinseverythingoverlay');
         if (!overlay) return;
 
-
         let blocksHTML = '';
         for (let i = 0; i < CONFIG.blockCount; i++) {
             blocksHTML += `<img src="/static/images/entities/loading.svg" alt="Loading" class="loading-block" data-index="${i}" width="24" height="24">`;
@@ -262,17 +249,14 @@
             <div class="progressbarisnotworking">
                 <div class="asciiprogressbar">
                     <div class="progressrow">
-                        <span class="progressbracket">[</span>
                         <div class="progresstrack" id="loadingblockscontainer">
                             ${blocksHTML}
                         </div>
-                        <span class="progressbracket">]</span>
                     </div>
                     <span id="loadingpercenttext" class="percentagedisplay">0%</span>
                 </div>
             </div>
         `;
-
 
         startInvertAnimation();
     }
@@ -295,9 +279,7 @@
                 return;
             }
 
-
             const targetFilled = Math.floor(progress * CONFIG.blockCount);
-
 
             blocks.forEach((block, i) => {
                 if (i < targetFilled) {
@@ -313,7 +295,6 @@
                     }
                 }
             });
-
 
             if (targetFilled > 2) {
                 const numFlickers = Math.floor(Math.random() * 3) + 1;
@@ -378,7 +359,6 @@
         init();
     }
 
-
     window.LoadingOverlay = {
         show: function() {
             const overlay = document.getElementById('moneyruinseverythingoverlay');
@@ -398,7 +378,6 @@
         hide: hideOverlay,
         setProgress: updateProgressBar
     };
-
 
     window.LoadingOverlayV2 = window.LoadingOverlay;
 })();

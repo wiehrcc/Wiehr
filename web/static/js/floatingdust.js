@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    // Density and frame rate both come from the shared tier (js/howfastareyou.js)
-    // rather than a third private copy of the cores/memory/user-agent guess.
+    
+    
     const Tier = window.WiehrTier;
     const COUNT = Tier ? Tier.pick(140, 70, 30) : 90;
 
@@ -46,8 +46,8 @@
         canvas.height = window.innerHeight;
     }
 
-    // Read once per frame instead of once per frame *per particle* — this used
-    // to call getComputedStyle on every tick, which forces a style recalc.
+    
+    
     let inkColor = null;
     function readInk() {
         inkColor = getComputedStyle(document.documentElement)
@@ -74,12 +74,12 @@
         for (let i = 0; i < COUNT; i++) particles.push(new DustPixel());
 
         readInk();
-        // The theme toggle changes --color-text; nothing else does.
+        
         new MutationObserver(readInk).observe(document.documentElement, {
             attributes: true, attributeFilter: ['data-wiehr-theme']
         });
 
-        // Tier.frame caps the rate and stops the loop while the tab is hidden.
+        
         function start() {
             if (stopFrames) return;
             stopFrames = Tier ? Tier.frame(draw) : (function () {
@@ -93,11 +93,7 @@
         }
         start();
 
-        /* Nothing here is visible behind an open overlay - it sits under a
-           full-viewport backdrop-filter - but it was still drawing, and a
-           backdrop-filter recomputes whenever what is behind it changes. So a
-           canvas nobody could see was forcing a full-screen blur to re-run at
-           the dust's frame rate for as long as any modal stayed open. */
+        
         if (window.WiehrLoops) window.WiehrLoops.add(stop, start);
     }
 

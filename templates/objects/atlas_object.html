@@ -2,22 +2,21 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website{% endblock %}
+{% block title %}{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website{% endblock %}
 
-{% block backdropmode %}{% if images %}art{% else %}mark{% endif %}{% endblock %}
-{% block backdrop %}{% if images %}/media/{{ images.0.image }}{% else %}{% static 'images/backdrop/atlas.jpg' %}{% endif %}{% endblock %}
+{% block backdrop %}{% static 'images/backdrop/atlas.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}" />
 
-    <meta name="title" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website">
-    <meta property="og:title" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website" />
-    <meta property="vk:title" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website" />
-    <meta name="twitter:title" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website" />
-    <meta itemprop="name" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website">
+    <meta name="title" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website">
+    <meta property="og:title" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website" />
+    <meta property="vk:title" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website" />
 
     <meta name="description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
     <meta property="og:description" content="Photography collection from {{ atlas_object.country_title|title }} — travel and geographic photography by Wiehr at Atlas. Explore images from {{ atlas_object.coordinates }}." />
@@ -43,7 +42,7 @@
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}/media/{{ image.image }}" />
     {% endif %}{% endfor %}
     {% if not images %}
-    {% comment %}No photographs uploaded for this country yet.{% endcomment %}
+    
     <meta property="og:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta property="og:image:type" content="image/png" />
@@ -51,7 +50,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
-    <meta name="twitter:image:alt" content="{{ atlas_object.country_title|title }} at atlas. — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/labyrinth.png' %}" />
     {% endif %}

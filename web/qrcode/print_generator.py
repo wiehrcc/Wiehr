@@ -402,6 +402,111 @@ def _extract_rectangles(path_data: str) -> List[Rect]:
                     points.append(current)
                 continue
 
+            if cmd in "Cc":
+                relative = cmd == "c"
+                idx += 1
+                while True:
+                    x1, next_idx = _consume_number(path_data, idx)
+                    if x1 is None:
+                        break
+                    y1, next_idx = _consume_number(path_data, next_idx)
+                    x2, next_idx = _consume_number(path_data, next_idx)
+                    y2, next_idx = _consume_number(path_data, next_idx)
+                    ex, next_idx = _consume_number(path_data, next_idx)
+                    ey, next_idx = _consume_number(path_data, next_idx)
+                    if any(v is None for v in (y1, x2, y2, ex, ey)):
+                        raise ValueError("Malformed path: incomplete cubic bezier.")
+                    idx = next_idx
+                    ox, oy = current
+                    if relative:
+                        x1 += ox; y1 += oy; x2 += ox; y2 += oy; ex += ox; ey += oy
+                    points.append((x1, y1))
+                    points.append((x2, y2))
+                    current = (ex, ey)
+                    points.append(current)
+                continue
+
+            if cmd in "Ss":
+                relative = cmd == "s"
+                idx += 1
+                while True:
+                    x2, next_idx = _consume_number(path_data, idx)
+                    if x2 is None:
+                        break
+                    y2, next_idx = _consume_number(path_data, next_idx)
+                    ex, next_idx = _consume_number(path_data, next_idx)
+                    ey, next_idx = _consume_number(path_data, next_idx)
+                    if any(v is None for v in (y2, ex, ey)):
+                        raise ValueError("Malformed path: incomplete smooth cubic.")
+                    idx = next_idx
+                    ox, oy = current
+                    if relative:
+                        x2 += ox; y2 += oy; ex += ox; ey += oy
+                    points.append((x2, y2))
+                    current = (ex, ey)
+                    points.append(current)
+                continue
+
+            if cmd in "Qq":
+                relative = cmd == "q"
+                idx += 1
+                while True:
+                    cx, next_idx = _consume_number(path_data, idx)
+                    if cx is None:
+                        break
+                    cy, next_idx = _consume_number(path_data, next_idx)
+                    ex, next_idx = _consume_number(path_data, next_idx)
+                    ey, next_idx = _consume_number(path_data, next_idx)
+                    if any(v is None for v in (cy, ex, ey)):
+                        raise ValueError("Malformed path: incomplete quadratic bezier.")
+                    idx = next_idx
+                    ox, oy = current
+                    if relative:
+                        cx += ox; cy += oy; ex += ox; ey += oy
+                    points.append((cx, cy))
+                    current = (ex, ey)
+                    points.append(current)
+                continue
+
+            if cmd in "Tt":
+                relative = cmd == "t"
+                idx += 1
+                while True:
+                    ex, next_idx = _consume_number(path_data, idx)
+                    if ex is None:
+                        break
+                    ey, next_idx = _consume_number(path_data, next_idx)
+                    if ey is None:
+                        raise ValueError("Malformed path: incomplete smooth quadratic.")
+                    idx = next_idx
+                    if relative:
+                        ex += current[0]; ey += current[1]
+                    current = (ex, ey)
+                    points.append(current)
+                continue
+
+            if cmd in "Aa":
+                relative = cmd == "a"
+                idx += 1
+                while True:
+                    rx, next_idx = _consume_number(path_data, idx)
+                    if rx is None:
+                        break
+                    ry, next_idx = _consume_number(path_data, next_idx)
+                    _rot, next_idx = _consume_number(path_data, next_idx)
+                    _laf, next_idx = _consume_number(path_data, next_idx)
+                    _sf, next_idx = _consume_number(path_data, next_idx)
+                    ex, next_idx = _consume_number(path_data, next_idx)
+                    ey, next_idx = _consume_number(path_data, next_idx)
+                    if any(v is None for v in (ry, _rot, _laf, _sf, ex, ey)):
+                        raise ValueError("Malformed path: incomplete arc.")
+                    idx = next_idx
+                    if relative:
+                        ex += current[0]; ey += current[1]
+                    current = (ex, ey)
+                    points.append(current)
+                continue
+
             raise ValueError(f"Unsupported SVG command '{cmd}' encountered.")
 
         if len(points) < 2:

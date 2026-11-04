@@ -16,7 +16,6 @@
     touch-action: none;
 }
 
-
 .retreatbutton {
     font-family: var(--font-family, monospace);
 }
@@ -33,12 +32,10 @@
     opacity: 0.7;
 }
 
-
 #whereamiexactly {
     font-family: var(--font-family, monospace);
     color: var(--color-text);
 }
-
 
 #unsolicitedinfo {
     font-family: var(--font-family, monospace);
@@ -56,7 +53,6 @@
     transition: opacity 0.2s ease;
 }
 
-
 .receiptnumber {
     font-weight: 800;
     letter-spacing: 0.06em;
@@ -72,7 +68,6 @@
     opacity: 0.7;
 }
 
-
 .howmanystamps {
     font-family: var(--font-family, monospace);
     z-index: 16;
@@ -87,7 +82,6 @@
     padding: 3px 6px;
 }
 
-
 .pindrop {
     font-family: var(--font-family, monospace);
     z-index: 15;
@@ -97,13 +91,13 @@
     transform-origin: top center;
 }
 .pindropnumber {
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 .pindropname {
-    font-size: var(--font-size-micro);
+    font-size: var(--font-size-thin);
     font-weight: 500;
     letter-spacing: 0.04em;
     opacity: 0.55;
@@ -135,10 +129,10 @@
         padding: 2px 4px;
     }
     .pindropnumber {
-        font-size: var(--font-size-micro);
+        font-size: var(--font-size-tiny);
     }
     .pindropname {
-        font-size: 9px;
+        font-size: var(--font-size-tiny);
     }
     #unsolicitedinfo {
         font-size: var(--font-size-micro);
@@ -148,4 +142,20 @@
         font-size: var(--font-size-micro);
         padding: 2px 5px;
     }
+}
+
+[data-wiehr-accent="blood"] .retreatbutton img {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
+}
+
+[data-wiehr-accent="blood"] .pindropnumber {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] #unsolicitedinfo {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .thetally {
+    color: var(--color-accent);
 }

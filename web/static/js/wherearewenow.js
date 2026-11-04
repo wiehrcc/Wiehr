@@ -44,12 +44,10 @@
             this.createNavigation();
             this.setupEventListeners();
 
-
             const initialIndex = this.getIndexFromHash();
             this.showSection(initialIndex);
             this.currentIndex = initialIndex;
             this.updateNavigation();
-
 
             this.updateHash(initialIndex);
         }
@@ -68,10 +66,8 @@
             const hash = window.location.hash.slice(1); 
             if (!hash) return 0;
 
-
             const index = this.sectionAnchors.findIndex(anchor => anchor === hash.toLowerCase());
             if (index !== -1) return index;
-
 
             const numIndex = parseInt(hash, 10) - 1;
             if (!isNaN(numIndex) && numIndex >= 0 && numIndex < this.sections.length) {
@@ -85,7 +81,6 @@
             const anchor = this.sectionAnchors[index];
             if (anchor) {
                 const newHash = '#' + anchor;
-
 
                 if (window.location.hash !== newHash) {
                     history.replaceState(null, '', newHash);
@@ -389,7 +384,6 @@
                 const sectionEl = document.createElement('div');
                 sectionEl.className = 'viewport-section';
                 sectionEl.dataset.index = index;
-
 
                 const anchor = this.sectionAnchors[index];
                 if (anchor) {

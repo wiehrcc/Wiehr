@@ -4,29 +4,13 @@
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-    const REGIONS = [
-        { id: 'europe', name: 'Europe', latMin: 34, latMax: 72, lonMin: -12, lonMax: 42 },
-        { id: 'asia', name: 'Asia', latMin: 5, latMax: 60, lonMin: 42, lonMax: 145 },
-        { id: 'africa', name: 'Africa', latMin: -36, latMax: 38, lonMin: -20, lonMax: 55 },
-        { id: 'north_america', name: 'N. America', latMin: 15, latMax: 72, lonMin: -170, lonMax: -50 },
-        { id: 'south_america', name: 'S. America', latMin: -56, latMax: 15, lonMin: -85, lonMax: -30 },
-        { id: 'oceania', name: 'Oceania', latMin: -50, latMax: 0, lonMin: 100, lonMax: 180 },
-        { id: 'russia', name: 'Russia & CIS', latMin: 40, latMax: 78, lonMin: 19, lonMax: 180,
-          countries: ['russia', 'belarus', 'kazakhstan', 'ukraine', 'moldova', 'armenia',
-                      'azerbaijan', 'georgia', 'kyrgyzstan', 'tajikistan', 'turkmenistan',
-                      'uzbekistan'] },
-        { id: 'middle_east', name: 'Middle East', latMin: 12, latMax: 42, lonMin: 25, lonMax: 75,
-          countries: ['turkey', 'cyprus', 'northern_cyprus', 'syria', 'lebanon', 'israel',
-                      'palestine', 'jordan', 'iraq', 'iran', 'saudi_arabia', 'yemen', 'oman',
-                      'united_arab_emirates', 'qatar', 'bahrain', 'kuwait'] },
-    ];
+    const REGIONS = [];
 
-    const LERP_SPEED = isMobile ? 0.16 : 0.14;
+    const LERP_SPEED = isMobile ? 0.45 : 0.40;
     const DRAG_SCALE = isMobile ? 0.9 : 0.7;
     const TOUCH_DRAG_SCALE = 0.9;
 
-
-    const MARKER_SIZE = 9;
+    const MARKER_SIZE = 14;
 
     const ZOOM_FACTOR_IN = 0.86;
     const ZOOM_FACTOR_OUT = 1.16;
@@ -55,15 +39,13 @@
     let currentView = { ...WORLD_VIEW };
     let targetView = { ...WORLD_VIEW };
 
-    let currentMode = 'overview', activeRegion = null;
-    let hoveredRegion = -1, hoveredDot = -1;
+    let hoveredDot = -1;
     let isDragging = false, wasDrag = false;
     let lastMouse = { x: 0, y: 0 }, pinchDist = 0;
     let isVisible = true, time = 0;
     let tooltipEl = null, backBtn = null, regionTitleEl = null;
     let labelEls = [];
     let regionBadgeEls = [];
-
 
     function getRegionIdx(lat, lon, countryKey) {
         if (countryKey) {
@@ -86,11 +68,24 @@
         return c;
     }
 
-
     let geoData = null;
     let geoIsHiRes = false;
 
-    function decodeGeo(raw) {
+    function simplifyPoly(lat, lon, maxEdges) {
+        if (lat.length <= maxEdges) return { lat: lat, lon: lon };
+        const step = (lat.length - 1) / (maxEdges - 1);
+        const sLat = new Float32Array(maxEdges);
+        const sLon = new Float32Array(maxEdges);
+        for (let i = 0; i < maxEdges; i++) {
+            const idx = Math.min(Math.round(i * step), lat.length - 1);
+            sLat[i] = lat[idx];
+            sLon[i] = lon[idx];
+        }
+        return { lat: sLat, lon: sLon };
+    }
+
+    function decodeGeo(raw, maxEdges) {
+        const limit = maxEdges || 9999;
         for (const r of Object.values(raw)) {
             if (!r.polygons) continue;
             for (const poly of r.polygons) {
@@ -104,8 +99,9 @@
                     lat[i] = aLat / 1000;
                     lon[i] = aLon / 1000;
                 }
-                poly.lat = lat;
-                poly.lon = lon;
+                const s = simplifyPoly(lat, lon, limit);
+                poly.lat = s.lat;
+                poly.lon = s.lon;
             }
         }
         return raw;
@@ -118,7 +114,7 @@
         s.async = true;
         s.onload = function () {
             if (typeof atlasCountriesHi === 'undefined') return;
-            geoData = decodeGeo(atlasCountriesHi);
+            geoData = decodeGeo(atlasCountriesHi, 12);
             geoIsHiRes = true;
             buildCountryRegionMap();
             buildLocationDots();
@@ -171,7 +167,6 @@
         });
     }
 
-
     function lonToX(lon) {
         return (lon - currentView.lonMin) / (currentView.lonMax - currentView.lonMin) * canvas.width;
     }
@@ -184,7 +179,6 @@
             lat: (1 - py / canvas.height) * (currentView.latMax - currentView.latMin) + currentView.latMin
         };
     }
-
 
     function pointInPolygon(lat, lon, poly) {
         const plat = poly.lat, plon = poly.lon;
@@ -199,65 +193,15 @@
         return inside;
     }
 
-    function findRegionAt(px, py) {
-        const { lat, lon } = screenToLatLon(px, py);
-
-        if (geoData) {
-            for (const key of Object.keys(geoData)) {
-                const r = geoData[key];
-                if (!r.polygons || !r.polygons.length) continue;
-                const regions = polygonRegionMap[key];
-                if (!regions) continue;
-                for (let pi = 0; pi < r.polygons.length; pi++) {
-                    const ri = regions[pi];
-                    if (ri < 0 || getRegionDotCount(ri) === 0) continue;
-                    if (pointInPolygon(lat, lon, r.polygons[pi])) return ri;
-                }
-            }
-        }
-
-        for (let i = 0; i < REGIONS.length; i++) {
-            const r = REGIONS[i];
-            if (r.countries) continue;
-            if (lat >= r.latMin && lat <= r.latMax && lon >= r.lonMin && lon <= r.lonMax && getRegionDotCount(i) > 0) return i;
-        }
-        return -1;
-    }
     function findDotAt(px, py) {
-        if (currentMode !== 'region') return -1;
-        const hitRadius = isMobile ? 44 : 28;
+        const hitRadius = isMobile ? 52 : 36;
         for (let i = 0; i < locationDots.length; i++) {
             const d = locationDots[i];
-            if (d.regionIdx !== activeRegion) continue;
             const sx = lonToX(d.lon), sy = latToY(d.lat);
             if (Math.hypot(sx - px, sy - py) < hitRadius) return i;
         }
         return -1;
     }
-    function findCountryAt(px, py) {
-        const { lat, lon } = screenToLatLon(px, py);
-        for (const [key, r] of Object.entries(geoData)) {
-            if (!r.polygons || !r.polygons.length) continue;
-            if (currentMode === 'region') {
-                if (!countryTouchesRegion(key, activeRegion)) continue;
-            }
-            if (!locationCountryMap.hasOwnProperty(key)) continue;
-            let inside = false;
-            for (const poly of r.polygons) {
-                const plat = poly.lat, plon = poly.lon;
-                for (let i = 0, j = plat.length - 1; i < plat.length; j = i++) {
-                    const yi = plat[i], yj = plat[j];
-                    const xi = plon[i], xj = plon[j];
-                    if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) {
-                        inside = !inside;
-                    }
-                }
-            }
-            if (inside) return key;
-        }
-        return null;
-    }
-
 
     function keyPhase(key) {
         let h = 0;
@@ -270,21 +214,10 @@
 
     function computeRegionStride() {
         regionStrideBase = 1;
-        if (currentMode !== 'region' || activeRegion === null || !geoData) return;
-        let pts = 0;
-        for (const key of Object.keys(geoData)) {
-            if (!countryTouchesRegion(key, activeRegion)) continue;
-            const r = geoData[key];
-            if (!r.polygons) continue;
-            for (const poly of r.polygons) pts += poly.lat.length;
-        }
-        regionStrideBase = Math.max(1, Math.min(8, Math.ceil(pts / REGION_POINT_BUDGET)));
     }
 
     function strideForLonSpan(lonSpan) {
-        if (currentMode !== 'region') return 10;
-        const zoomRelief = Math.max(1, Math.min(4, 140 / Math.max(lonSpan, 1)));
-        return Math.max(1, Math.round(regionStrideBase / zoomRelief));
+        return 10;
     }
 
     function tracePath(lats, lons, stride, offsetX, offsetY) {
@@ -319,10 +252,9 @@
         }
     }
 
-
     function borderVibration(phase) {
-        const vx = Math.sin(time * 2.6 + phase) * 0.5 + Math.sin(time * 5.1 + phase * 1.7) * 0.25;
-        const vy = Math.cos(time * 2.3 + phase * 1.3) * 0.5 + Math.cos(time * 4.7 + phase * 0.9) * 0.25;
+        const vx = Math.sin(time * 2.6 + phase) * 0.15 + Math.sin(time * 5.1 + phase * 1.7) * 0.08;
+        const vy = Math.cos(time * 2.3 + phase * 1.3) * 0.15 + Math.cos(time * 4.7 + phase * 0.9) * 0.08;
         return { vx, vy };
     }
 
@@ -353,7 +285,6 @@
         ctx.restore();
     }
 
-
     function getCountriesInRegion(ri) {
         const regionCountries = new Set();
         for (let i = 0; i < locationDots.length; i++) {
@@ -361,7 +292,6 @@
         }
         return regionCountries;
     }
-
 
     function computeRegionBounds(ri) {
         const regionCountries = getCountriesInRegion(ri);
@@ -382,28 +312,6 @@
         }
         return { latMin, latMax, lonMin, lonMax };
     }
-
-
-    function enterRegion(ri) {
-        if (getRegionDotCount(ri) === 0) return;
-        currentMode = 'region'; activeRegion = ri; hoveredRegion = -1; hoveredDot = -1;
-        computeRegionStride();
-        const bounds = computeRegionBounds(ri);
-        const pad = isMobile ? 8 : 5;
-        const asp = canvas.width / canvas.height;
-        let lonSpan = (bounds.lonMax - bounds.lonMin) + pad * 2;
-        let latSpan = lonSpan / asp;
-        const latC = (bounds.latMin + bounds.latMax) / 2;
-        const lonC = (bounds.lonMin + bounds.lonMax) / 2;
-        const minLat = (bounds.latMax - bounds.latMin) + pad * 2;
-        if (latSpan < minLat) { latSpan = minLat; lonSpan = latSpan * asp; }
-        targetView = { lonMin: lonC - lonSpan / 2, lonMax: lonC + lonSpan / 2, latMin: latC - latSpan / 2, latMax: latC + latSpan / 2 };
-    }
-    function exitRegion() {
-        currentMode = 'overview'; activeRegion = null; hoveredDot = -1; hoveredRegion = -1;
-        WORLD_VIEW = computeWorldView(); targetView = { ...WORLD_VIEW };
-    }
-
 
     function zoomAround(lat, lon, factor) {
         const curLon = targetView.lonMax - targetView.lonMin;
@@ -427,24 +335,14 @@
     function setupInteraction() {
         canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
-            if (currentMode === 'region') exitRegion();
         });
         canvas.addEventListener('mousedown', e => { if (e.button !== 0) return; isDragging = true; wasDrag = false; lastMouse = { x: e.clientX, y: e.clientY }; });
         window.addEventListener('mousemove', e => {
             const rect = canvas.getBoundingClientRect();
             const dpr = canvas.width / rect.width;
             const px = (e.clientX - rect.left) * dpr, py = (e.clientY - rect.top) * dpr;
-            if (currentMode === 'overview') {
-                hoveredDot = -1;
-                hoveredRegion = findRegionAt(px, py);
-                if (!isDragging) canvas.style.cursor = hoveredRegion >= 0 ? 'pointer' : 'default';
-            } else {
-                hoveredDot = findDotAt(px, py);
-                if (!isDragging) {
-                    if (hoveredDot >= 0) { canvas.style.cursor = 'pointer'; }
-                    else { canvas.style.cursor = findCountryAt(px, py) ? 'pointer' : 'default'; }
-                }
-            }
+            hoveredDot = findDotAt(px, py);
+            if (!isDragging) canvas.style.cursor = hoveredDot >= 0 ? 'pointer' : 'default';
             if (tooltipEl) {
                 tooltipEl.style.left = (e.clientX - rect.left) + 'px';
                 tooltipEl.style.top = (e.clientY - rect.top - 50) + 'px';
@@ -466,8 +364,7 @@
         window.addEventListener('mouseup', e => {
             if (isDragging && !wasDrag) handleClick(e);
             isDragging = false;
-            if (currentMode === 'overview') canvas.style.cursor = hoveredRegion >= 0 ? 'pointer' : 'default';
-            else canvas.style.cursor = (hoveredDot >= 0) ? 'pointer' : 'default';
+            canvas.style.cursor = hoveredDot >= 0 ? 'pointer' : 'default';
         });
 
         canvas.addEventListener('wheel', e => {
@@ -536,26 +433,12 @@
         if (e.button && e.button !== 0) return;
         const rect = canvas.getBoundingClientRect(), dpr = canvas.width / rect.width;
         const px = (e.clientX - rect.left) * dpr, py = (e.clientY - rect.top) * dpr;
-        if (currentMode === 'region') {
-            const di = findDotAt(px, py);
-            if (di >= 0) {
-                const loc = atlasLocations[locationDots[di].locIdx];
-                window.location.href = loc.url || ('/atlas/' + loc.internal_id);
-                return;
-            }
-            const countryKey = findCountryAt(px, py);
-            if (countryKey && locationCountryMap.hasOwnProperty(countryKey)) {
-                const locIdx = locationCountryMap[countryKey];
-                const loc = atlasLocations[locIdx];
-                window.location.href = loc.url || ('/atlas/' + loc.internal_id);
-                return;
-            }
-        } else {
-            const ri = findRegionAt(px, py);
-            if (ri >= 0) enterRegion(ri);
+        const di = findDotAt(px, py);
+        if (di >= 0) {
+            const loc = atlasLocations[locationDots[di].locIdx];
+            window.location.href = loc.url || ('/atlas/' + loc.internal_id);
         }
     }
-
 
     function createUI() {
         const container = document.getElementById('flatearththeory');
@@ -565,33 +448,6 @@
         tooltipEl.id = 'unsolicitedinfo';
         tooltipEl.style.cssText = 'position:absolute;pointer-events:none;opacity:0;transition:opacity 0.15s;white-space:nowrap;transform:translate(-50%,0);z-index:20;';
         container.appendChild(tooltipEl);
-
-        backBtn = document.createElement('button');
-        backBtn.className = 'retreatbutton';
-        backBtn.innerHTML = '<img src="/static/images/entities/notok.svg" alt="Close" style="width:14px;height:14px;display:block;">';
-        backBtn.style.cssText = 'position:absolute;top:5rem;left:1.5rem;pointer-events:auto;z-index:30;display:none;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:var(--color-text);border:none;border-radius:0;cursor:pointer;transition:opacity 0.3s;';
-        backBtn.addEventListener('click', exitRegion);
-        container.appendChild(backBtn);
-
-        regionTitleEl = document.createElement('div');
-        regionTitleEl.id = 'whereamiexactly';
-        regionTitleEl.style.cssText = 'position:absolute;top:5rem;left:50%;transform:translateX(-50%);pointer-events:none;z-index:25;font-family:var(--font-family,monospace);font-size:' + (isMobile ? '0.8rem' : '1rem') + ';font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text,#000);opacity:0;transition:opacity 0.4s;white-space:nowrap;';
-        container.appendChild(regionTitleEl);
-
-
-        for (let i = 0; i < REGIONS.length; i++) {
-            const count = getRegionDotCount(i);
-            if (count === 0) { regionBadgeEls.push(null); continue; }
-            const el = document.createElement('div');
-            el.className = 'howmanystamps';
-            el.style.cssText = 'position:absolute;pointer-events:auto;cursor:pointer;z-index:16;opacity:0;transition:opacity 0.3s,transform 0.2s;white-space:nowrap;transform:translate(-50%,-50%);display:flex;align-items:center;gap:4px;';
-            el.innerHTML = '<span class="thetally">' + count + ' LOC' + (count > 1 ? 'S' : '') + '</span>';
-            el.setAttribute('data-region', i);
-            el.addEventListener('click', (function(ri) { return function(e) { e.stopPropagation(); enterRegion(ri); }; })(i));
-            container.appendChild(el);
-            regionBadgeEls.push(el);
-        }
-
 
         if (typeof atlasLocations !== 'undefined') {
             atlasLocations.forEach((loc, i) => {
@@ -605,7 +461,6 @@
             });
         }
     }
-
 
     function drawCoordinateGrid(w, h, isDark) {
         const alpha = isDark ? 0.025 : 0.018;
@@ -624,7 +479,6 @@
         }
         ctx.setLineDash([]);
     }
-
 
     let terrainImg = null, terrainReady = false;
 
@@ -667,25 +521,21 @@
         ctx.restore();
     }
 
-
     function drawLocationMarkers(isDark) {
-        if (currentMode !== 'region') return;
-
         const dpr = canvas.width / (parseFloat(canvas.style.width) || window.innerWidth);
         const side = MARKER_SIZE * dpr;
-        const ink = isDark ? '255,255,255' : '0,0,0';
+        const isBlood = document.documentElement.getAttribute('data-wiehr-accent') === 'blood';
+        const ink = isBlood ? '175,0,0' : (isDark ? '255,255,255' : '0,0,0');
 
         for (let i = 0; i < locationDots.length; i++) {
             const d = locationDots[i];
-            if (d.regionIdx !== activeRegion) continue;
-
             const x = lonToX(d.lon), y = latToY(d.lat);
             if (x < -40 || x > canvas.width + 40 || y < -40 || y > canvas.height + 40) continue;
 
             const isHov = hoveredDot === i;
-            const half = (isHov ? side * 1.3 : side) / 2;
+            const half = (isHov ? side * 1.4 : side) / 2;
 
-            ctx.fillStyle = 'rgba(' + ink + ',' + (isHov ? 1 : 0.8) + ')';
+            ctx.fillStyle = 'rgba(' + ink + ',' + (isHov ? 1 : 0.7) + ')';
             ctx.fillRect(x - half, y - half, half * 2, half * 2);
         }
     }
@@ -723,10 +573,9 @@
         ctx.restore();
     }
 
-
-    /* Frame budget from the shared tier — see js/howfastareyou.js. */
+    
     const ATLAS_FRAME_MS = (window.WiehrTier && window.WiehrTier.fps)
-        ? 1000 / window.WiehrTier.fps - 4 : 0;   // -4: see frame() in howfastareyou.js
+        ? 1000 / window.WiehrTier.fps - 4 : 0;   
     let atlasLastFrameAt = 0;
 
     function render(now) {
@@ -747,7 +596,6 @@
         const isDark = document.documentElement.getAttribute('data-wiehr-theme') === 'dark';
         const w = canvas.width, h = canvas.height;
 
-
         ctx.clearRect(0, 0, w, h);
 
         drawCoordinateGrid(w, h, isDark);
@@ -757,110 +605,15 @@
 
         drawTerrainBackdrop(isDark);
 
-        if (geoData) {
-            const highlightCountries = new Set();
-            const activeCountries = new Set();
-            const regionCountriesSet = new Set();
-            if (currentMode === 'overview' && hoveredRegion >= 0) {
-                for (const key of Object.keys(polygonRegionMap)) {
-                    if (countryTouchesRegion(key, hoveredRegion)) highlightCountries.add(key);
-                }
-            }
-            if (currentMode === 'region' && activeRegion !== null) {
-                for (let i = 0; i < locationDots.length; i++) {
-                    if (locationDots[i].regionIdx === activeRegion) activeCountries.add(locationDots[i].countryKey);
-                }
-                for (const key of Object.keys(polygonRegionMap)) {
-                    if (countryTouchesRegion(key, activeRegion)) regionCountriesSet.add(key);
-                }
-            }
-
-
-            for (const [key, r] of Object.entries(geoData)) {
-                if (!r.polygons || !r.polygons.length) continue;
-                if (currentMode === 'region' && !regionCountriesSet.has(key)) continue;
-
-                const isHighlighted = highlightCountries.has(key);
-                const isActive = activeCountries.has(key);
-                const hasLocation = locationCountryMap.hasOwnProperty(key);
-
-                const maskStyle = (isActive || hasLocation)
-                    ? (isDark ? 'rgba(21,22,23,0.72)' : 'rgba(255,255,255,0.72)')
-                    : (isDark ? 'rgba(21,22,23,0.55)' : 'rgba(255,255,255,0.55)');
-
-                if (isHighlighted) {
-                    ctx.fillStyle = maskStyle;
-                    drawCountryPath(r, stride, key, hoveredRegion, true);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = maskStyle;
-                    drawCountryPath(r, stride, key, null);
-                    ctx.fill();
-                }
-            }
-
-
-            for (const [key, r] of Object.entries(geoData)) {
-                if (!r.polygons || !r.polygons.length) continue;
-                if (currentMode === 'region' && !regionCountriesSet.has(key)) continue;
-                if (!locationCountryMap.hasOwnProperty(key)) continue;
-                const isHighlighted = highlightCountries.has(key);
-                const isActive = activeCountries.has(key);
-                if (isHighlighted || isActive) {
-                    const hatchFilter = isHighlighted ? hoveredRegion
-                        : (currentMode === 'region' ? activeRegion : null);
-                    const hatchSpacing = Math.max(4, Math.min(10, lonSpan / 35)) * regionStrideBase;
-                    drawCountryHatching(r, isDark, hatchSpacing, stride, key, hatchFilter);
-                }
-            }
-
-
-            for (const [key, r] of Object.entries(geoData)) {
-                if (!r.polygons || !r.polygons.length) continue;
-                if (currentMode === 'region' && !regionCountriesSet.has(key)) continue;
-                const isHighlighted = highlightCountries.has(key);
-                const isActive = activeCountries.has(key);
-                drawDetailedBorder(r, isDark, isHighlighted || isActive, r.height || 0.5, stride, keyPhase(key));
-            }
-        }
-
         drawLocationMarkers(isDark);
 
-
         const dpr = canvas.width / (parseFloat(canvas.style.width) || window.innerWidth);
-
-
-        for (let i = 0; i < regionBadgeEls.length; i++) {
-            const el = regionBadgeEls[i];
-            if (!el) continue;
-            if (currentMode !== 'overview') {
-                el.style.opacity = '0'; el.style.pointerEvents = 'none'; continue;
-            }
-            const r = REGIONS[i];
-            const cLat = (r.latMin + r.latMax) / 2;
-            const cLon = (r.lonMin + r.lonMax) / 2;
-            const sx = lonToX(cLon) / dpr, sy = latToY(cLat) / dpr;
-            if (sx < -80 || sx > window.innerWidth + 80 || sy < -50 || sy > window.innerHeight + 50) {
-                el.style.opacity = '0'; el.style.pointerEvents = 'none'; continue;
-            }
-            el.style.left = sx + 'px';
-            el.style.top = sy + 'px';
-            const isHov = hoveredRegion === i;
-            el.style.opacity = isHov ? '1' : '0.7';
-            el.style.transform = isHov ? 'translate(-50%,-50%) scale(1.1)' : 'translate(-50%,-50%)';
-            el.style.pointerEvents = 'auto';
-        }
-
 
         const labelOffset = MARKER_SIZE * 1.3 + 14;
 
         for (let i = 0; i < labelEls.length; i++) {
             const el = labelEls[i];
             const d = locationDots[i];
-
-            if (currentMode !== 'region' || d.regionIdx !== activeRegion) {
-                el.style.opacity = '0'; el.style.pointerEvents = 'none'; continue;
-            }
 
             const sx = lonToX(d.lon) / dpr, sy = latToY(d.lat) / dpr;
             if (sx < -50 || sx > window.innerWidth + 50 || sy < -50 || sy > window.innerHeight + 50) {
@@ -874,9 +627,8 @@
             el.style.pointerEvents = 'auto';
         }
 
-
         if (tooltipEl) {
-            if (hoveredDot >= 0 && currentMode === 'region') {
+            if (hoveredDot >= 0) {
                 const loc = atlasLocations[locationDots[hoveredDot].locIdx];
                 tooltipEl.innerHTML = '<span class="receiptnumber">' + loc.internal_id + '</span><span class="thedivider">//</span><span class="theactualplace">' + loc.country + '</span>';
                 tooltipEl.style.opacity = '1';
@@ -884,17 +636,9 @@
                 tooltipEl.style.opacity = '0';
             }
         }
-        if (backBtn) backBtn.style.display = currentMode === 'region' ? 'flex' : 'none';
-        if (regionTitleEl) {
-            if (currentMode === 'region' && activeRegion !== null) {
-                regionTitleEl.textContent = REGIONS[activeRegion].name;
-                regionTitleEl.style.opacity = '1';
-            } else { regionTitleEl.style.opacity = '0'; }
-        }
 
         requestAnimationFrame(render);
     }
-
 
     let resizeTimer = null;
     function updateCanvasSize() {
@@ -912,7 +656,7 @@
     function resize() {
         updateCanvasSize();
         WORLD_VIEW = computeWorldView();
-        if (currentMode === 'overview') targetView = { ...WORLD_VIEW };
+        targetView = { ...WORLD_VIEW };
     }
 
     function onResize() {
@@ -938,7 +682,7 @@
 
     function start() {
         if (typeof atlasCountriesLo !== 'undefined') {
-            geoData = decodeGeo(atlasCountriesLo);
+            geoData = decodeGeo(atlasCountriesLo, 60);
             buildCountryRegionMap();
             buildLocationDots();
             createUI();
@@ -951,7 +695,6 @@
         } else { setTimeout(start, 100); }
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentMode === 'region') exitRegion(); });
     if (window.WiehrLoops) {
         window.WiehrLoops.add(() => { isVisible = false; }, () => { isVisible = true; });
     }

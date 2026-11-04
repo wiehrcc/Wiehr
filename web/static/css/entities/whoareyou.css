@@ -30,9 +30,6 @@
     margin-bottom: 0;
 }
 
-/* Links inside the prose. Underlined, because with the section labels gone
-   these are the only thing on the page that is clickable, and nothing else is
-   left to signal it. */
 .inlinelink {
     color: inherit;
     text-decoration: underline;
@@ -40,9 +37,7 @@
     text-decoration-thickness: 1px;
     opacity: 0.9;
     transition: opacity 0.2s ease;
-    /* A line of body text is a thin thing to hit with a thumb. Padding out and
-       margin back in gives the tap area some height without opening gaps in
-       the sentence it sits inside. */
+    
     padding: 0.35em 0.2em;
     margin: -0.35em -0.2em;
 }
@@ -51,10 +46,81 @@
     opacity: 0.55;
 }
 
+.sectionlabel {
+    font-size: var(--type-meta);
+    font-weight: var(--font-weight-black, 900);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-top: 1.25rem;
+    margin-bottom: 0.15rem;
+}
+
+.contacttype {
+    font-weight: var(--font-weight-bold, 700);
+    font-size: var(--type-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-right: 0.4em;
+}
+
 .iamastring {
     font-weight: var(--font-weight-bold, 700);
     opacity: 0.85;
     word-break: break-all;
+}
+
+.aboutsection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.aboutsectionlabel {
+    font-size: var(--font-size-thin);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin: 0;
+}
+
+.aboutlines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.aboutlines p {
+    font-size: var(--font-size-thin);
+    line-height: 1.45;
+    opacity: 0.75;
+    margin: 0;
+}
+
+.aboutcvrow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 100%;
+}
+
+.aboutcvlabel {
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.4;
+}
+
+.rateline {
+    font-size: var(--font-size-thin);
+    line-height: 1.45;
+    opacity: 0.75;
 }
 
 @media (max-width: 640px) {

@@ -2,14 +2,8 @@
     align-items: center;
 }
 
-/* The card is capped at the viewport and the cover is the part that gives.
-
-   A fixed cover height only fits the description it was measured against; one
-   more line of copy and the last button drops below the fold again. Capping
-   the card and letting the cover flex-shrink means the text always wins the
-   argument, whatever its length, on whatever screen. */
 .onefileonly {
-    max-height: calc(100dvh - var(--space-header) - var(--space-bottom));
+    overflow-y: auto;
 }
 
 .fileguts {
@@ -23,27 +17,9 @@
 
 .filefacts {
     flex: 0 0 auto;
+    width: 100%;
 }
 
-/* The cover yields height so the words fit.
-
-   At 480px wide and its own aspect ratio the cover alone ate more than half a
-   phone screen, and a description of any length pushed the buttons below the
-   fold — on a page whose whole job is to get you to those buttons. It is now
-   capped in *viewport* height rather than only in width, so it shrinks on
-   short screens instead of the text being pushed off one.
-
-   Cropping is fine here: the covers are full-bleed artwork with nothing to
-   read, and the image opens full-size in the modal on tap. */
-/* Always a square, and the square is what gives.
-
-   Capping only the height let a wide cover keep its width and get cropped to a
-   letterbox — the artwork is composed square, so that is a real disfigurement,
-   not a crop. Driving the box off `height` with `aspect-ratio: 1` means width
-   follows height, so it stays square at every size, and `flex: 0 1 auto` still
-   lets it shrink when the text needs the room. */
-/* The cover needs to be a positioning context once a badge sits on top of it,
-   and to say it is clickable when it is. */
 .coverplays {
     position: relative;
     cursor: pointer;
@@ -62,6 +38,7 @@
     flex: 0 1 auto;
     min-height: 0;
     overflow: hidden;
+    align-self: center;
 }
 
 .filecoverart img {
@@ -82,7 +59,7 @@
 .filefacts {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
     width: 100%;
 }
@@ -129,17 +106,12 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 0;
+    gap: .5em;
     width: 100%;
     margin-top: auto;
     padding-top: 0.5rem;
 }
 
-/* The second row: where to go when you want the whole thing.
-
-   Kept visually subordinate to the row above it — that row is what you can do
-   right now, on your own, and this one is "write to a person and wait". The
-   label carries the price so the ask is answered before the click. */
 .knockonmydoor {
     display: flex;
     flex-direction: column;
@@ -159,6 +131,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    gap: .5em;
 }
 
 .doonething {
@@ -169,15 +142,15 @@
     text-decoration: none;
     color: var(--color-text);
     font-family: var(--font-family, monospace);
-    font-size: var(--font-size-thin);
+    font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 1rem 1.5rem;
-    border: none;
-    transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
-    opacity: 0.7;
-    background: var(--surface-tint);
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--color-text);
+    background: transparent;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .doonething:hover {
@@ -226,35 +199,35 @@
 .provewhoyouareform input[type="password"],
 .provewhoyouareform input[type="text"] {
     padding: 0.75rem 1rem;
-    border: 1px solid currentColor;
-    background: transparent;
+    border: none;
+    background: var(--color-text);
     font-size: var(--font-size-small);
     font-family: var(--font-family, monospace);
-    color: var(--color-text);
+    color: var(--color-bg);
     text-align: center;
     letter-spacing: 0.1em;
 }
 
 .provewhoyouareform input::placeholder {
-    color: var(--color-text);
-    opacity: 0.35;
+    color: var(--color-bg);
+    opacity: 0.5;
 }
 
 .provewhoyouareform input:focus {
     outline: none;
-    border-color: var(--color-text);
 }
 
 .provewhoyouareform button {
     padding: 0.75rem 1.5rem;
-    background: var(--color-text);
-    border: none;
+    background: transparent;
+    border: 1px solid var(--color-text);
     cursor: pointer;
-    transition: opacity 0.15s ease;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .provewhoyouareform button span {
-    color: var(--color-bg);
+    color: inherit;
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: 0.12em;
@@ -262,7 +235,9 @@
 }
 
 .provewhoyouareform button:hover {
-    opacity: 0.7;
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
 }
 
 .thepeek {
@@ -294,7 +269,7 @@
 
 .showmeyourpapersrow {
     display: flex;
-    gap: 0;
+    gap: .5em;
 }
 
 .showmeyourpapersrow .thekeyitself {
@@ -309,23 +284,25 @@
     outline: none;
 }
 
-
 .showmeyourpapersrow .checkitnow {
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 0.6rem 1.1rem;
-    border: none;
-    background: var(--color-text);
-    color: var(--color-bg);
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--color-text);
+    background: transparent;
+    color: var(--color-text);
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    opacity: 0.5;
+    transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 }
 
 .showmeyourpapersrow .checkitnow:hover {
-    opacity: 0.85;
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
 }
 
 .proofidownloaded {
@@ -389,6 +366,7 @@
     padding: 0.15rem 0.4rem;
     color: var(--color-bg);
     background: var(--color-text);
+    font-size: var(--font-size-thin);
     letter-spacing: 0.08em;
     opacity: 1;
 }

@@ -2,22 +2,21 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}{{ storage_object.title }} at storage. — Wiehr. Official Website{% endblock %}
+{% block title %}{{ storage_object.title }} at Storage — Wiehr. Official Website{% endblock %}
 
-{% block backdropmode %}{% if access_granted and storage_object.cover_image %}art{% else %}mark{% endif %}{% endblock %}
-{% block backdrop %}{% if access_granted and storage_object.cover_image %}{{ storage_object.cover_image.url }}{% else %}{% static 'images/backdrop/storage.jpg' %}{% endif %}{% endblock %}
+{% block backdrop %}{% static 'images/backdrop/storage.jpg' %}{% endblock %}
 
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/storage/{{ storage_object.slug }}" />
 
-    <meta name="title" content="{{ storage_object.title }} at storage. — Wiehr. Official Website">
-    <meta property="og:title" content="{{ storage_object.title }} at storage. — Wiehr. Official Website" />
-    <meta property="vk:title" content="{{ storage_object.title }} at storage. — Wiehr. Official Website" />
-    <meta name="twitter:title" content="{{ storage_object.title }} at storage. — Wiehr. Official Website" />
-    <meta itemprop="name" content="{{ storage_object.title }} at storage. — Wiehr. Official Website">
+    <meta name="title" content="{{ storage_object.title }} at Storage — Wiehr. Official Website">
+    <meta property="og:title" content="{{ storage_object.title }} at Storage — Wiehr. Official Website" />
+    <meta property="vk:title" content="{{ storage_object.title }} at Storage — Wiehr. Official Website" />
+    <meta name="twitter:title" content="{{ storage_object.title }} at Storage — Wiehr. Official Website" />
+    <meta itemprop="name" content="{{ storage_object.title }} at Storage — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="{{ storage_object.title }} at storage. — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="{{ storage_object.title }} at Storage — Wiehr. Official Website" />
 
     <meta name="description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
     <meta property="og:description" content="Download {{ storage_object.title }} from Storage by Wiehr — free digital asset including themes, fonts, presets, and creative tools." />
@@ -34,7 +33,7 @@
     <meta property="og:image:secure_url" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
-    <meta name="twitter:image:alt" content="{{ storage_object.title }} at storage. — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="{{ storage_object.title }} at Storage — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}" />
 
@@ -48,7 +47,7 @@
       "@type": "SoftwareApplication",
       "@id": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}/#item",
       "name": "{{ storage_object.title|escapejs }}",
-      "description": "Download {{ storage_object.title|escapejs }} at storage. — Wiehr. Official Website",
+      "description": "Download {{ storage_object.title|escapejs }} at Storage — Wiehr. Official Website",
       "url": "{{ site_url_nodashed|default:'https://wiehr.cc' }}/storage/{{ storage_object.slug }}"{% if storage_object.cover_image %},
       "image": "{{ site_url_nodashed|default:'https://wiehr.cc' }}{{ storage_object.cover_image.url }}"{% endif %},
       "applicationCategory": "{{ storage_object.file_type|escapejs }}",
@@ -111,7 +110,7 @@
             {% endif %}
             <form method="post" class="provewhoyouareform">
                 {% csrf_token %}
-                <input type="password" name="password" placeholder="Enter password" required>
+                <input type="password" name="password" placeholder="Enter password" required autocomplete="off" data-form-type="other">
                 <button type="submit"><span>UNLOCK</span></button>
             </form>
         </div>
@@ -119,17 +118,7 @@
     {% elif access_granted %}
     <div class="onefileonly">
         <div class="fileguts">
-            {% comment %}The cover is the play button, the way Lab's thumbnail is.
-
-            A separate PREVIEW button made three actions compete for one row,
-            which at 375px wrapped two of the three labels onto a second line
-            while the third stayed on one — the buttons lined up, the words did
-            not. Folding the preview into the artwork removes the third button
-            and matches an interaction the site already had.
-
-            With a video the cover opens it; without one it still opens the
-            image full-size, so `tapthis` is conditional rather than
-            unconditional.{% endcomment %}
+            
             <div class="filecoverart{% if storage_object.has_preview %} coverplays{% endif %}"
                  {% if storage_object.has_preview %}id="coverplaysbutton"
                  role="button" tabindex="0"
@@ -150,27 +139,14 @@
             </div>
 
             <div class="filefacts">
-                <h1 class="filename">{{ storage_object.title }}</h1>
-                <span class="filecode">{{ storage_object.internal_id }}{% if storage_object.is_paid %} <span class="whatitcosts">{{ storage_object.price_display }}</span>{% endif %}</span>
+                <h1 class="filename">{{ storage_object.title }}{% if storage_object.is_paid %} <span class="whatitcosts">{{ storage_object.price_display }}</span>{% endif %}</h1>
+                <span class="filecode">{{ storage_object.internal_id }}</span>
                 {% if storage_object.description %}
                 <div class="filestory">{{ storage_object.description|safe|linebreaks }}</div>
                 {% endif %}
-                {% comment %}Nothing is sold here.
-
-                There is no checkout, because there is no business behind it.
-                The page's job is to let anyone try the thing, and to point the
-                people who want the whole thing at a human. So: a free preview
-                anyone can take, a way to reach me, and a key box for whoever
-                has already been given one.{% endcomment %}
+                
                 <div class="whattodowithit">
-                    {% comment %}The same two slots either side of the gate.
-
-                    A valid key does not add a dialog on top of the page — it
-                    changes what the two buttons already there say. Left slot:
-                    the key box becomes the licence files. Right slot: the
-                    sample becomes the real thing. Nothing moves, nothing to
-                    dismiss, and the page reads as one state rather than as a
-                    page plus an announcement about it.{% endcomment %}
+                    
                     {% if download_locked %}
                         {% if license_key_required %}
                         <button type="button" class="doonething" id="keyBtn">ENTER LICENSE KEY</button>
@@ -295,8 +271,6 @@ document.addEventListener('DOMContentLoaded', function(){
         if(e.key==='Escape'&&modal.style.display==='flex')close();
     });
 
-    // A wrong key re-renders the page, so reopen so the error is visible
-    // instead of hidden behind a button the user has to find again.
     if(modal.getAttribute('data-openonload'))open();
 });
 </script>

@@ -272,6 +272,12 @@ class WiehrGlobeModel(models.Model):
         validators=[hex_color_validator],
         help_text='Hex color code for page theme (e.g., #1DB954)'
     )
+    bpm = models.PositiveIntegerField(
+        verbose_name='BPM',
+        blank=True,
+        null=True,
+        help_text='Beats per minute (used on print label)'
+    )
 
     internal_id = models.CharField(
         verbose_name='Internal ID',
@@ -1866,7 +1872,7 @@ class QrCode(models.Model):
                 "wid": release.internal_id,
                 "geo": release.geo,
                 "color": release.background_color,
-                "bpm": None,
+                "bpm": str(release.bpm) if release.bpm else None,
                 "pdf_title": release.internal_id
             }
         else:

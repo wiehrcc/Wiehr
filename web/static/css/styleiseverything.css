@@ -30,7 +30,7 @@
     --line-height-basic: 1;
     --line-height-text: 1;
 
-    --space-header: 120px;
+    --space-header: 160px;
     --space-bottom: 88px;
 
     --page-gutter: 1.5rem;
@@ -58,7 +58,10 @@
     --color-text: var(--color-black);
     --color-bg: var(--color-white);
 
-    --surface-tint: rgba(0, 0, 0, 0.02);
+    --color-blood: #af0000;
+    --color-accent: var(--color-text);
+
+    --surface-tint: rgba(0, 0, 0, 0.05);
     --surface-chip: rgba(244, 244, 244, 0.95);
     --surface-input: rgba(244, 244, 244, 0.5);
     --surface-subtle: rgba(0, 0, 0, 0.01);
@@ -73,7 +76,7 @@
     --color-text: var(--color-white);
     --color-bg: var(--color-black);
 
-    --surface-tint: rgba(244, 244, 244, 0.02);
+    --surface-tint: rgba(244, 244, 244, 0.05);
     --surface-chip: rgba(21, 22, 23, 0.95);
     --surface-input: rgba(21, 22, 23, 0.5);
     --surface-subtle: rgba(244, 244, 244, 0.01);
@@ -550,7 +553,7 @@ body {
 }
 
 .catalognumber {
-    font-size: var(--font-size-thin);
+    font-size: calc(var(--font-size-thin) * 0.5);
     opacity: 0.4;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -560,7 +563,8 @@ body {
 .pickyourpoison {
     display: flex;
     flex-direction: row;
-    gap: 0;
+    flex-wrap: wrap;
+    gap: .5em;
     width: 100%;
 }
 
@@ -569,26 +573,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.85rem 0.5rem;
+    padding: 1rem 1.5rem;
     text-decoration: none;
-    color: inherit;
-    font-family: 'Wiehr', sans-serif;
+    color: var(--color-text);
+    font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
-    font-weight: var(--font-weight-black);
+    font-weight: var(--font-weight-bold, 700);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    border: 1px solid currentColor;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    opacity: 0.7;
-    transition: opacity 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-wiehr-theme="dark"] .onemorelink {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.onemorelink + .onemorelink {
-    border-left: none;
+    border: 1px solid var(--color-text);
+    background: transparent;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .onemorelink:hover {
@@ -710,7 +706,7 @@ body {
     padding: 0.25rem 0.6rem;
     margin-left: 0.6rem;
     cursor: pointer;
-    opacity: 0.55;
+    opacity: 0.8;
     flex: none;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
@@ -789,13 +785,16 @@ body {
 }
 .catalognumber,
 .filecode {
-    font-size: var(--type-meta);
+    font-size: calc(var(--type-meta) * 0.75);
     line-height: var(--line-height-meta);
     opacity: 0.4;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: var(--font-weight-bold);
-    margin-top: 0.5rem;
+}
+.filenumber,
+.exhibitnumber {
+    font-size: calc(var(--type-meta) * 0.75);
 }
 
 @media (max-width: 640px) {
@@ -806,42 +805,21 @@ body {
         --type-meta: var(--font-size-tiny);
 
         --space-header: 96px;
-        --chrome-inset: 0.5rem;
+        --chrome-inset: 0.75rem;
         --space-bottom: 76px;
         --page-gutter: 1.25rem;
     }
 }
 
-/* --------------------------------------------------------------------------
-   Device tiers
-
-   `data-tier` is stamped on <html> before first paint by js/howfastareyou.js.
-   Three levels: `high` is the site as designed and appears nowhere below —
-   there is nothing to hold back. `mid` and `low` keep every visual. What they
-   give up is smoothness, density and work done in the background.
-
-   Specificity note: `:root[data-tier="x"]` is (0,2,0), which outranks the
-   `[data-wiehr-theme="dark"]` token block at (0,1,0). So nothing here may
-   touch a token that the dark theme redefines, or dark mode would inherit the
-   light value. Only theme-independent tokens are overridden below.
-   -------------------------------------------------------------------------- */
-
-/* One-shot entry animations. Nothing is lost by arriving already settled. */
 :root[data-tier="mid"] .whatliesbeneath,
 :root[data-tier="mid"] .themarkbehind {
     animation: none;
 }
 
-/* The drifting dust is pure atmosphere and a permanent canvas repaint. */
 :root[data-tier="low"] .floatingdustcanvas {
     display: none;
 }
 
-/* `wiehrnoiseanim` is feTurbulence into feDisplacementMap. On a link that is a
-   small area, but a menu row is 541x60 on desktop, and moving down the menu
-   starts a fresh one on every row you cross - several overlapping at once,
-   next to the preview render and the veil. Below the top tier the hover state
-   stays and the churn goes. */
 :root[data-tier="low"] .noiseonhover:hover,
 :root[data-tier="low"] .singlerouteforyou:not(.singlerouteforyou-disabled):hover,
 :root[data-tier="mid"] .noiseonhover:hover,
@@ -852,24 +830,16 @@ body {
 
 :root[data-tier="low"] .whatliesbeneath,
 :root[data-tier="low"] .themarkbehind,
-/* A full-page filter of any kind is worth skipping below the top tier. */
+
 :root[data-tier="low"] body.themeglitch,
 :root[data-tier="mid"] body.themeglitch {
     animation: none;
 }
 
-/* Transitions stay, but short. The page still responds, it just does not
-   spend 1.4s doing it. */
 :root[data-tier="low"] .wherewewouldgo {
     transition-duration: 0.15s;
 }
 
-/* The play badge, shared.
-
-   Lab and Storage both show "a still image that is really a video", and the
-   badge is how you know before you click. It lived in lab-object.css, which
-   only loads on /lab; moved here so Storage can use the same affordance
-   instead of a second, slightly different one. */
 .pretendplaybutton {
     position: absolute;
     top: 50%;
@@ -898,4 +868,133 @@ body {
 .coverplays:hover .pretendplaybutton {
     background: rgba(21, 22, 23, 0.75);
     transform: translate(-50%, -50%) scale(1.08);
+}
+
+.wiehr-btn {
+    border: 1px solid var(--color-text);
+    background: transparent;
+    padding: 1rem 1.5rem;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    text-decoration: none;
+    font-family: var(--font-family, monospace);
+    font-weight: var(--font-weight-bold, 700);
+    font-size: var(--font-size-thin);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.wiehr-btn:hover {
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+
+[data-wiehr-accent="blood"] {
+    --color-accent: var(--color-blood);
+}
+
+[data-wiehr-accent="blood"] .wiehr-btn,
+[data-wiehr-accent="blood"] .onemorelink,
+[data-wiehr-accent="blood"] .doonething,
+[data-wiehr-accent="blood"] .checkitnow,
+[data-wiehr-accent="blood"] .pressandpray,
+[data-wiehr-accent="blood"] .becomevisible,
+[data-wiehr-accent="blood"] .grabformat,
+[data-wiehr-accent="blood"] .onepaperformat,
+[data-wiehr-accent="blood"] .takeitwithyou,
+[data-wiehr-accent="blood"] .grabit {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .wiehr-btn:hover,
+[data-wiehr-accent="blood"] .onemorelink:hover,
+[data-wiehr-accent="blood"] .doonething:hover,
+[data-wiehr-accent="blood"] .checkitnow:hover,
+[data-wiehr-accent="blood"] .pressandpray:hover,
+[data-wiehr-accent="blood"] .becomevisible:hover,
+[data-wiehr-accent="blood"] .grabformat:hover,
+[data-wiehr-accent="blood"] .onepaperformat:hover,
+[data-wiehr-accent="blood"] .takeitwithyou:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+[data-wiehr-accent="blood"] .onepaperformat.chosen {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .grabit.grabit-done {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+[data-wiehr-accent="blood"] .verdict-good {
+    background: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .wilogoatleft img {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wilogoatleft img {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"] .labyrinthopenseverything .labyrinthicon {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
+}
+
+[data-wiehr-accent="blood"] .singlerouteforyou .routelabel {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .thekeyitself {
+    background: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .typehereifyoudare {
+    background: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .knockknockform input[type="password"],
+[data-wiehr-accent="blood"] .knockknockform input[type="text"],
+[data-wiehr-accent="blood"] .provewhoyouareform input[type="password"],
+[data-wiehr-accent="blood"] .provewhoyouareform input[type="text"] {
+    background: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .provewhoyouareform button {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .provewhoyouareform button:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+[data-wiehr-accent="blood"] .showmeyourpaperslabel {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .showmeyourpapersrow .thekeyitself {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .showmeyourpapersrow .thekeyitself::placeholder {
+    color: var(--color-accent);
+    opacity: 0.5;
+}
+
+[data-wiehr-accent="blood"] .retreatbutton img {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
 }

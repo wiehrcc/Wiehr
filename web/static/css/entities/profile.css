@@ -9,7 +9,6 @@
     color: var(--color-text);
 }
 
-
 .whoisthisguy {
     display: flex;
     flex-direction: column;
@@ -31,7 +30,6 @@
     opacity: 0.55;
     margin: 0;
 }
-
 
 .anotherpitch {
     display: flex;
@@ -59,7 +57,6 @@
 .storyisell p:last-child {
     margin-bottom: 0;
 }
-
 
 .priceofmytime {
     display: flex;
@@ -89,7 +86,6 @@
     font-weight: var(--font-weight-black, 900);
     white-space: nowrap;
 }
-
 
 .knockhere {
     display: flex;
@@ -122,7 +118,6 @@
     font-style: italic;
 }
 
-
 .paperproof {
     display: flex;
     flex-direction: column;
@@ -139,54 +134,71 @@
 
 .pickyourpoison {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .5em;
 }
 
 .onepaperformat {
     flex: 1;
-    padding: 0.75rem 0.5rem;
-    font-family: var(--font-family, monospace);
-    font-size: var(--font-size-thin);
-    font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: none;
-    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
     color: var(--color-text);
-    opacity: 0.6;
-    transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--color-text);
+    background: transparent;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease, flex 0.2s ease;
+    cursor: pointer;
 }
 
 .onepaperformat:hover {
-    opacity: 0.9;
-}
-
-.onepaperformat.chosen {
     opacity: 1;
     background: var(--color-text);
     color: var(--color-bg);
+}
+
+.onepaperformat.chosen {
+    flex: 2;
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
 }
 
 .takeitwithyou {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    font-family: var(--font-family, monospace);
-    font-size: var(--font-size-thin);
-    font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    border: none;
-    background: var(--color-text);
-    color: var(--color-bg);
     text-decoration: none;
-    transition: opacity 0.2s ease;
+    color: var(--color-text);
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--color-text);
+    background: transparent;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .takeitwithyou:hover {
-    opacity: 0.85;
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
 }
-
 
 @media (max-width: 640px) {
     .sellingmyself {
@@ -209,13 +221,11 @@
         font-size: var(--font-size-thin);
     }
 
-    .onepaperformat {
-        font-size: var(--font-size-tiny);
-        padding: 0.6rem 0.35rem;
+    #roletumbler {
+        flex-direction: column;
     }
 
-    .takeitwithyou {
-        font-size: var(--font-size-tiny);
-        padding: 0.85rem;
+    #roletumbler .onepaperformat {
+        width: 100%;
     }
 }

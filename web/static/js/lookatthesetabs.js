@@ -10,7 +10,6 @@
             : '<span class="flipthrough-number">' + (index + 1) + '</span>';
     }
 
-
     function createNav(count, opts) {
         opts = opts || {};
         var current = opts.initial || 0;

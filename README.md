@@ -1,8 +1,8 @@
 # wiehr.cc
 
-I've spent the last year building a central hub for my work as a composer, artist, and software engineer — this is **wiehr.cc**.
+One place for everything I do — music, visuals, and code. Built from scratch.
 
-The entire site is built around the **Wiehr Font Family** — my own monospace typeface with six weights and Latin + Cyrillic support — alongside 17 custom SVG icons designed specifically for each section, and **WebGL2** powering the particle logo, animations, navigation, and 3D globe.
+Custom typeface. Custom icons. WebGL. No frameworks.
 
 **WEBSITE:** [wiehr.cc](https://wiehr.cc)
 
@@ -12,26 +12,25 @@ The entire site is built around the **Wiehr Font Family** — my own monospace t
 
 - **NETWORK** — homepage; listener network and country-based subscriptions.
 - **ARCHIVE** — Globe, Atlas, Lab, Storage releases organized by year.
-- **GLOBE** — music releases that attached to real-world locations.
-- **ATLAS** — 9 photos per country on Natural Earth and ETOPO5 elevation/ocean-depth data interactive maps.
-- **LAB** — portfolio of works, projects and collaborations.
+- **GLOBE** — music releases attached to real-world locations.
+- **ATLAS** — photos per country on interactive terrain and ocean-depth maps.
+- **LAB** — portfolio of works, projects, and collaborations.
 - **STORAGE** — shared files: font, presets, downloads.
-- **COMPOSER / ENGINEER** — hire possibilities: services, rates, and CVs.
+- **ABOUT** — bio, contact, rates, and downloadable CVs.
 - **LICENSING** — license verification and signed document downloading.
-- **SHORTENER / QR** — internal tools for URLs and print-ready QR codes / stickers.
+- **SHORTENER / QR** — internal tools for URLs and print-ready QR codes.
 
 ---
 
 ## Stack
 
 - **Backend:** Django 4.2, SQLite, WhiteNoise, django-compressor
-- **Frontend:** Vanilla JS (ES modules + IIFE), WebGL2, Three.js concepts (custom implementation)
-- **Fonts:** Wiehr Font Family (6 weights, Latin + Cyrillic) — custom monospace typeface
-- **Icons:** 17 custom SVG icons
-- **Maps:** Natural Earth + ETOPO5 geodata for atlas terrain and country boundaries
-- **Audio:** Web Audio API ambient sound system with hover/transition effects
-- **PDF:** ReportLab + python-docx for license document generation
-- **QR:** qrcode library for print-ready QR code generation
+- **Frontend:** Vanilla JS, WebGL2 (custom implementation)
+- **Fonts:** Wiehr Font Family — 6 weights, Latin + Cyrillic, custom monospace
+- **Icons:** 19 custom SVG icons
+- **Maps:** Natural Earth + ETOPO5 geodata
+- **PDF:** ReportLab for rates, CVs, and license documents
+- **QR:** qrcode library for print-ready QR generation
 - **Deployment:** Gunicorn, NGINX, AWS EC2
 
 ---
@@ -54,27 +53,31 @@ wiehr/
 │   └── context_processors.py
 │
 ├── web/                            # Main application
-│   ├── models.py                   # Archive, Globe, Atlas, Lab, Storage, Team, CV, Licensing, etc.
-│   ├── views.py                    # All views, API endpoints, robots.txt, sitemap, llms.txt
+│   ├── models.py                   # Archive, Globe, Atlas, Lab, Storage, Team, CV, Licensing
+│   ├── views.py                    # Views, API, robots.txt, sitemap.xml, llms.txt
 │   ├── urls.py                     # URL routing
-│   ├── admin.py                    # Django admin customization
-│   ├── management/
-│   │   └── commands/
-│   │       └── seed_lab.py         # Seed sample lab items
+│   ├── admin.py                    # Admin customization
+│   ├── api.py                      # JSON API endpoints
+│   ├── cv_builder.py               # PDF CV generation
+│   ├── rates_builder.py            # PDF rates sheet generation
+│   ├── license_builder.py          # Signed license document generation
+│   ├── email_utils.py              # Email helpers
+│   ├── signals.py                  # Model signals
+│   ├── context_processors.py       # Template context
+│   ├── qrcode/                     # QR code and print sticker generation
+│   ├── management/commands/        # Management commands
 │   ├── migrations/                 # Database migrations
 │   │
 │   └── static/
 │       ├── css/
 │       │   ├── styleiseverything.css          # Global styles + Wiehr Font @font-face
-│       │   ├── nothingisalitwithoutthis.css   # Core UI (cursor, menu, logo, footer)
+│       │   ├── nothingisalitwithoutthis.css   # Core UI: cursor, menu, header, footer
+│       │   ├── whatliesbeneath.css            # Backdrop and menu overlay
 │       │   ├── wiehr-theme.css                # Light/dark theme variables
 │       │   ├── viewportsections.css           # Viewport section navigation
-│       │   ├── piecesileftforyou.css           # Breadcrumb navigation
 │       │   ├── waitforitall.css               # Page transition effects
-│       │   ├── wehavefollowinginmenu.css       # Legacy menu styles
-│       │   ├── wiehr-modules.css              # Shared module styles
 │       │   └── entities/                      # Per-page styles
-│       │       ├── pleasesavemefromthis.css    #   Index / Network
+│       │       ├── pleasesavemefromthis.css    #   Network / Home
 │       │       ├── archive.css                #   Archive
 │       │       ├── atlas.css                  #   Atlas list
 │       │       ├── atlas-object.css           #   Atlas detail
@@ -85,92 +88,82 @@ wiehr/
 │       │       ├── storage-object.css         #   Storage detail
 │       │       ├── license.css                #   Licensing
 │       │       ├── shortener.css              #   Shortener / QR
-│       │       ├── whoareyou.css              #   Who Are You
+│       │       ├── whoareyou.css              #   About
 │       │       ├── profile.css                #   Composer / Engineer profiles
 │       │       ├── flipthrough.css            #   Flip-through gallery
-│       │       ├── errorpagesstyle.css        #   Error pages
 │       │       └── youcannotseethis.css       #   Classified page
 │       │
 │       ├── js/
-│       │   ├── logolookslikevenom.js           # WebGL2 particle logo + network visualization
-│       │   ├── networkgraph.js                 # Network graph overlay + ripples + subscribe modal
-│       │   ├── pleasepickasideofthemenu.js     # Menu system + cursor + theme toggle
+│       │   ├── logolookslikevenom.js           # WebGL2 particle logo
+│       │   ├── networkgraph.js                 # Network graph overlay + subscribe modal
+│       │   ├── pleasepickasideofthemenu.js     # Menu, cursor, theme, accent, breadcrumbs
 │       │   ├── webgl-globe.js                  # WebGL2 3D globe
 │       │   ├── webgl-atlas.js                  # WebGL2 atlas map with terrain
-│       │   ├── wiehr-sound.js                  # Ambient sound system (Web Audio API)
-│       │   ├── wiehr-theme.js                  # Theme persistence
-│       │   ├── onepageatatime.js               # Viewport section navigation
 │       │   ├── waitforitall.js                 # Page transitions
+│       │   ├── floatingdust.js                 # Floating dust particles
+│       │   ├── howfastareyou.js                # Scroll speed detection
+│       │   ├── onepageatatime.js               # Viewport section navigation
+│       │   ├── wherearewenow.js                # Breadcrumb navigation
+│       │   ├── lookatthesetabs.js              # Tab navigation
+│       │   ├── grabit.js                       # Copy-to-clipboard utility
+│       │   ├── globe-object.js                 # Globe detail page
 │       │   ├── countries.js                    # Country autocomplete data
 │       │   ├── globe-countries.js              # Globe country boundaries
 │       │   ├── globe-belarus.js                # Belarus detailed boundaries
 │       │   ├── atlas-countries.js              # Atlas country boundaries (hi-res)
 │       │   ├── atlas-countries-lo.js           # Atlas country boundaries (lo-res)
-│       │   ├── atlas-terrain-meta.js           # Atlas terrain metadata
-│       │   ├── scrollindicator.js              # Scroll progress indicator
-│       │   ├── noiseborder.js                  # Noise border effect
-│       │   ├── tvnoise.js                      # TV noise effect
-│       │   ├── menuwebgl.js                    # Menu WebGL background
-│       │   ├── floatingdust.js                 # Floating dust particles
-│       │   ├── depth3d-css.js                  # CSS 3D depth effects
-│       │   ├── treeview.js                     # File tree navigation
-│       │   ├── lookatthesetabs.js              # Tab navigation
-│       │   ├── wherearewenow.js                # Breadcrumb navigation
-│       │   ├── yourenotgoingfast.js            # Scroll speed detection
-│       │   └── globe-object.js                 # Globe detail page
+│       │   └── atlas-terrain-meta.js           # Atlas terrain metadata
 │       │
-│       ├── font/                   # Wiehr Font Family (woff2, woff, ttf)
-│       │   ├── Wiehr-Thin.*
-│       │   ├── Wiehr-Light.*
-│       │   ├── Wiehr-Regular.*
-│       │   ├── Wiehr-Medium.*
-│       │   ├── Wiehr-Bold.*
-│       │   └── Wiehr-Black.*
-│       │
-│       ├── images/                 # SVG icons, SEO images, atlas terrain
-│       │   ├── entities/           #   17 custom SVG icons per section
+│       ├── font/                   # Wiehr Font Family (woff2, woff, ttf × 6 weights)
+│       ├── images/
+│       │   ├── entities/           #   19 custom SVG icons
+│       │   ├── backdrop/           #   Pre-blurred section backdrop images
 │       │   ├── seo/                #   Open Graph and social media images
+│       │   ├── live/               #   Live/animated assets
 │       │   ├── qr/                 #   QR code assets
 │       │   └── atlas-terrain.png   #   ETOPO5 elevation/depth map
 │       │
 │       ├── flags/                  # Country flag SVGs
 │       ├── favicon/                # Favicons, web manifest, touch icons
-│       ├── sound/                  # Ambient audio (BG, hover, noise, transitions)
-│       └── assets/                 # Misc static assets
+│       └── assets/                 # llms.txt and misc static assets
 │
 ├── shortener/                      # URL shortener app
-│   ├── apps.py
-│   └── migrations/
 │
 ├── templates/
 │   ├── nothingmattersalikebase.html            # Master base template
-│   ├── classified.html                         # Classified / coming-soon page
-│   ├── entities/                               # List pages
+│   ├── classified.html                         # Classified / coming-soon
+│   ├── custom_500.html                         # Fallback error page
+│   ├── entities/                               # Section pages
 │   │   ├── index.html                          #   Network / Home
 │   │   ├── archive.html                        #   Archive
 │   │   ├── globe.html                          #   Globe
 │   │   ├── atlas.html                          #   Atlas
 │   │   ├── lab.html                            #   Lab
 │   │   ├── storage.html                        #   Storage
-│   │   ├── composer.html                       #   Composer services
-│   │   ├── engineer.html                       #   Engineer services
-│   │   ├── license.html                        #   License verification
-│   │   ├── shortener.html                      #   URL shortener / QR
-│   │   ├── whoareyou.html                      #   Who Are You
-│   │   ├── disconnect.html                     #   Unsubscribe
-│   │   └── _profile.html                       #   Shared profile partial
+│   │   ├── whoareyou.html                      #   About
+│   │   ├── rates.html                          #   Rates
+│   │   ├── composer.html                       #   Composer profile
+│   │   ├── engineer.html                       #   Engineer profile
+│   │   ├── _profile.html                       #   Shared profile partial
+│   │   ├── license.html                        #   Licensing
+│   │   ├── shortener.html                      #   Shortener / QR
+│   │   └── disconnect.html                     #   Unsubscribe
 │   ├── objects/                                # Detail pages
 │   │   ├── archive_object.html
 │   │   ├── globe_object.html
 │   │   ├── atlas_object.html
 │   │   ├── lab_object.html
-│   │   └── storage_object.html
-│   ├── legal/                                  # Legal pages
+│   │   ├── storage_object.html
+│   │   └── _imagemodal.html                    #   Shared image modal
+│   ├── legal/
 │   │   ├── privacy.html
-│   │   └── terms.html
-│   ├── emails/                                 # Email templates
+│   │   ├── terms.html
+│   │   ├── _privacy_en.html
+│   │   └── _terms_en.html
+│   ├── emails/
 │   │   ├── base_email.html
-│   │   └── team_campaign.html
+│   │   ├── team_campaign.html
+│   │   └── license_issued.html
 │   └── admin/                                  # Admin overrides
 │
 └── scripts/                        # Geodata generation scripts
@@ -184,60 +177,41 @@ wiehr/
 ## Setup
 
 ```bash
-# Clone
 git clone https://github.com/wiehrcc/Wiehr.git
 cd Wiehr
 
-# Virtual environment
 python -m venv .venv
 source .venv/bin/activate        # Linux/macOS
 .venv\Scripts\activate           # Windows
 
-# Dependencies
 pip install -r requirements.txt
 
-# Environment
-cp .env.example .env
-# Edit .env with your values
+cp .env.example .env             # Edit with your values
 
-# Database
 python manage.py migrate
-
-# Run
 python manage.py runserver
 ```
 
 ## Deploying
 
 Static assets are served through WhiteNoise's manifest storage, and CSS/JS are
-compressed offline. Both are sensitive to `DEBUG`: manifest storage only emits
-hashed filenames when `DEBUG=False`, and the offline compressor keys its
-manifest on the rendered markup — hashed names included.
-
-So the manifest has to be built under the **same `DEBUG` value the server runs
-with**. Set `DEBUG` in `.env` first, then build, in this order:
+compressed offline. Both depend on `DEBUG` — set it in `.env` first, then build:
 
 ```bash
 python manage.py collectstatic --noinput && python manage.py compress --force
 ```
 
-Building with `DEBUG=True` and serving with `DEBUG=False` (or the reverse)
-makes every page fail with `OfflineGenerationError: ... missing from offline
-manifest`. Re-run both commands after any template or static-asset change.
+Building with one `DEBUG` value and serving with another breaks every page.
+Re-run after any template or static-asset change.
 
-`STATIC_ROOT` is `static/` and is gitignored — it is generated, never
-committed, and `git clean -fd` will remove it. If the site suddenly loses all
-styling or returns 500 everywhere, run the command above before looking
-anywhere else.
+`STATIC_ROOT` is `static/` — gitignored, generated, never committed.
 
 ---
 
-## What's Next
+## Follow
 
-The site is also the foundation for what's next. Follow to get updates:
-
-- **Telegram channel:** [t.me/Wiehr](https://t.me/Wiehr)
-- **Are you visible?** [wiehr.cc](https://wiehr.cc)
+- **Telegram:** [t.me/Wiehr](https://t.me/Wiehr)
+- **Website:** [wiehr.cc](https://wiehr.cc)
 
 ---
 

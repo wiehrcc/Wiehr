@@ -7,24 +7,22 @@
 
     var MENU_ITEMS = [
         { id: 'index', label: '•', icon: 'network.svg', backdrop: 'network.jpg', href: '/', active: true, isFirst: true },
-        { id: 'archive', label: 'archive.', icon: 'archive.svg', backdrop: 'archive.jpg', href: '/archive', active: true },
-        { id: 'globe', label: 'globe.', icon: 'globe.svg', backdrop: 'globe.jpg', href: '/globe', active: true },
-        { id: 'atlas', label: 'atlas.', icon: 'atlas.svg', backdrop: 'atlas.jpg', href: '/atlas', active: true },
-        { id: 'storage', label: 'storage.', icon: 'storage.svg', backdrop: 'storage.jpg', href: '/storage', active: true },
-        { id: 'lab', label: 'lab.', icon: 'lab.svg', backdrop: 'lab.jpg', href: '/lab', active: true },
-        { id: 'whoareyou', label: 'who are you?', icon: 'whoareyou.svg', backdrop: 'whoareyou.jpg', href: '/whoareyou', active: true },
-        { id: 'licensing', label: 'licensing.', icon: 'license.svg', backdrop: 'license.jpg', href: '/licensing', active: true }
+        { id: 'archive', label: 'Archive', icon: 'archive.svg', backdrop: 'archive.jpg', href: '/archive', active: true },
+        { id: 'globe', label: 'Globe', icon: 'globe.svg', backdrop: 'globe.jpg', href: '/globe', active: true },
+        { id: 'atlas', label: 'Atlas', icon: 'atlas.svg', backdrop: 'atlas.jpg', href: '/atlas', active: true },
+        { id: 'storage', label: 'Storage', icon: 'storage.svg', backdrop: 'storage.jpg', href: '/storage', active: true },
+        { id: 'lab', label: 'Lab', icon: 'lab.svg', backdrop: 'lab.jpg', href: '/lab', active: true },
+        { id: 'about', label: 'About', icon: 'whoareyou.svg', backdrop: 'whoareyou.jpg', href: '/about', active: true }
     ];
-
 
     function initCursor() {
         if (window.innerWidth <= 640 || ('ontouchstart' in window)) return;
-        // The custom cursor runs at every tier. Dropping it on the bottom one
-        // was a mistake: the cursor is the one thing on the page the user is
-        // driving directly, so anything less than the full rate there does not
-        // read as "economical", it reads as broken. The saving that mattered
-        // was the permanent rAF, and idling the loop out between movements
-        // (below) gets that without touching how the cursor feels.
+        
+        
+        
+        
+        
+        
 
         var cursorDot = document.createElement('div');
         var cursorDotOutline = document.createElement('div');
@@ -82,8 +80,8 @@
             cursorDotOutline.style.opacity = 0;
         });
 
-        // Idles out once the outline has caught up, instead of running for the
-        // life of the page. Any pointer move restarts it.
+        
+        
         var outlineFrame = null;
         function animateOutline() {
             var dx = endX - _x;
@@ -104,7 +102,6 @@
         document.addEventListener('mousemove', wakeOutline, { passive: true });
         wakeOutline();
 
-
         window.WiehrCursor = {
             hide: function() {
                 cursorDot.style.display = 'none';
@@ -117,23 +114,11 @@
         };
     }
 
-
     window.WiehrCursor = window.WiehrCursor || { hide: function() {}, show: function() {} };
-
 
     var openOverlays = 0;
 
-    /* Every overlay stops the animation underneath it, not just the menu.
-
-       An overlay here is a full-viewport backdrop-filter, and a
-       backdrop-filter recomputes whenever what is behind it changes. So any
-       loop left running under one is paying for a full-screen blur every
-       frame to produce pixels the blur then hides. The menu did this by hand
-       and no modal did it at all, which is why opening an image or a video on
-       /storage or /lab cost as much as it did.
-
-       Doing it here means it happens once, for every overlay on the site,
-       including any added later. */
+    
     window.WiehrOverlay = {
         open: function(options) {
             options = options || {};
@@ -190,11 +175,61 @@
     }
 
     function initThemeToggle() {
-        var btn = document.getElementById('lightordarkness');
-        if (!btn) return;
-        btn.addEventListener('click', function() {
-            triggerGlitch();
-            if (window.WiehrTheme) window.WiehrTheme.toggle();
+        ['lightordarkness', 'lightordarkness-overlay'].forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('click', function() {
+                triggerGlitch();
+                if (window.WiehrTheme) window.WiehrTheme.toggle();
+            });
+        });
+    }
+
+    var ACCENT_KEY = 'wiehr-accent';
+
+    function getAccent() {
+        return localStorage.getItem(ACCENT_KEY) || 'none';
+    }
+
+    function applyAccent(accent) {
+        if (accent === 'blood') {
+            document.documentElement.setAttribute('data-wiehr-accent', 'blood');
+        } else {
+            document.documentElement.removeAttribute('data-wiehr-accent');
+        }
+        if (window._wiehrColorLoc && window.WebGLRenderingContext) {
+            updateLogoAccentColor();
+        }
+    }
+
+    function updateLogoAccentColor() {
+        // defer to next frame so the logo render picks it up
+    }
+
+    function toggleAccent() {
+        var current = getAccent();
+        var next = current === 'blood' ? 'none' : 'blood';
+        localStorage.setItem(ACCENT_KEY, next);
+        applyAccent(next);
+        return next;
+    }
+
+    applyAccent(getAccent());
+
+    window.WiehrAccent = {
+        get: getAccent,
+        set: function(a) { localStorage.setItem(ACCENT_KEY, a); applyAccent(a); },
+        toggle: toggleAccent
+    };
+
+    function initAccentToggle() {
+        ['bloodordeath', 'bloodordeath-overlay'].forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('click', function() {
+                triggerGlitch();
+                toggleAccent();
+            });
         });
     }
 
@@ -211,13 +246,16 @@
         var html = '';
         var delayStep = 0;
 
-        function isCurrentRoute(href) {
-            return (href === '/' && currentPath === '/') ||
-                   (href !== '/' && currentPath.indexOf(href) === 0);
+        function isCurrentRoute(item) {
+            var href = item.href;
+            if (href === '/' && currentPath === '/') return true;
+            if (href !== '/' && currentPath.indexOf(href) === 0) return true;
+            if (item.id === 'about' && currentPath.indexOf('/rates') === 0) return true;
+            return false;
         }
 
         function renderRoute(item, branch) {
-            var isCurrent = isCurrentRoute(item.href);
+            var isCurrent = isCurrentRoute(item);
             var disabled = item.active === false;
             var cls = 'singlerouteforyou';
             if (isCurrent) cls += ' singlerouteforyou-current';
@@ -247,7 +285,6 @@
         });
         itemsContainer.innerHTML = html;
 
-
         var preview = document.getElementById('wherewewouldgo');
         var previewShown = '';
         var preloaded = false;
@@ -260,18 +297,7 @@
             });
         }
 
-        /* Settle before rendering, rather than on every row crossed.
-
-           .wherewewouldgo is bigger than the viewport and carries a
-           full-screen `filter: invert() contrast() blur()`. Swapping its
-           background-image invalidates that filter, so it is re-rendered
-           whole. Bound straight to pointerenter, dragging down nine menu rows
-           fired nine full-screen filtered renders in about as many hundred
-           milliseconds - on the main thread, while the custom cursor was
-           trying to follow the pointer. That is the drag you feel.
-
-           A short settle means passing over a row costs nothing and only the
-           row you stop on ever renders. 90ms is below what reads as delay. */
+        
         var previewTimer = null;
         var PREVIEW_SETTLE = 90;
 
@@ -307,7 +333,6 @@
 
             itemsContainer.addEventListener('pointerleave', hidePreview);
         }
-
 
         function openMenu() {
             if (menuTransitioning) return;
@@ -378,15 +403,13 @@
         'atlas': { icon: 'atlas.svg', href: '/atlas', label: 'Atlas' },
         'lab': { icon: 'lab.svg', href: '/lab', label: 'Lab' },
         'storage': { icon: 'storage.svg', href: '/storage', label: 'Storage' },
-        'composer': { icon: 'hire.svg', href: '/composer', label: 'Composer' },
-        'engineer': { icon: 'hire.svg', href: '/engineer', label: 'Engineer' },
-        'whoareyou': { icon: 'whoareyou.svg', href: '/whoareyou', label: 'Who Are You?' },
+        'about': { icon: 'whoareyou.svg', href: '/about', label: 'About' },
+        'rates': { icon: 'hire.svg', href: '/rates', label: 'Rates' },
         'privacy': { icon: 'legal.svg', href: '/privacy', label: 'Privacy' },
         'terms': { icon: 'legal.svg', href: '/terms', label: 'Terms' },
         'licensing': { icon: 'license.svg', href: '/licensing', label: 'Licensing' },
         's': { icon: 'shortener.svg', href: '/s', label: 'Shortener' }
     };
-
 
     function breadcrumbRow(iconEl) {
         var row = document.createElement('div');
@@ -400,7 +423,6 @@
         line.className = 'youarehereline';
         return line;
     }
-
 
     function initBreadcrumbs() {
         var nav = document.getElementById('youarehere');
@@ -446,7 +468,7 @@
         var header = document.getElementById('acrossthetop');
         var logo = document.querySelector('.wilogoatleft');
         var crumbs = document.getElementById('youarehere');
-        var footers = ['.versionmark', '.flipthrough']
+        var footers = ['.copyrightmark:not(.copyrightmark--overlay)', '.flipthrough']
             .map(function(sel) { return document.querySelector(sel); })
             .filter(Boolean);
 
@@ -495,7 +517,7 @@
             root.style.setProperty('--space-bottom', Math.round(floor + inset) + 'px');
 
             var marks = 0;
-            ['.versionmark'].forEach(function(sel) {
+            ['.copyrightmark:not(.copyrightmark--overlay)'].forEach(function(sel) {
                 var el = document.querySelector(sel);
                 if (el) marks = Math.max(marks, el.getBoundingClientRect().height);
             });
@@ -517,6 +539,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         initCursor();
         initThemeToggle();
+        initAccentToggle();
         initMenu();
         initBreadcrumbs();
         syncHeaderClearance();

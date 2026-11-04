@@ -2,7 +2,7 @@
 {% load static %}
 {% load compress %}
 
-{% block title %}archive. — Wiehr. Official Website{% endblock %}
+{% block title %}Archive — Wiehr. Official Website{% endblock %}
 
 {% block backdrop %}{% static 'images/backdrop/archive.jpg' %}{% endblock %}
 
@@ -10,13 +10,13 @@
     <link rel="canonical" href="{{ site_url_nodashed }}/archive">
     <link rel="alternate" href="{{ site_url_nodashed }}/archive" />
 
-    <meta name="title" content="archive. — Wiehr. Official Website">
-    <meta property="og:title" content="archive. — Wiehr. Official Website" />
-    <meta property="vk:title" content="archive. — Wiehr. Official Website" />
-    <meta name="twitter:title" content="archive. — Wiehr. Official Website" />
-    <meta itemprop="name" content="archive. — Wiehr. Official Website">
+    <meta name="title" content="Archive — Wiehr. Official Website">
+    <meta property="og:title" content="Archive — Wiehr. Official Website" />
+    <meta property="vk:title" content="Archive — Wiehr. Official Website" />
+    <meta name="twitter:title" content="Archive — Wiehr. Official Website" />
+    <meta itemprop="name" content="Archive — Wiehr. Official Website">
     <meta property="og:site_name" content="Wiehr" />
-    <meta property="og:image:alt" content="archive. — Wiehr. Official Website" />
+    <meta property="og:image:alt" content="Archive — Wiehr. Official Website" />
 
     <meta name="description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
     <meta property="og:description" content="Complete chronological archive of all releases by Wiehr, organized by year. Music, photography, projects, and digital assets." />
@@ -36,7 +36,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="vk:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
     <meta name="twitter:image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
-    <meta name="twitter:image:alt" content="archive. — Wiehr. Official Website" />
+    <meta name="twitter:image:alt" content="Archive — Wiehr. Official Website" />
     <meta itemprop="thumbnailUrl" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
     <meta itemprop="image" content="{{ site_url_nodashed|default:'https://wiehr.cc' }}{% static 'images/seo/archive.png' %}" />
 
@@ -87,7 +87,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="seoonly">archive. — Wiehr. Official Website</h1>
+    <h1 class="seoonly">Archive — Wiehr. Official Website</h1>
     <h2 class="seoonly">Complete chronological archive of all releases by Wiehr</h2>
     <div class="everythingwedid">
         {% if archives %}
@@ -95,9 +95,9 @@
                 {% for page in archive_pages %}
                 <div class="pageslice ledger">
                     <div class="oneyearline ledgerhead">
-                        <span class="ledgercell whichyear">year</span>
-                        <span class="ledgercell whatitheld">globe. · atlas. · storage. · lab.</span>
-                        <span class="ledgercell howmuchitweighed">total</span>
+                        <span class="ledgercell whichyear">YEAR</span>
+                        <span class="ledgercell whatitheld">Globe · Atlas · Storage · Lab</span>
+                        <span class="ledgercell howmuchitweighed">TOTAL</span>
                     </div>
                     {% for archive in page %}
                     <a href="/archive/{{ archive.year }}" class="oneyearline noiseonhover">

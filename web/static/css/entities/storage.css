@@ -44,7 +44,6 @@
     z-index: 1;
 }
 
-
 .boxthumb {
     position: absolute;
     inset: 0;
@@ -157,7 +156,6 @@
         font-size: var(--font-size-micro);
     }
 }
-
 
 .boxprice {
     position: absolute;

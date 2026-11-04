@@ -1,7 +1,6 @@
 (function() {
     'use strict';
 
-
     var locationInput = document.getElementById('wherearetheyfrominput');
     var locationResults = document.getElementById('wherearetheyfromresults');
     var countryField = document.getElementById('wherearetheyfromname');
@@ -77,7 +76,6 @@
         });
     }
 
-
     var modal = document.getElementById('pleasedontleave');
     var addBtn = document.getElementById('becomevisible');
     var form = document.getElementById('formalitieskillus');
@@ -115,7 +113,6 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal && modal.style.display !== 'none') closeModal();
     });
-
 
     var menuBtn = document.getElementById('labyrinthopenseverything');
     if (menuBtn) {
@@ -196,7 +193,6 @@
         });
     }
 
-
     var networkCanvas = document.getElementById('linesbetweenus');
     if (!networkCanvas) return;
 
@@ -243,7 +239,6 @@
         nctx.restore();
     }
 
-
     var ripples = [];
     var nextRippleAt = 0;
 
@@ -289,7 +284,6 @@
                 continue;
             }
 
-
             var spread = 1 - Math.pow(1 - age, 2.4);
             var fade = Math.pow(1 - age, 1.8);
 
@@ -305,9 +299,9 @@
         }
     }
 
-    /* Frame budget from the shared tier — see js/howfastareyou.js. */
+    
     var NET_FRAME_MS = (window.WiehrTier && window.WiehrTier.fps)
-        ? 1000 / window.WiehrTier.fps - 4 : 0;   // -4: see frame() in howfastareyou.js
+        ? 1000 / window.WiehrTier.fps - 4 : 0;   
     var netLastFrameAt = 0;
 
     function drawFrame(now) {
@@ -338,10 +332,8 @@
         var cx = w / 2;
         var cy = h / 2;
 
-
         function toScreenX(nx) { return cx + nx * cx; }
         function toScreenY(ny) { return cy - ny * cy; }
-
 
         for (var i = 0; i < projected.length; i++) {
             var node = projected[i];
@@ -356,7 +348,6 @@
             nctx.stroke();
             drawLabel(cx, cy, sx, sy, node.country, 0.28);
         }
-
 
         for (var j = 0; j < projected.length; j++) {
             var child = projected[j];
@@ -374,9 +365,7 @@
         networkAnimId = requestAnimationFrame(drawFrame);
     }
 
-
-    /* Registered rather than chained. The chain worked, but only because this
-       file happened to load last; see WiehrLoops in howfastareyou.js. */
+    
     if (window.WiehrLoops) {
         window.WiehrLoops.add(
             function () {
