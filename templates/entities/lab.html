@@ -4,8 +4,6 @@
 
 {% block title %}Lab — Wiehr. Official Website{% endblock %}
 
-{% block backdrop %}{% static 'images/backdrop/lab.jpg' %}{% endblock %}
-
 {% block head %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/lab.css' %}">
@@ -93,7 +91,7 @@
                     {% endif %}
                 </div>
                 <div class="whatitwas">
-                    <span class="whaticlaimed">{{ item.title_with_type }}</span>
+                    <span class="whaticlaimed">{{ item.title }}</span>
                     <span class="whenitried">{{ item.get_year_range }}</span>
                 </div>
             </a>

@@ -45,23 +45,32 @@
 
             var from = slices[current];
             var to = slices[index];
+            var direction = index > current ? 1 : -1;
+            var shift = 8 * direction;
+            var halfDur = CONFIG.transitionDuration / 2;
 
-            from.style.transition = 'opacity ' + (CONFIG.transitionDuration / 2) + 'ms ease-out';
+            from.style.transition = 'opacity ' + halfDur + 'ms ease-out, transform ' + halfDur + 'ms ease-out';
             from.style.opacity = '0';
+            from.style.transform = 'translateY(' + (-shift) + 'px)';
 
             setTimeout(function() {
                 from.style.display = 'none';
+                from.style.transition = 'none';
+                from.style.transform = '';
                 to.style.display = '';
                 to.style.opacity = '0';
-                to.style.transition = 'opacity ' + (CONFIG.transitionDuration / 2) + 'ms ease-in';
+                to.style.transform = 'translateY(' + shift + 'px)';
+                to.style.transition = 'none';
                 void to.offsetHeight;
+                to.style.transition = 'opacity ' + halfDur + 'ms ease-in, transform ' + halfDur + 'ms ease-out';
                 to.style.opacity = '1';
+                to.style.transform = 'translateY(0)';
 
                 current = index;
                 flipper.setActive(current);
 
-                setTimeout(function() { transitioning = false; }, CONFIG.transitionDuration / 2);
-            }, CONFIG.transitionDuration / 2);
+                setTimeout(function() { transitioning = false; }, halfDur);
+            }, halfDur);
         }
 
         function handleWheel(e) {

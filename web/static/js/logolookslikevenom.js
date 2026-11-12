@@ -23,9 +23,6 @@ if (!gl) {
 }
 
 function resizeCanvas() {
-
-  const content = document.getElementById('content') || document.getElementById('whatareyouinterestedin');
-
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.width = '100%';

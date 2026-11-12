@@ -1,6 +1,8 @@
 :root {
-    --bottom-padding: max(40px, 3vmin);
-    --top-padding: max(60px, 5vmin);
+    --bottom-padding: max(40px, 3vmin, env(safe-area-inset-bottom, 0px));
+    --top-padding: max(60px, 5vmin, env(safe-area-inset-top, 0px));
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
     --index-priority-max: 10000;
     --index-priority-medium: 100;
     --index-priority-low: 10;
@@ -26,7 +28,8 @@
     --font-weight-medium: 600;
     --font-weight-bold: 700;
     --font-weight-black: 900;
-    --letter-spacing: 0;
+    --letter-spacing: 0.1em;
+    --font-family-alt: "Segoe UI", system-ui, sans-serif;
     --line-height-basic: 1;
     --line-height-text: 1;
 
@@ -61,15 +64,32 @@
     --color-blood: #af0000;
     --color-accent: var(--color-text);
 
-    --surface-tint: rgba(0, 0, 0, 0.05);
+    --surface-tint: rgba(21, 22, 23, 0.05);
     --surface-chip: rgba(244, 244, 244, 0.95);
     --surface-input: rgba(244, 244, 244, 0.5);
-    --surface-subtle: rgba(0, 0, 0, 0.01);
+    --surface-subtle: rgba(21, 22, 23, 0.01);
 
     --shadow-card: 0 8px 32px rgba(21, 22, 23, 0.12), 0 2px 8px rgba(21, 22, 23, 0.06);
     --shadow-card-hover: 0 12px 40px rgba(21, 22, 23, 0.16), 0 4px 12px rgba(21, 22, 23, 0.08);
 
     --color-error: #c00;
+}
+
+[data-wiehr-font="segoeui"] {
+    --font-family: "Segoe UI", system-ui, sans-serif;
+    --letter-spacing: 0;
+    --font-size-micro: 8px;
+    --font-size-tiny: 10px;
+    --font-size-thin: 12px;
+    --font-size-small: 14px;
+    --font-size-light: 16px;
+    --font-size-standard: 18px;
+    --font-size-regular: 20px;
+    --font-size-large: 22px;
+    --font-size-medium: 24px;
+    --font-size-semibold: 26px;
+    --font-size-bold: 28px;
+    --font-size-black: 30px;
 }
 
 [data-wiehr-theme="dark"] {
@@ -220,12 +240,46 @@ h6 {
 
 a {
     color: inherit;
-    text-decoration: none
+    text-decoration: none;
+    text-underline-offset: 0.2em
 }
 
 ol,
 ul {
     list-style: none
+}
+
+sup {
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    top: -0.5em
+}
+
+button,
+label,
+.versionmark {
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic
+}
+
+abbr,
+.acronym {
+    font-variant-caps: all-small-caps
+}
+
+.tab {
+    display: inline-grid
+}
+
+.tab > * {
+    grid-area: 1 / 1
+}
+
+.tab::after {
+    content: attr(data-text);
+    font-weight: 700;
+    visibility: hidden
 }
 
 html,
@@ -252,17 +306,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 
     color: var(--color-text);
-}
-
-.floatingdustcanvas {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    z-index: var(--index-priority-min);
-    pointer-events: none;
 }
 
 #whatareyouinterestedin {
@@ -292,7 +335,13 @@ body {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
-    mix-blend-mode: normal
+    mix-blend-mode: normal;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.loaded #iwanttoeathealthyfood {
+    opacity: 1;
 }
 
 #whoisbehindmyback {
@@ -556,7 +605,7 @@ body {
     font-size: calc(var(--font-size-thin) * 0.5);
     opacity: 0.4;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     margin-top: .5rem;
 }
 
@@ -580,10 +629,10 @@ body {
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     border: 1px solid var(--color-text);
     background: transparent;
-    opacity: 0.5;
+    opacity: 0.7;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
@@ -620,14 +669,13 @@ body {
 
 .staringcontest-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1em;
+    right: 0;
     background: none;
     border: none;
     cursor: pointer;
     z-index: 10;
-    padding: 1rem;
-    margin: -1rem;
+    padding: 1.25rem;
     opacity: 0.5;
     transition: opacity 0.2s;
 }
@@ -698,8 +746,9 @@ body {
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
+    line-height: 1;
     color: var(--color-text);
     background: transparent;
     border: none;
@@ -767,7 +816,7 @@ body {
     font-size: var(--type-title);
     font-weight: var(--font-weight-black);
     line-height: var(--line-height-title);
-    letter-spacing: 0;
+    letter-spacing: var(--letter-spacing);
     margin: 0;
 }
 .whosnamegoeshere {
@@ -789,7 +838,7 @@ body {
     line-height: var(--line-height-meta);
     opacity: 0.4;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     font-weight: var(--font-weight-bold);
 }
 .filenumber,
@@ -811,14 +860,15 @@ body {
     }
 }
 
-:root[data-tier="mid"] .whatliesbeneath,
-:root[data-tier="mid"] .themarkbehind {
-    animation: none;
+@media (orientation: landscape) and (max-height: 500px) {
+    :root {
+        --top-padding: max(40px, env(safe-area-inset-top, 0px));
+        --bottom-padding: max(28px, env(safe-area-inset-bottom, 0px));
+        --space-header: 80px;
+        --space-bottom: 56px;
+    }
 }
 
-:root[data-tier="low"] .floatingdustcanvas {
-    display: none;
-}
 
 :root[data-tier="low"] .noiseonhover:hover,
 :root[data-tier="low"] .singlerouteforyou:not(.singlerouteforyou-disabled):hover,
@@ -828,16 +878,9 @@ body {
     animation: none;
 }
 
-:root[data-tier="low"] .whatliesbeneath,
-:root[data-tier="low"] .themarkbehind,
-
 :root[data-tier="low"] body.themeglitch,
 :root[data-tier="mid"] body.themeglitch {
     animation: none;
-}
-
-:root[data-tier="low"] .wherewewouldgo {
-    transition-duration: 0.15s;
 }
 
 .pretendplaybutton {
@@ -873,20 +916,21 @@ body {
 .wiehr-btn {
     border: 1px solid var(--color-text);
     background: transparent;
-    padding: 1rem 1.5rem;
+    line-height: 1;
+    padding: 0.85rem 1.5rem;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
     text-decoration: none;
     font-family: var(--font-family, monospace);
     font-weight: var(--font-weight-bold, 700);
     font-size: var(--font-size-thin);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     color: var(--color-text);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
 .wiehr-btn:hover {
@@ -908,6 +952,7 @@ body {
 [data-wiehr-accent="blood"] .grabformat,
 [data-wiehr-accent="blood"] .onepaperformat,
 [data-wiehr-accent="blood"] .takeitwithyou,
+[data-wiehr-accent="blood"] .cvsectiontoggle,
 [data-wiehr-accent="blood"] .grabit {
     border-color: var(--color-accent);
     color: var(--color-accent);
@@ -926,7 +971,8 @@ body {
     color: var(--color-bg);
 }
 
-[data-wiehr-accent="blood"] .onepaperformat.chosen {
+[data-wiehr-accent="blood"] .onepaperformat.chosen,
+[data-wiehr-accent="blood"] .cvsectiontoggle.chosen {
     background: var(--color-accent);
     color: var(--color-bg);
     border-color: var(--color-accent);
@@ -943,6 +989,57 @@ body {
 
 [data-wiehr-accent="blood"] .wilogoatleft img {
     filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wiehr-btn,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onemorelink,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .doonething,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .checkitnow,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .pressandpray,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .becomevisible,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabformat,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .takeitwithyou,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabit {
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+    opacity: 0.75;
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wiehr-btn:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onemorelink:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .doonething:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .checkitnow:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .pressandpray:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .becomevisible:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabformat:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .takeitwithyou:hover {
+    opacity: 1;
+    background: var(--color-accent);
+    color: var(--color-black);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat.chosen,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle.chosen {
+    opacity: 1;
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle {
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+    opacity: 0.75;
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabit.grabit-done {
+    background: var(--color-accent);
+    color: var(--color-black);
+    opacity: 1;
 }
 
 [data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wilogoatleft img {
@@ -997,4 +1094,131 @@ body {
 
 [data-wiehr-accent="blood"] .retreatbutton img {
     filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
+}
+
+.filename-truncate {
+    display: flex;
+    min-width: 0;
+}
+
+.filename-truncate .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filename-truncate .ext {
+    flex-shrink: 0;
+}
+
+.card-title-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+@keyframes wiehr-entrance {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wiehr-entrance-image {
+    from {
+        opacity: 0;
+        filter: blur(6px);
+        transform: scale(1.015);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+}
+
+body.loaded .onemoretrack,
+body.loaded .onefileonly,
+body.loaded .nobodyknowsme,
+body.loaded .proveit,
+body.loaded .digitalhoarder,
+body.loaded .everythingwedid {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.loaded .onemoretrack .thealbumface img,
+body.loaded .onefileonly .filecoverart img {
+    animation: wiehr-entrance-image 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+body.loaded .onemoretrack .thefinerpoints,
+body.loaded .onefileonly .filefacts {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+body.loaded .onemoretrack .pickyourpoison,
+body.loaded .onefileonly .whattodowithit {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+body.loaded .sellingmyself {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.loaded .sellingmyself .whoisthisguy {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+
+body.loaded .sellingmyself .anotherpitch {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+body.loaded .sellingmyself .priceofmytime {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+body.loaded .sellingmyself .knockhere {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+body.loaded .digitalhoarder .allmystuff {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+body.loaded .proofofonemoreidea {
+    animation: wiehr-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.loaded .proofofonemoreidea .thumbnailofmyego img {
+    animation: wiehr-entrance-image 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.loaded .onemoretrack,
+    body.loaded .onefileonly,
+    body.loaded .nobodyknowsme,
+    body.loaded .proveit,
+    body.loaded .digitalhoarder,
+    body.loaded .everythingwedid,
+    body.loaded .sellingmyself,
+    body.loaded .proofofonemoreidea,
+    body.loaded .onemoretrack .thealbumface img,
+    body.loaded .onefileonly .filecoverart img,
+    body.loaded .onemoretrack .thefinerpoints,
+    body.loaded .onefileonly .filefacts,
+    body.loaded .onemoretrack .pickyourpoison,
+    body.loaded .onefileonly .whattodowithit,
+    body.loaded .sellingmyself .whoisthisguy,
+    body.loaded .sellingmyself .anotherpitch,
+    body.loaded .sellingmyself .priceofmytime,
+    body.loaded .sellingmyself .knockhere,
+    body.loaded .digitalhoarder .allmystuff,
+    body.loaded .proofofonemoreidea .thumbnailofmyego img {
+        animation: none;
+    }
 }

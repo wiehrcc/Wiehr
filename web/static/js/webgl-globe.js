@@ -918,10 +918,9 @@
             setupInteraction();
             resize();
 
-            window.addEventListener('resize', resize);
-
             render();
             window.globeInitialized = true;
+            requestAnimationFrame(function() { canvas.classList.add('globe-ready'); });
         } else {
             setTimeout(start, 100);
         }

@@ -31,7 +31,7 @@
 .whereiclaimedtobe {
     font-size: var(--font-size-semibold);
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     margin: 0;
 }
@@ -72,7 +72,7 @@
 .exhibitnumber {
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--letter-spacing);
     opacity: 0.5;
 }
 
@@ -82,7 +82,7 @@
     font-size: var(--font-size-micro);
     font-weight: 600;
     font-family: var(--font-family, monospace);
-    letter-spacing: 0.04em;
+    letter-spacing: var(--letter-spacing);
     text-decoration: none;
     color: var(--color-text);
     padding: 0;

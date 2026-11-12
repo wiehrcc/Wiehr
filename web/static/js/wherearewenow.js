@@ -563,28 +563,37 @@
             const sectionElements = this.sectionsContainer.querySelectorAll('.viewport-section');
             const currentSection = sectionElements[this.currentIndex];
             const nextSection = sectionElements[targetIndex];
+            const direction = targetIndex > this.currentIndex ? 1 : -1;
+            const shift = 8 * direction;
+            const halfDur = CONFIG.transitionDuration / 2;
 
             if (window.triggerGlitch) {
                 window.triggerGlitch(150);
             }
 
-            currentSection.style.transition = `opacity ${CONFIG.transitionDuration / 2}ms ease-out`;
+            currentSection.style.transition = `opacity ${halfDur}ms ease-out, transform ${halfDur}ms ease-out`;
             currentSection.style.opacity = '0';
+            currentSection.style.transform = `translateY(${-shift}px)`;
 
             setTimeout(() => {
                 currentSection.classList.remove('active');
                 currentSection.style.display = 'none';
                 currentSection.style.visibility = 'hidden';
+                currentSection.style.transition = 'none';
+                currentSection.style.transform = '';
 
                 nextSection.style.display = 'flex';
                 nextSection.style.visibility = 'visible';
                 nextSection.style.opacity = '0';
-                nextSection.style.transition = `opacity ${CONFIG.transitionDuration / 2}ms ease-in`;
+                nextSection.style.transform = `translateY(${shift}px)`;
+                nextSection.style.transition = 'none';
 
                 nextSection.offsetHeight;
 
+                nextSection.style.transition = `opacity ${halfDur}ms ease-in, transform ${halfDur}ms ease-out`;
                 nextSection.classList.add('active');
                 nextSection.style.opacity = '1';
+                nextSection.style.transform = 'translateY(0)';
 
                 this.currentIndex = targetIndex;
                 this.updateNavigation();
@@ -601,8 +610,8 @@
 
                 setTimeout(() => {
                     this.isTransitioning = false;
-                }, CONFIG.transitionDuration / 2);
-            }, CONFIG.transitionDuration / 2);
+                }, halfDur);
+            }, halfDur);
         }
 
         destroy() {

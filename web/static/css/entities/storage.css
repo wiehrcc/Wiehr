@@ -29,8 +29,19 @@
     color: var(--color-text);
     position: relative;
     border: none;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     overflow: hidden;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.005) 100%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.onebox-taken {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.035) 0%, rgba(0, 0, 0, 0.01) 100%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.onebox-taken:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .onebox::after {
@@ -91,7 +102,7 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-tiny);
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     white-space: nowrap;
     user-select: none;
@@ -164,7 +175,7 @@
     z-index: 2;
     font-size: var(--font-size-micro);
     font-weight: var(--font-weight-black, 900);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--letter-spacing);
     line-height: 1;
     padding: 0.2rem 0.3rem;
     color: var(--color-bg);

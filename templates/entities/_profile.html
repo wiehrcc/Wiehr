@@ -2,8 +2,6 @@
 {% load static %}
 {% load compress %}
 
-{% block backdrop %}{% static 'images/backdrop/hire.jpg' %}{% endblock %}
-
 {% block extra_css %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/profile.css' %}">
@@ -66,6 +64,39 @@
                     <button class="onepaperformat" data-fmt="docx">DOCX</button>
                     <button class="onepaperformat" data-fmt="txt">TXT</button>
                 </div>
+                <div class="paperlabel">Sections</div>
+                <div class="cvsectiongrid" id="cvsections">
+                    <button class="cvsectiontoggle chosen" data-section="experience">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Work Experience</span>
+                    </button>
+                    <button class="cvsectiontoggle chosen" data-section="skills">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Skills</span>
+                    </button>
+                    <button class="cvsectiontoggle chosen" data-section="commercial">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Commercial Projects</span>
+                    </button>
+                    <button class="cvsectiontoggle chosen" data-section="personal">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Personal Projects</span>
+                    </button>
+                    <button class="cvsectiontoggle chosen" data-section="education">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Education</span>
+                    </button>
+                    <button class="cvsectiontoggle chosen" data-section="languages">
+                        <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                        <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                        <span>Languages</span>
+                    </button>
+                </div>
                 <a href="{{ download_url }}?fmt=pdf" class="takeitwithyou" id="takeitwithyou">Download</a>
             </div>
         </section>
@@ -76,15 +107,42 @@
 <script>
 (function() {
     var opts = document.querySelectorAll('#pickyourpoison .onepaperformat');
+    var sectionToggles = document.querySelectorAll('#cvsections .cvsectiontoggle');
     var btn = document.getElementById('takeitwithyou');
     if (!btn) return;
     var base = '{{ download_url }}';
+    var currentFmt = 'pdf';
+
+    function getActiveSections() {
+        var active = [];
+        sectionToggles.forEach(function(t) {
+            if (t.classList.contains('chosen')) active.push(t.getAttribute('data-section'));
+        });
+        return active;
+    }
+
+    function updateLink() {
+        var sections = getActiveSections();
+        var url = base + '?fmt=' + currentFmt;
+        if (sections.length < sectionToggles.length) {
+            url += '&sections=' + sections.join(',');
+        }
+        btn.href = url;
+    }
 
     opts.forEach(function(opt) {
         opt.addEventListener('click', function() {
             opts.forEach(function(o) { o.classList.remove('chosen'); });
             opt.classList.add('chosen');
-            btn.href = base + '?fmt=' + opt.getAttribute('data-fmt');
+            currentFmt = opt.getAttribute('data-fmt');
+            updateLink();
+        });
+    });
+
+    sectionToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+            toggle.classList.toggle('chosen');
+            updateLink();
         });
     });
 })();

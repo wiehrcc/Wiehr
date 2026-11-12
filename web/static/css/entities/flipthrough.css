@@ -40,14 +40,14 @@ body.menuisopen .flipthrough,
 .flipthrough-item.active {
     opacity: 1;
     cursor: default;
-    transform: scale(1);
+    transform: scale(1.25);
 }
 
 .flipthrough-number {
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin, 0.625rem);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.05em;
+    letter-spacing: var(--letter-spacing);
 }
 
 .flipthrough-dot {
@@ -55,6 +55,11 @@ body.menuisopen .flipthrough,
     height: 10px;
     object-fit: contain;
     display: block;
+    transition: transform 0.2s ease;
+}
+
+.flipthrough-item.active .flipthrough-dot {
+    transform: scale(1.15);
 }
 
 [data-wiehr-theme="dark"] .flipthrough-dot {

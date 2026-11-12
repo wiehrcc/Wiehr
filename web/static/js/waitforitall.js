@@ -20,6 +20,7 @@
     let resourcesLoaded = 0;
     let totalResources = 0;
     let isComplete = false;
+    let cachedFillColor = '#151617';
 
     
     function detectPerformance() {
@@ -65,7 +66,7 @@
         draw() {
             ctx.save();
             ctx.globalAlpha = this.opacity;
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-text')?.trim() || '#151617';
+            ctx.fillStyle = cachedFillColor;
             ctx.fillRect(this.x, this.y, this.size, this.size);
             ctx.restore();
         }
@@ -76,6 +77,7 @@
         if (!canvas) return false;
 
         ctx = canvas.getContext('2d', { alpha: true });
+        cachedFillColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text')?.trim() || '#151617';
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         return true;

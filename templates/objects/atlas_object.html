@@ -4,8 +4,6 @@
 
 {% block title %}{{ atlas_object.country_title|title }} at Atlas — Wiehr. Official Website{% endblock %}
 
-{% block backdrop %}{% static 'images/backdrop/atlas.jpg' %}{% endblock %}
-
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/atlas/{{ atlas_object.internal_id }}" />
