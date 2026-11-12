@@ -91,7 +91,7 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-tiny);
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     white-space: nowrap;
     user-select: none;
@@ -164,7 +164,7 @@
     z-index: 2;
     font-size: var(--font-size-micro);
     font-weight: var(--font-weight-black, 900);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--letter-spacing);
     line-height: 1;
     padding: 0.2rem 0.3rem;
     color: var(--color-bg);

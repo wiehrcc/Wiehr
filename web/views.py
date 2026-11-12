@@ -604,7 +604,7 @@ def _profile_page(request, version, template):
         if current_url != target_url:
             return redirect(target_url)
 
-    profile = CVProfile.objects.filter(version=version).first()
+    profile = WiehrDocument.objects.filter(version=version).first()
 
     context = {
         'site_url_nodashed': settings.SITE_URL_NODASHED,
@@ -641,23 +641,26 @@ def _profile_download(request, version):
     import io
     from .cv_builder import get_cv_pdf, get_cv_docx, get_cv_txt
 
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR', '0')
-    minute_key = f"cv_dl_min_{ip}"
-    hour_key = f"cv_dl_hr_{ip}"
-    minute_count = cache.get(minute_key, 0)
-    hour_count = cache.get(hour_key, 0)
-    if minute_count >= 5 or hour_count >= 15:
-        return HttpResponse("Rate limited. Try again later.", status=429, content_type="text/plain")
-    cache.set(minute_key, minute_count + 1, timeout=60)
-    cache.set(hour_key, hour_count + 1, timeout=3600)
+    if os.environ.get('ENV') != 'DEV':
+        ip = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR', '0')
+        minute_key = f"cv_dl_min_{ip}"
+        hour_key = f"cv_dl_hr_{ip}"
+        minute_count = cache.get(minute_key, 0)
+        hour_count = cache.get(hour_key, 0)
+        if minute_count >= 5 or hour_count >= 15:
+            return HttpResponse("Rate limited. Try again later.", status=429, content_type="text/plain")
+        cache.set(minute_key, minute_count + 1, timeout=60)
+        cache.set(hour_key, hour_count + 1, timeout=3600)
 
     fmt = request.GET.get('fmt', 'pdf')
+    sections_raw = request.GET.get('sections', '')
+    sections = [s.strip() for s in sections_raw.split(',') if s.strip()] if sections_raw else None
 
     current_date = datetime.datetime.now().strftime("%d-%m-%Y")
     name_slug = "Yauheni-Kandratovich"
 
     if fmt == 'docx':
-        docx_bytes = get_cv_docx(version)
+        docx_bytes = get_cv_docx(version, sections=sections)
         if not docx_bytes:
             return HttpResponse("CV not found. Please configure it in admin.", status=404)
         filename = f"CV_{name_slug}_{version}@{current_date}.docx"
@@ -668,7 +671,7 @@ def _profile_download(request, version):
             content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
     elif fmt == 'txt':
-        txt_content = get_cv_txt(version)
+        txt_content = get_cv_txt(version, sections=sections)
         if not txt_content:
             return HttpResponse("CV not found. Please configure it in admin.", status=404)
         filename = f"CV_{name_slug}_{version}@{current_date}.txt"
@@ -679,7 +682,7 @@ def _profile_download(request, version):
             content_type="text/plain; charset=utf-8",
         )
     else:
-        pdf_bytes = get_cv_pdf(version)
+        pdf_bytes = get_cv_pdf(version, sections=sections)
         if not pdf_bytes:
             return HttpResponse("CV not found. Please configure it in admin.", status=404)
         filename = f"CV_{name_slug}_{version}@{current_date}.pdf"

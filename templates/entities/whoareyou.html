@@ -4,8 +4,6 @@
 
 {% block title %}About — Wiehr. Official Website{% endblock %}
 
-{% block backdrop %}{% static 'images/backdrop/whoareyou.jpg' %}{% endblock %}
-
 {% block head %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/whoareyou.css' %}">
@@ -93,38 +91,18 @@
 
                 <section class="aboutsection">
                     <div class="aboutlines">
-                        <p>Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music.</p>
+                        <p>Wiehr is a pseudonymous Belarus-born electronic composer and multidisciplinary artist creating cinematic, ambient, and experimental music through a synthetic orchestra approach.</p>
+                        <p>Built on direct emotion, words, and sound, his work remains both fragile and powerful. His work combines synthetic organ, minimal rock drums, string ensembles, and cyberpunk bass — moving across genres to form a distinct internal world.</p>
+                        <p>Released through Label Nisha with self-engineered cover art shaped by raw color and emotion. Featured in campaigns across Belarus, Ukraine, Russia, and the EU — built entirely by a single composer and engineer, creating a direct, personal signature.</p>
                     </div>
                 </section>
 
                 <section class="aboutsection">
-                    <h2 class="aboutsectionlabel">Contact</h2>
                     <div class="whattodowithit">
-                        <a href="/rates" class="doonething">RATES & INFO</a>
+                        <button class="doonething" id="opencvmodal">CV</button>
+                        <a href="/rates" class="doonething">RATES</a>
                         <a href="mailto:igor@labelnisha.com" class="doonething">CLEARANCE</a>
                         <a href="mailto:hello@wiehr.cc?subject=Zero" class="doonething">INQUIRIES</a>
-                    </div>
-                </section>
-
-                <section class="aboutsection">
-                    <h2 class="aboutsectionlabel">CV</h2>
-                    <div class="aboutlines">
-                        <div class="aboutcvrow">
-                            <span class="aboutcvlabel">Type</span>
-                            <div class="pickyourpoison" id="aboutcvtype">
-                                <button class="onepaperformat chosen" data-role="engineer">Software Engineer</button>
-                                <button class="onepaperformat" data-role="composer">Music Composer</button>
-                            </div>
-                        </div>
-                        <div class="aboutcvrow">
-                            <span class="aboutcvlabel">Format</span>
-                            <div class="pickyourpoison" id="aboutcvfmt">
-                                <button class="onepaperformat chosen" data-fmt="pdf">PDF</button>
-                                <button class="onepaperformat" data-fmt="docx">DOCX</button>
-                                <button class="onepaperformat" data-fmt="txt">TXT</button>
-                            </div>
-                        </div>
-                        <a href="{{ engineer_download_url }}?fmt=pdf" class="doonething" id="aboutcvdownload">Download</a>
                     </div>
                 </section>
             </div>
@@ -133,10 +111,92 @@
 {% endblock %}
 
 {% block scripts %}
+<div id="cvmodal" class="staringcontest">
+    <button class="staringcontest-close" id="closecvmodal">
+        <img src="{% static 'images/entities/notok.svg' %}" alt="Close">
+    </button>
+    <div class="aboutlines cvmodal-content">
+        <div class="aboutcvrow">
+            <span class="aboutcvlabel">Type</span>
+            <div class="pickyourpoison" id="aboutcvtype">
+                <button class="onepaperformat chosen" data-role="engineer">Software Engineer</button>
+                <button class="onepaperformat" data-role="composer">Music Composer</button>
+            </div>
+        </div>
+        <div class="aboutcvrow">
+            <span class="aboutcvlabel">Format</span>
+            <div class="pickyourpoison" id="aboutcvfmt">
+                <button class="onepaperformat chosen" data-fmt="pdf">PDF</button>
+                <button class="onepaperformat" data-fmt="docx">DOCX</button>
+                <button class="onepaperformat" data-fmt="txt">TXT</button>
+            </div>
+        </div>
+        <div class="aboutcvrow">
+            <span class="aboutcvlabel">Sections</span>
+            <div class="cvsectiongrid" id="aboutcvsections">
+                <button class="cvsectiontoggle chosen" data-section="experience">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Work Experience</span>
+                </button>
+                <button class="cvsectiontoggle chosen" data-section="skills">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Skills</span>
+                </button>
+                <button class="cvsectiontoggle" data-section="commercial">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Commercial Projects</span>
+                </button>
+                <button class="cvsectiontoggle chosen" data-section="personal">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Personal Projects</span>
+                </button>
+                <button class="cvsectiontoggle chosen" data-section="education">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Education</span>
+                </button>
+                <button class="cvsectiontoggle chosen" data-section="languages">
+                    <img class="cvsectionicon on" src="{% static 'images/entities/box_on.svg' %}" alt="">
+                    <img class="cvsectionicon off" src="{% static 'images/entities/box_off.svg' %}" alt="">
+                    <span>Languages</span>
+                </button>
+            </div>
+        </div>
+        <a href="{{ engineer_download_url }}?fmt=pdf" class="doonething" id="aboutcvdownload">Download</a>
+    </div>
+</div>
 <script>
 (function() {
+    var modal = document.getElementById('cvmodal');
+    var openBtn = document.getElementById('opencvmodal');
+    var closeBtn = document.getElementById('closecvmodal');
+    if (!modal) return;
+
+    function openModal() {
+        modal.style.display = 'flex';
+        if (window.WiehrOverlay) window.WiehrOverlay.open();
+    }
+    function closeModal() {
+        modal.style.display = 'none';
+        if (window.WiehrOverlay) window.WiehrOverlay.close();
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+    });
+
     var typeOpts = document.querySelectorAll('#aboutcvtype .onepaperformat');
     var fmtOpts = document.querySelectorAll('#aboutcvfmt .onepaperformat');
+    var sectionToggles = document.querySelectorAll('#aboutcvsections .cvsectiontoggle');
     var dlBtn = document.getElementById('aboutcvdownload');
     if (!dlBtn) return;
 
@@ -147,8 +207,21 @@
     var currentRole = 'engineer';
     var currentFmt = 'pdf';
 
+    function getActiveSections() {
+        var active = [];
+        sectionToggles.forEach(function(t) {
+            if (t.classList.contains('chosen')) active.push(t.getAttribute('data-section'));
+        });
+        return active;
+    }
+
     function updateLink() {
-        dlBtn.href = bases[currentRole] + '?fmt=' + currentFmt;
+        var sections = getActiveSections();
+        var url = bases[currentRole] + '?fmt=' + currentFmt;
+        if (sections.length < sectionToggles.length) {
+            url += '&sections=' + sections.join(',');
+        }
+        dlBtn.href = url;
     }
 
     typeOpts.forEach(function(opt) {
@@ -165,6 +238,13 @@
             fmtOpts.forEach(function(o) { o.classList.remove('chosen'); });
             opt.classList.add('chosen');
             currentFmt = opt.getAttribute('data-fmt');
+            updateLink();
+        });
+    });
+
+    sectionToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+            toggle.classList.toggle('chosen');
             updateLink();
         });
     });

@@ -27,7 +27,7 @@
     {% block extra_css %}{% endblock %}
 
     <script>
-    (function(){'use strict';var L='light',D='dark',K='wiehr-theme';function g(){return localStorage.getItem(K)||D}function a(t){document.documentElement.setAttribute('data-wiehr-theme',t);var b=t===D?'#151617':'#F4F4F4';document.documentElement.style.setProperty('background',b,'important');if(document.body){document.body.style.setProperty('background',b,'important');document.body.style.color=t===D?'#f4f4f4':'#151617'}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t===D?'#151617':'#f4f4f4';var i=document.getElementById('lightnessicon');if(i)i.style.filter=t===D?'invert(1)':'none'}function toggle(){var c=g(),n=c===L?D:L;localStorage.setItem(K,n);a(n);return n}a(g());if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){a(g())})}window.WiehrTheme={get:g,set:function(t){localStorage.setItem(K,t);a(t)},toggle:toggle,LIGHT:L,DARK:D};var ac=localStorage.getItem('wiehr-accent');if(ac==='blood')document.documentElement.setAttribute('data-wiehr-accent','blood')})();
+    (function(){'use strict';var L='light',D='dark',K='wiehr-theme';function g(){return localStorage.getItem(K)||D}function a(t){document.documentElement.setAttribute('data-wiehr-theme',t);var b=t===D?'#151617':'#F4F4F4';document.documentElement.style.setProperty('background',b,'important');if(document.body){document.body.style.setProperty('background',b,'important');document.body.style.color=t===D?'#f4f4f4':'#151617'}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t===D?'#151617':'#f4f4f4';var i=document.getElementById('lightnessicon');if(i)i.style.filter=t===D?'invert(1)':'none'}function toggle(){var c=g(),n=c===L?D:L;localStorage.setItem(K,n);a(n);return n}a(g());if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){a(g())})}window.WiehrTheme={get:g,set:function(t){localStorage.setItem(K,t);a(t)},toggle:toggle,LIGHT:L,DARK:D};var ac=localStorage.getItem('wiehr-accent');if(ac==='blood')document.documentElement.setAttribute('data-wiehr-accent','blood');var wf=localStorage.getItem('wiehr-font');if(wf==='courier')document.documentElement.setAttribute('data-wiehr-font','courier')})();
 </script>
 
     
@@ -89,14 +89,6 @@
     </script>
 </head>
 <body class="loading{% block bodyclass %}{% endblock %}">
-    
-    <div class="whatliesbeneath" aria-hidden="true">
-        <div class="themarkbehind"
-             data-backdrop="{% block backdropmode %}mark{% endblock %}"
-             style="background-image:url('{% block backdrop %}{% static 'images/backdrop/network.jpg' %}{% endblock %}')"></div>
-    </div>
-
-    <canvas id="floatingdustcanvas" class="floatingdustcanvas" aria-hidden="true"></canvas>
     <div id="moneyruinseverythingoverlay" class="moneyruinseverything"></div>
 
     <svg class="noisefilterdefinitions" aria-hidden="true">
@@ -136,7 +128,6 @@
 
     <div class="whatareyouinterestedin" id="whatareyouinterestedin">
         
-        <div class="wherewewouldgo" id="wherewewouldgo" aria-hidden="true"></div>
         <div class="pickyourdestination">
             
             <div class="treeofalloptions">
@@ -145,34 +136,46 @@
             </div>
         </div>
         <div class="copyrightmark copyrightmark--overlay" id="copyrightmark-overlay">
+            <div class="copyrightmark-links">
+                <a href="/privacy" class="lastresortlink">Privacy</a>
+                <span class="lastresortsplit" aria-hidden="true">|</span>
+                <a href="/terms" class="lastresortlink">Terms</a>
+                <span class="lastresortsplit" aria-hidden="true">|</span>
+                <a href="/licensing" class="lastresortlink">Licensing</a>
+            </div>
+            <div class="copyrightmark-controls">
+                <button class="versionmark noiseonhover" id="fontswitch-overlay" aria-label="Toggle font">
+                    <img src="{% static 'images/entities/font_on.svg' %}" alt="Toggle font" width="16" height="16">
+                </button>
+                <button class="versionmark versionmark--accent noiseonhover" id="bloodordeath-overlay" aria-label="Toggle accent color">
+                    <img src="{% static 'images/entities/blood.svg' %}" alt="Toggle accent" width="16" height="16">
+                </button>
+                <button class="versionmark noiseonhover" id="lightordarkness-overlay" aria-label="Toggle theme">
+                    <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" width="16" height="16">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="copyrightmark" id="copyrightmark">
+        <div class="copyrightmark-links">
             <a href="/privacy" class="lastresortlink">Privacy</a>
             <span class="lastresortsplit" aria-hidden="true">|</span>
             <a href="/terms" class="lastresortlink">Terms</a>
             <span class="lastresortsplit" aria-hidden="true">|</span>
             <a href="/licensing" class="lastresortlink">Licensing</a>
-            <span class="lastresortsplit" aria-hidden="true">|</span>
-            <button class="versionmark versionmark--accent noiseonhover" id="bloodordeath-overlay" aria-label="Toggle accent color">
-                <img src="{% static 'images/entities/blood.svg' %}" alt="Toggle accent" width="16" height="16">
+        </div>
+        <div class="copyrightmark-controls">
+            <button class="versionmark noiseonhover" id="fontswitch" aria-label="Toggle font">
+                <img src="{% static 'images/entities/font_on.svg' %}" alt="Toggle font" id="fontswitchicon" width="16" height="16">
             </button>
-            <button class="versionmark noiseonhover" id="lightordarkness-overlay" aria-label="Toggle theme">
-                <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" width="16" height="16">
+            <button class="versionmark versionmark--accent noiseonhover" id="bloodordeath" aria-label="Toggle accent color">
+                <img src="{% static 'images/entities/blood.svg' %}" alt="Toggle accent" id="bloodicon" width="16" height="16">
+            </button>
+            <button class="versionmark noiseonhover" id="lightordarkness" aria-label="Toggle theme">
+                <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" id="lightnessicon" width="16" height="16">
             </button>
         </div>
-    </div>
-
-    <div class="copyrightmark" id="copyrightmark">
-        <a href="/privacy" class="lastresortlink">Privacy</a>
-        <span class="lastresortsplit" aria-hidden="true">|</span>
-        <a href="/terms" class="lastresortlink">Terms</a>
-        <span class="lastresortsplit" aria-hidden="true">|</span>
-        <a href="/licensing" class="lastresortlink">Licensing</a>
-        <span class="lastresortsplit" aria-hidden="true">|</span>
-        <button class="versionmark versionmark--accent noiseonhover" id="bloodordeath" aria-label="Toggle accent color">
-            <img src="{% static 'images/entities/blood.svg' %}" alt="Toggle accent" id="bloodicon" width="16" height="16">
-        </button>
-        <button class="versionmark noiseonhover" id="lightordarkness" aria-label="Toggle theme">
-            <img src="{% static 'images/entities/theme.svg' %}" alt="Toggle theme" id="lightnessicon" width="16" height="16">
-        </button>
     </div>
 
     <div id="iwanttoeathealthyfood">
@@ -180,7 +183,6 @@
     </div>
 
     <script src="{% static 'js/waitforitall.js' %}"></script>
-    <script src="{% static 'js/floatingdust.js' %}" defer></script>
     <script src="{% static 'js/pleasepickasideofthemenu.js' %}" defer></script>
     <script src="{% static 'js/grabit.js' %}" defer></script>
 

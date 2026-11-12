@@ -33,7 +33,7 @@
     padding: 1.1rem 0.6rem;
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-regular);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--letter-spacing);
     vertical-align: baseline;
 }
 
@@ -60,7 +60,7 @@
 .ledgerhead .ledgercell {
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.18em;
+    letter-spacing: var(--letter-spacing);
     opacity: 0.3;
     padding-bottom: 0.6rem;
 }
@@ -154,7 +154,7 @@ a.oneyearline:hover {
 .kindname {
     font-size: var(--font-size-thin);
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     opacity: 0.6;
 }
 
@@ -205,6 +205,21 @@ a.reachforit:hover {
     text-align: center;
 }
 
+[data-wiehr-accent="blood"] .whichyear,
+[data-wiehr-accent="blood"] .howmuchitweighed,
+[data-wiehr-accent="blood"] .whichyearagain,
+[data-wiehr-accent="blood"] .kindname {
+    color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"] .kindicon {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .kindicon {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%) !important;
+}
+
 @media (max-width: 640px) {
     .ledgercell {
         font-size: var(--font-size-light);
@@ -217,7 +232,7 @@ a.reachforit:hover {
 
     .ledgerhead .ledgercell {
         font-size: var(--font-size-micro);
-        letter-spacing: 0.08em;
+        letter-spacing: var(--letter-spacing);
     }
 
     .ledgerhead .whatitheld {

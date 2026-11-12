@@ -370,7 +370,7 @@ class WiehrGlobeObjectCreditsAdmin(admin.ModelAdmin):
 class CVExperienceInline(admin.StackedInline):
     model = CVExperience
     extra = 0
-    fields = ('role', 'company', 'company_url', 'date', 'location', 'bullets', 'order')
+    fields = ('role', 'company', 'company_url', 'overview', 'date', 'location', 'bullets', 'order')
     ordering = ('order',)
 
 
@@ -402,10 +402,17 @@ class CVLanguageInline(admin.TabularInline):
     ordering = ('order',)
 
 
-@admin.register(CVProfile)
-class CVProfileAdmin(admin.ModelAdmin):
+class RatesServiceInline(admin.StackedInline):
+    model = RatesService
+    extra = 0
+    fields = ('category', 'name', 'description', 'rate', 'order')
+    ordering = ('order',)
+
+
+@admin.register(WiehrDocument)
+class WiehrDocumentAdmin(admin.ModelAdmin):
     list_display = ('version', 'name', 'title', 'updated_at')
-    readonly_fields = ('updated_at',)
+    readonly_fields = ('updated_at', 'preview_links')
     fieldsets = (
         ('Profile', {
             'fields': ('version', 'name', 'title', 'bio')
@@ -413,18 +420,51 @@ class CVProfileAdmin(admin.ModelAdmin):
         ('Contact', {
             'fields': ('email', 'location', 'linkedin', 'linkedin_url', 'website')
         }),
+        ('Rates', {
+            'fields': ('rates_text',),
+            'classes': ('collapse',),
+        }),
+        ('Preview', {
+            'fields': ('preview_links', 'updated_at'),
+        }),
     )
-    inlines = [CVExperienceInline, CVSkillInline, CVProjectInline, CVEducationInline, CVLanguageInline]
+    inlines = [CVExperienceInline, CVSkillInline, CVProjectInline, CVEducationInline, CVLanguageInline, RatesServiceInline]
+
+    def preview_links(self, obj):
+        if not obj.pk:
+            return '-'
+        from django.utils.html import format_html
+        version = obj.version
+        if version == 'rates':
+            return format_html(
+                '<a href="/rates" target="_blank">Rates PDF</a>',
+            )
+        return format_html(
+            '<a href="/{v}/download?fmt=pdf" target="_blank">PDF</a> &nbsp; '
+            '<a href="/{v}/download?fmt=docx" target="_blank">DOCX</a> &nbsp; '
+            '<a href="/{v}/download?fmt=txt" target="_blank">TXT</a>',
+            v=version,
+        )
+    preview_links.short_description = 'Download Preview'
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
-        from .cv_builder import invalidate_cv_cache
-        invalidate_cv_cache(obj.version)
+        if obj.version != 'rates':
+            from .cv_builder import invalidate_cv_cache
+            invalidate_cv_cache(obj.version)
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
-        from .cv_builder import invalidate_cv_cache
-        invalidate_cv_cache(form.instance.version)
+        if form.instance.version != 'rates':
+            from .cv_builder import invalidate_cv_cache
+            invalidate_cv_cache(form.instance.version)
+
+    def delete_model(self, request, obj):
+        version = obj.version
+        super().delete_model(request, obj)
+        if version != 'rates':
+            from .cv_builder import invalidate_cv_cache
+            invalidate_cv_cache(version)
 
 
 class WiehrAtlasObjectImageInline(admin.TabularInline):

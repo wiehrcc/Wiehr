@@ -750,10 +750,14 @@ class Team(models.Model):
         return f"{self.email} ({status})"
 
 
-class CVProfile(models.Model):
+CVProfile = None  # legacy alias removed — use WiehrDocument
+
+
+class WiehrDocument(models.Model):
     VERSION_CHOICES = [
         ('engineer', 'ENGINEER'),
         ('composer', 'COMPOSER'),
+        ('rates', 'RATES'),
     ]
     version = models.CharField(max_length=20, choices=VERSION_CHOICES, unique=True)
     name = models.CharField(max_length=100, help_text="Full name")
@@ -764,22 +768,25 @@ class CVProfile(models.Model):
     linkedin = models.CharField(max_length=100, blank=True, help_text="Display text, e.g. linkedin.com/in/wiehrcc")
     linkedin_url = models.URLField(blank=True)
     website = models.URLField(blank=True)
+    rates_text = models.TextField(blank=True, help_text="Rates & commissions content (plain text). If empty, default rates are used.")
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Wiehr CV Profile'
-        verbose_name_plural = 'Wiehr CV Profiles'
+        verbose_name = 'Wiehr Document'
+        verbose_name_plural = 'Wiehr Documents'
+        db_table = 'web_cvprofile'
         ordering = ['version']
 
     def __str__(self):
-        return f"CV — {self.get_version_display()} ({self.name})"
+        return f"{self.get_version_display()} — {self.name}"
 
 
 class CVExperience(models.Model):
-    profile = models.ForeignKey(CVProfile, on_delete=models.CASCADE, related_name='experiences')
+    profile = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='experiences')
     role = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
     company_url = models.URLField(blank=True)
+    overview = models.CharField(max_length=300, blank=True, help_text="One-line company overview, e.g. 'Global tech consultancy with 3,000+ engineers'")
     date = models.CharField(max_length=50, help_text="e.g. 03/2022 — Present")
     location = models.CharField(max_length=100, blank=True)
     bullets = models.TextField(help_text="One bullet point per line")
@@ -798,7 +805,7 @@ class CVExperience(models.Model):
 
 
 class CVSkill(models.Model):
-    profile = models.ForeignKey(CVProfile, on_delete=models.CASCADE, related_name='skills')
+    profile = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='skills')
     category = models.CharField(max_length=100, help_text="e.g. Backend, Frontend, DevOps")
     items = models.TextField(help_text="Comma-separated skills, e.g. Python, Django, Flask")
     order = models.PositiveIntegerField(default=0)
@@ -817,7 +824,7 @@ class CVProject(models.Model):
         ('commercial', 'Commercial'),
         ('personal', 'Personal'),
     ]
-    profile = models.ForeignKey(CVProfile, on_delete=models.CASCADE, related_name='projects')
+    profile = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='projects')
     section = models.CharField(max_length=20, choices=SECTION_CHOICES, default='personal')
     name = models.CharField(max_length=200)
     project_type = models.CharField(max_length=100, help_text="e.g. Portfolio, Record Label")
@@ -841,7 +848,7 @@ class CVProject(models.Model):
 
 
 class CVEducation(models.Model):
-    profile = models.ForeignKey(CVProfile, on_delete=models.CASCADE, related_name='education')
+    profile = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='education')
     title = models.CharField(max_length=200)
     date = models.CharField(max_length=50, help_text="e.g. 09/2023 — Present")
     url = models.URLField(blank=True)
@@ -857,7 +864,7 @@ class CVEducation(models.Model):
 
 
 class CVLanguage(models.Model):
-    profile = models.ForeignKey(CVProfile, on_delete=models.CASCADE, related_name='languages')
+    profile = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='languages')
     language = models.CharField(max_length=50)
     level = models.CharField(max_length=100, help_text="e.g. C2 Proficient · EF SET Certified")
     order = models.PositiveIntegerField(default=0)
@@ -869,6 +876,23 @@ class CVLanguage(models.Model):
 
     def __str__(self):
         return f"{self.language}: {self.level}"
+
+
+class RatesService(models.Model):
+    document = models.ForeignKey(WiehrDocument, on_delete=models.CASCADE, related_name='services')
+    category = models.CharField(max_length=100, help_text="e.g. COMPOSER SERVICES, ENGINEER SERVICES")
+    name = models.CharField(max_length=200, help_text="e.g. Composition & Scoring")
+    description = models.TextField(help_text="Service description")
+    rate = models.CharField(max_length=200, blank=True, help_text="e.g. from €500, hourly €50/h")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Rates Service'
+        verbose_name_plural = 'Rates Services'
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.category}: {self.name}"
 
 
 class WiehrAtlasModel(models.Model):
@@ -1109,7 +1133,7 @@ class WiehrLabModel(models.Model):
 
     @property
     def title_with_type(self):
-        """'Wanda • Chrome Extension' for /lab; plain title when no type is set.
+        """'Wanda — Chrome Extension' for /lab/item; plain title when no type.
 
         /archive deliberately uses `title` on its own — it lists items from
         every section together, so the extra qualifier only adds noise there.
@@ -1117,7 +1141,7 @@ class WiehrLabModel(models.Model):
         title = self.title
         project_type = self.project_type
         if project_type:
-            return f"{title} • {project_type}"
+            return f"{title} \u2014 {project_type}"
         return title
 
     def youtube_embed_url(self):

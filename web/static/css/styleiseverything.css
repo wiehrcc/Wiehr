@@ -26,7 +26,8 @@
     --font-weight-medium: 600;
     --font-weight-bold: 700;
     --font-weight-black: 900;
-    --letter-spacing: 0;
+    --letter-spacing: 0.1em;
+    --font-family-alt: "Segoe UI", system-ui, sans-serif;
     --line-height-basic: 1;
     --line-height-text: 1;
 
@@ -70,6 +71,23 @@
     --shadow-card-hover: 0 12px 40px rgba(21, 22, 23, 0.16), 0 4px 12px rgba(21, 22, 23, 0.08);
 
     --color-error: #c00;
+}
+
+[data-wiehr-font="segoeui"] {
+    --font-family: "Segoe UI", system-ui, sans-serif;
+    --letter-spacing: 0;
+    --font-size-micro: 8px;
+    --font-size-tiny: 10px;
+    --font-size-thin: 12px;
+    --font-size-small: 14px;
+    --font-size-light: 16px;
+    --font-size-standard: 18px;
+    --font-size-regular: 20px;
+    --font-size-large: 22px;
+    --font-size-medium: 24px;
+    --font-size-semibold: 26px;
+    --font-size-bold: 28px;
+    --font-size-black: 30px;
 }
 
 [data-wiehr-theme="dark"] {
@@ -252,17 +270,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 
     color: var(--color-text);
-}
-
-.floatingdustcanvas {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    z-index: var(--index-priority-min);
-    pointer-events: none;
 }
 
 #whatareyouinterestedin {
@@ -556,7 +563,7 @@ body {
     font-size: calc(var(--font-size-thin) * 0.5);
     opacity: 0.4;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     margin-top: .5rem;
 }
 
@@ -580,7 +587,7 @@ body {
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     border: 1px solid var(--color-text);
     background: transparent;
     opacity: 0.5;
@@ -698,8 +705,9 @@ body {
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
+    line-height: 1;
     color: var(--color-text);
     background: transparent;
     border: none;
@@ -767,7 +775,7 @@ body {
     font-size: var(--type-title);
     font-weight: var(--font-weight-black);
     line-height: var(--line-height-title);
-    letter-spacing: 0;
+    letter-spacing: var(--letter-spacing);
     margin: 0;
 }
 .whosnamegoeshere {
@@ -789,7 +797,7 @@ body {
     line-height: var(--line-height-meta);
     opacity: 0.4;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
     font-weight: var(--font-weight-bold);
 }
 .filenumber,
@@ -811,14 +819,6 @@ body {
     }
 }
 
-:root[data-tier="mid"] .whatliesbeneath,
-:root[data-tier="mid"] .themarkbehind {
-    animation: none;
-}
-
-:root[data-tier="low"] .floatingdustcanvas {
-    display: none;
-}
 
 :root[data-tier="low"] .noiseonhover:hover,
 :root[data-tier="low"] .singlerouteforyou:not(.singlerouteforyou-disabled):hover,
@@ -828,16 +828,9 @@ body {
     animation: none;
 }
 
-:root[data-tier="low"] .whatliesbeneath,
-:root[data-tier="low"] .themarkbehind,
-
 :root[data-tier="low"] body.themeglitch,
 :root[data-tier="mid"] body.themeglitch {
     animation: none;
-}
-
-:root[data-tier="low"] .wherewewouldgo {
-    transition-duration: 0.15s;
 }
 
 .pretendplaybutton {
@@ -873,13 +866,14 @@ body {
 .wiehr-btn {
     border: 1px solid var(--color-text);
     background: transparent;
-    padding: 1rem 1.5rem;
+    line-height: 1;
+    padding: 0.85rem 1.5rem;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
     text-decoration: none;
     font-family: var(--font-family, monospace);
     font-weight: var(--font-weight-bold, 700);
     font-size: var(--font-size-thin);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     color: var(--color-text);
     cursor: pointer;
@@ -908,6 +902,7 @@ body {
 [data-wiehr-accent="blood"] .grabformat,
 [data-wiehr-accent="blood"] .onepaperformat,
 [data-wiehr-accent="blood"] .takeitwithyou,
+[data-wiehr-accent="blood"] .cvsectiontoggle,
 [data-wiehr-accent="blood"] .grabit {
     border-color: var(--color-accent);
     color: var(--color-accent);
@@ -926,7 +921,8 @@ body {
     color: var(--color-bg);
 }
 
-[data-wiehr-accent="blood"] .onepaperformat.chosen {
+[data-wiehr-accent="blood"] .onepaperformat.chosen,
+[data-wiehr-accent="blood"] .cvsectiontoggle.chosen {
     background: var(--color-accent);
     color: var(--color-bg);
     border-color: var(--color-accent);
@@ -943,6 +939,57 @@ body {
 
 [data-wiehr-accent="blood"] .wilogoatleft img {
     filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wiehr-btn,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onemorelink,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .doonething,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .checkitnow,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .pressandpray,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .becomevisible,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabformat,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .takeitwithyou,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabit {
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+    opacity: 0.75;
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wiehr-btn:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onemorelink:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .doonething:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .checkitnow:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .pressandpray:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .becomevisible:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabformat:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat:hover,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .takeitwithyou:hover {
+    opacity: 1;
+    background: var(--color-accent);
+    color: var(--color-black);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .onepaperformat.chosen,
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle.chosen {
+    opacity: 1;
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle {
+    background: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+    opacity: 0.75;
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .grabit.grabit-done {
+    background: var(--color-accent);
+    color: var(--color-black);
+    opacity: 1;
 }
 
 [data-wiehr-accent="blood"][data-wiehr-theme="dark"] .wilogoatleft img {

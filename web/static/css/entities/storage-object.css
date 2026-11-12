@@ -122,7 +122,7 @@
 
 .knockonmydoorlabel {
     font-size: var(--font-size-tiny);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     opacity: 0.4;
 }
@@ -144,9 +144,10 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
-    padding: 0.65rem 0.8rem;
+    line-height: 1;
+    padding: 0.5rem 0.6rem;
     border: 1px solid var(--color-text);
     background: transparent;
     opacity: 0.5;
@@ -172,7 +173,7 @@
 .provewhoyouaretitle {
     font-size: var(--font-size-light);
     font-weight: var(--font-weight-black, 900);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     margin: 0;
 }
 
@@ -205,7 +206,7 @@
     font-family: var(--font-family, monospace);
     color: var(--color-bg);
     text-align: center;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
 }
 
 .provewhoyouareform input::placeholder {
@@ -230,7 +231,7 @@
     color: inherit;
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     font-family: var(--font-family, monospace);
 }
 
@@ -262,7 +263,7 @@
 .showmeyourpaperslabel {
     font-size: var(--font-size-micro);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     opacity: 0.5;
 }
@@ -288,8 +289,9 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
+    line-height: 1;
     padding: 1rem 1.5rem;
     border: 1px solid var(--color-text);
     background: transparent;
@@ -318,7 +320,7 @@
 .proofidownloadedlabel {
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     opacity: 0.35;
 }
@@ -327,7 +329,7 @@
     font-size: var(--font-size-thin);
     font-family: var(--font-family, monospace);
     font-weight: var(--font-weight-regular, 400);
-    letter-spacing: 0.04em;
+    letter-spacing: var(--letter-spacing);
     opacity: 0.6;
     word-break: break-all;
     user-select: all;
@@ -351,7 +353,7 @@
 
     .doonething {
         font-size: var(--font-size-tiny);
-        padding: 0.75rem 0.5rem;
+        padding: 0.5rem 0.4rem;
     }
 
     .showmeyourpapersrow {
@@ -367,6 +369,6 @@
     color: var(--color-bg);
     background: var(--color-text);
     font-size: var(--font-size-thin);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--letter-spacing);
     opacity: 1;
 }

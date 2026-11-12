@@ -48,7 +48,7 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-black, 900);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--letter-spacing);
 }
 
 .oneshorttarget {
@@ -141,7 +141,7 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-light);
     font-weight: var(--font-weight-black, 900);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     margin: 0;
 }
 
@@ -175,7 +175,7 @@
     font-family: var(--font-family, monospace);
     color: var(--color-bg);
     text-align: center;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--letter-spacing);
 }
 
 .knockknockform input::placeholder {
@@ -201,7 +201,7 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
 }
 
 .knockknockform button:hover {

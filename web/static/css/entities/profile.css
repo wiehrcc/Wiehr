@@ -19,7 +19,7 @@
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-black, 900);
     line-height: 1.1;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--letter-spacing);
     margin: 0;
 }
 
@@ -40,7 +40,7 @@
 .pitchlabel {
     font-size: var(--font-size-thin);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.18em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     opacity: 0.4;
     margin: 0;
@@ -127,7 +127,7 @@
 .paperlabel {
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.18em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
     opacity: 0.4;
 }
@@ -149,9 +149,10 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
-    padding: 0.65rem 0.8rem;
+    line-height: 1;
+    padding: 0.5rem 0.6rem;
     border: 1px solid var(--color-text);
     background: transparent;
     opacity: 0.5;
@@ -182,9 +183,10 @@
     font-family: var(--font-family, monospace);
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold, 700);
-    letter-spacing: 0.12em;
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
-    padding: 0.65rem 0.8rem;
+    line-height: 1;
+    padding: 0.5rem 0.6rem;
     border: 1px solid var(--color-text);
     background: transparent;
     opacity: 0.5;
@@ -198,6 +200,80 @@
     opacity: 1;
     background: var(--color-text);
     color: var(--color-bg);
+}
+
+.cvsectiongrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    width: 100%;
+}
+
+.cvsectiontoggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    background: transparent;
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+    font-family: var(--font-family, monospace);
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: var(--letter-spacing);
+    padding: 0.45rem 0.55rem;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    text-align: left;
+}
+
+.cvsectiontoggle:hover {
+    opacity: 0.8;
+}
+
+.cvsectiontoggle.chosen {
+    opacity: 1;
+    background: var(--color-text);
+    color: var(--color-bg);
+}
+
+.cvsectionicon {
+    width: 0.85em;
+    height: 0.85em;
+    flex-shrink: 0;
+}
+
+.cvsectiontoggle .cvsectionicon.on { display: none; }
+.cvsectiontoggle .cvsectionicon.off { display: inline; }
+.cvsectiontoggle.chosen .cvsectionicon.on { display: inline; }
+.cvsectiontoggle.chosen .cvsectionicon.off { display: none; }
+
+.cvsectiontoggle.chosen .cvsectionicon.on {
+    filter: invert(1);
+}
+
+[data-wiehr-theme="dark"] .cvsectiontoggle .cvsectionicon {
+    filter: invert(1);
+}
+
+[data-wiehr-theme="dark"] .cvsectiontoggle.chosen .cvsectionicon.on {
+    filter: none;
+}
+
+[data-wiehr-accent="blood"] .cvsectiontoggle .cvsectionicon {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"] .cvsectiontoggle.chosen .cvsectionicon.on {
+    filter: invert(1);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle .cvsectionicon {
+    filter: brightness(0) invert(14%) sepia(96%) saturate(6932%) hue-rotate(1deg) brightness(82%) contrast(118%);
+}
+
+[data-wiehr-accent="blood"][data-wiehr-theme="dark"] .cvsectiontoggle.chosen .cvsectionicon.on {
+    filter: none;
 }
 
 @media (max-width: 640px) {

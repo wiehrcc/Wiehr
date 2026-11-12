@@ -3,16 +3,14 @@
 
     var BARCODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:<>?/~';
 
-    var BACKDROP_PATH = '/static/images/backdrop/';
-
     var MENU_ITEMS = [
-        { id: 'index', label: '•', icon: 'network.svg', backdrop: 'network.jpg', href: '/', active: true, isFirst: true },
-        { id: 'archive', label: 'Archive', icon: 'archive.svg', backdrop: 'archive.jpg', href: '/archive', active: true },
-        { id: 'globe', label: 'Globe', icon: 'globe.svg', backdrop: 'globe.jpg', href: '/globe', active: true },
-        { id: 'atlas', label: 'Atlas', icon: 'atlas.svg', backdrop: 'atlas.jpg', href: '/atlas', active: true },
-        { id: 'storage', label: 'Storage', icon: 'storage.svg', backdrop: 'storage.jpg', href: '/storage', active: true },
-        { id: 'lab', label: 'Lab', icon: 'lab.svg', backdrop: 'lab.jpg', href: '/lab', active: true },
-        { id: 'about', label: 'About', icon: 'whoareyou.svg', backdrop: 'whoareyou.jpg', href: '/about', active: true }
+        { id: 'index', label: '•', icon: 'network.svg', href: '/', active: true, isFirst: true },
+        { id: 'archive', label: 'Archive', icon: 'archive.svg', href: '/archive', active: true },
+        { id: 'globe', label: 'Globe', icon: 'globe.svg', href: '/globe', active: true },
+        { id: 'atlas', label: 'Atlas', icon: 'atlas.svg', href: '/atlas', active: true },
+        { id: 'storage', label: 'Storage', icon: 'storage.svg', href: '/storage', active: true },
+        { id: 'lab', label: 'Lab', icon: 'lab.svg', href: '/lab', active: true },
+        { id: 'about', label: 'About', icon: 'whoareyou.svg', href: '/about', active: true }
     ];
 
     function initCursor() {
@@ -222,6 +220,57 @@
         toggle: toggleAccent
     };
 
+    var FONT_KEY = 'wiehr-font';
+
+    function getFont() {
+        return localStorage.getItem(FONT_KEY) || 'wiehr';
+    }
+
+    function applyFont(font) {
+        if (font === 'segoeui') {
+            document.documentElement.setAttribute('data-wiehr-font', 'segoeui');
+        } else {
+            document.documentElement.removeAttribute('data-wiehr-font');
+        }
+        var onSrc = '/static/images/entities/font_on.svg';
+        var offSrc = '/static/images/entities/font_off.svg';
+        var src = font === 'segoeui' ? offSrc : onSrc;
+        ['fontswitchicon', 'fontswitch-overlay'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                var img = el.tagName === 'IMG' ? el : el.querySelector('img');
+                if (img) img.src = src;
+            }
+        });
+    }
+
+    function toggleFont() {
+        var current = getFont();
+        var next = current === 'segoeui' ? 'wiehr' : 'segoeui';
+        localStorage.setItem(FONT_KEY, next);
+        applyFont(next);
+        return next;
+    }
+
+    applyFont(getFont());
+
+    window.WiehrFont = {
+        get: getFont,
+        set: function(f) { localStorage.setItem(FONT_KEY, f); applyFont(f); },
+        toggle: toggleFont
+    };
+
+    function initFontToggle() {
+        ['fontswitch', 'fontswitch-overlay'].forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('click', function() {
+                triggerGlitch();
+                toggleFont();
+            });
+        });
+    }
+
     function initAccentToggle() {
         ['bloodordeath', 'bloodordeath-overlay'].forEach(function(id) {
             var btn = document.getElementById(id);
@@ -261,8 +310,7 @@
             if (isCurrent) cls += ' singlerouteforyou-current';
             if (disabled) cls += ' singlerouteforyou-disabled';
 
-            var out = '<div class="' + cls + '" style="transition-delay:' + (delayStep * 40) + 'ms"' +
-                      (item.backdrop && !disabled ? ' data-routebackdrop="' + BACKDROP_PATH + item.backdrop + '"' : '') + '>';
+            var out = '<div class="' + cls + '" style="transition-delay:' + (delayStep * 40) + 'ms">';
             delayStep += 1;
             out += disabled
                 ? '<span class="routelink routelink-disabled">'
@@ -284,55 +332,6 @@
             html += renderRoute(item, branch);
         });
         itemsContainer.innerHTML = html;
-
-        var preview = document.getElementById('wherewewouldgo');
-        var previewShown = '';
-        var preloaded = false;
-
-        function preloadBackdrops() {
-            if (preloaded) return;
-            preloaded = true;
-            overlay.querySelectorAll('[data-routebackdrop]').forEach(function(el) {
-                (new Image()).src = el.getAttribute('data-routebackdrop');
-            });
-        }
-
-        
-        var previewTimer = null;
-        var PREVIEW_SETTLE = 90;
-
-        function showPreview(src) {
-            if (!preview || previewShown === src) return;
-            previewShown = src;
-            preview.style.backgroundImage = "url('" + src + "')";
-            preview.classList.add('showingitself');
-        }
-
-        function queuePreview(src) {
-            if (!preview || previewShown === src) return;
-            if (previewTimer) clearTimeout(previewTimer);
-            previewTimer = setTimeout(function() {
-                previewTimer = null;
-                showPreview(src);
-            }, PREVIEW_SETTLE);
-        }
-
-        function hidePreview() {
-            if (!preview) return;
-            if (previewTimer) { clearTimeout(previewTimer); previewTimer = null; }
-            previewShown = '';
-            preview.classList.remove('showingitself');
-        }
-
-        if (preview) {
-            overlay.querySelectorAll('[data-routebackdrop]').forEach(function(row) {
-                var src = row.getAttribute('data-routebackdrop');
-                row.addEventListener('pointerenter', function() { queuePreview(src); });
-                row.addEventListener('pointerleave', hidePreview);
-            });
-
-            itemsContainer.addEventListener('pointerleave', hidePreview);
-        }
 
         function openMenu() {
             if (menuTransitioning) return;
@@ -366,7 +365,6 @@
             menuBtn.classList.remove('menuisopen');
             document.body.classList.remove('menuisopen');
             stopAllScrambles();
-            hidePreview();
 
             var items = overlay.querySelectorAll('.singlerouteforyou');
             items.forEach(function(el) { el.classList.remove('shownitself'); });
@@ -540,6 +538,7 @@
         initCursor();
         initThemeToggle();
         initAccentToggle();
+        initFontToggle();
         initMenu();
         initBreadcrumbs();
         syncHeaderClearance();

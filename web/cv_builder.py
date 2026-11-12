@@ -1,5 +1,6 @@
 import io
 import os
+import re
 from pathlib import Path
 
 from reportlab.lib.pagesizes import A4
@@ -12,30 +13,56 @@ from django.conf import settings
 
 CACHE_DIR = Path(settings.BASE_DIR) / "media" / "cv" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
+for _f in CACHE_DIR.glob("cv_*"):
+    _f.unlink(missing_ok=True)
 
-FONT_MAP = {"bold": "Courier-Bold", "regular": "Courier"}
+def _register_fonts():
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    font_dir = os.path.join(settings.BASE_DIR, 'web', 'static', 'font')
+    segoe = os.path.join(font_dir, 'SegoeUI-Regular.ttf')
+    segoe_b = os.path.join(font_dir, 'SegoeUI-Bold.ttf')
+    pdfmetrics.registerFont(TTFont('SegoeUI', segoe))
+    pdfmetrics.registerFont(TTFont('SegoeUI-Bold', segoe_b))
+    return {'bold': 'SegoeUI-Bold', 'regular': 'SegoeUI'}
+
+
+FONT_MAP = _register_fonts()
+
+_MONTH_ABBR = {
+    '01': 'Jan.', '02': 'Feb.', '03': 'Mar.', '04': 'Apr.',
+    '05': 'May', '06': 'Jun.', '07': 'Jul.', '08': 'Aug.',
+    '09': 'Sep.', '10': 'Oct.', '11': 'Nov.', '12': 'Dec.',
+}
+
+
+def _fmt_date(raw):
+    """Convert '03/2022 — Present' to 'Mar. 2022 — Present'."""
+    def _repl(m):
+        mm_str, yyyy = m.group(1), m.group(2)
+        return f"{_MONTH_ABBR.get(mm_str, mm_str)} {yyyy}"
+    return re.sub(r'(\d{2})/(\d{4})', _repl, raw)
 
 
 TEXT_FULL = Color(0, 0, 0, 1.0)
-TEXT_SECONDARY = Color(0.20, 0.20, 0.20, 1.0)
 
 
 def _get_styles():
     fm = FONT_MAP
     return {
-        "name": ParagraphStyle("CVName", fontName=fm["bold"], fontSize=18, leading=20, textColor=TEXT_FULL, spaceAfter=2),
-        "title": ParagraphStyle("CVTitle", fontName=fm["regular"], fontSize=9, leading=11.5, textColor=TEXT_FULL, spaceAfter=3),
-        "contact": ParagraphStyle("CVContact", fontName=fm["regular"], fontSize=8, leading=10.5, textColor=TEXT_SECONDARY, spaceAfter=2),
-        "bio": ParagraphStyle("CVBio", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=5),
-        "section": ParagraphStyle("CVSection", fontName=fm["bold"], fontSize=8.5, leading=11, textColor=TEXT_FULL, spaceBefore=3, spaceAfter=2.5),
-        "role": ParagraphStyle("CVRole", fontName=fm["bold"], fontSize=9.5, leading=12, textColor=TEXT_FULL, spaceAfter=1),
-        "meta": ParagraphStyle("CVMeta", fontName=fm["regular"], fontSize=8, leading=10.5, textColor=TEXT_SECONDARY, spaceAfter=1.5),
+        "name": ParagraphStyle("CVName", fontName=fm["bold"], fontSize=16, leading=19, textColor=TEXT_FULL, spaceAfter=2),
+        "title": ParagraphStyle("CVTitle", fontName=fm["regular"], fontSize=9, leading=12, textColor=TEXT_FULL, spaceAfter=1),
+        "contact": ParagraphStyle("CVContact", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=2),
+        "bio": ParagraphStyle("CVBio", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=3),
+        "section": ParagraphStyle("CVSection", fontName=fm["bold"], fontSize=9, leading=12, textColor=TEXT_FULL, spaceBefore=8, spaceAfter=3),
+        "company": ParagraphStyle("CVCompany", fontName=fm["bold"], fontSize=9, leading=12, textColor=TEXT_FULL, spaceAfter=0),
+        "role_date": ParagraphStyle("CVRoleDate", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1),
         "bullet": ParagraphStyle("CVBullet", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, leftIndent=8, bulletIndent=0, spaceAfter=1),
-        "skill": ParagraphStyle("CVSkill", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1.5),
-        "project_name": ParagraphStyle("CVProjectName", fontName=fm["bold"], fontSize=8.5, leading=11, textColor=TEXT_FULL, spaceAfter=1),
-        "project_desc": ParagraphStyle("CVProjectDesc", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1.5),
-        "edu": ParagraphStyle("CVEdu", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1.5),
-        "lang": ParagraphStyle("CVLang", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1.5),
+        "skill": ParagraphStyle("CVSkill", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1),
+        "project_name": ParagraphStyle("CVProjectName", fontName=fm["bold"], fontSize=9, leading=12, textColor=TEXT_FULL, spaceAfter=0),
+        "project_desc": ParagraphStyle("CVProjectDesc", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1),
+        "edu": ParagraphStyle("CVEdu", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=2),
+        "lang": ParagraphStyle("CVLang", fontName=fm["regular"], fontSize=8, leading=11, textColor=TEXT_FULL, spaceAfter=1),
     }
 
 
@@ -45,20 +72,27 @@ def _link(text, url):
     return text
 
 
+def _link_with_icon(text, url):
+    if url:
+        return f'<a href="{url}" color="black">{text} ■</a>'
+    return text
+
+
+
 def _get_cv_data(version):
-    from .models import CVProfile
+    from .models import WiehrDocument
     try:
-        profile = CVProfile.objects.prefetch_related(
+        profile = WiehrDocument.objects.prefetch_related(
             'experiences', 'skills', 'projects', 'education', 'languages'
         ).get(version=version)
-    except CVProfile.DoesNotExist:
+    except WiehrDocument.DoesNotExist:
         return None
 
     def _project_dict(proj):
         return {
             "name": proj.name,
             "type": proj.project_type,
-            "date": proj.date,
+            "date": _fmt_date(proj.date),
             "desc": proj.description,
             "bullets": proj.get_bullets_list(),
             "link": proj.link_text,
@@ -85,7 +119,8 @@ def _get_cv_data(version):
                 "role": exp.role,
                 "company": exp.company,
                 "company_url": exp.company_url,
-                "date": exp.date,
+                "overview": exp.overview,
+                "date": _fmt_date(exp.date),
                 "location": exp.location,
                 "bullets": exp.get_bullets_list(),
             }
@@ -99,7 +134,7 @@ def _get_cv_data(version):
         "projects_personal": personal,
         "projects_personal_label": "WORKS" if version == "composer" else "PERSONAL PROJECTS",
         "education": [
-            (edu.title, edu.date, edu.url)
+            (edu.title, _fmt_date(edu.date), edu.url)
             for edu in profile.education.all()
         ],
         "languages": [
@@ -108,6 +143,7 @@ def _get_cv_data(version):
         ],
         "updated_at": profile.updated_at,
     }
+
 
 
 def _build_pdf(data):
@@ -120,16 +156,16 @@ def _build_pdf(data):
         pagesize=A4,
         leftMargin=MARGIN_LR,
         rightMargin=MARGIN_LR,
-        topMargin=14 * mm,
+        topMargin=12 * mm,
         bottomMargin=10 * mm,
+        title=f'CV — {data["name"]}',
+        author=data["name"],
     )
 
     elements = []
 
     elements.append(Paragraph(data["name"], S["name"]))
-    elements.append(Spacer(1, 1))
     elements.append(Paragraph(data["title"], S["title"]))
-    elements.append(Spacer(1, 2))
 
     contact_parts = []
     if data["contact"]["email"]:
@@ -140,66 +176,58 @@ def _build_pdf(data):
         contact_parts.append(_link(data["contact"]["linkedin"], data["contact"]["linkedin_url"]))
     if data["contact"]["website"]:
         contact_parts.append(_link(data["contact"]["website"], data["contact"]["website"]))
-    elements.append(Paragraph("  |  ".join(contact_parts), S["contact"]))
+    elements.append(Paragraph(" | ".join(contact_parts), S["contact"]))
 
     if data.get("bio"):
-        elements.append(Spacer(1, 6))
+        elements.append(Spacer(1, 2))
         elements.append(Paragraph(data["bio"], S["bio"]))
-    else:
-        elements.append(Spacer(1, 8))
 
     if data["experience"]:
-        elements.append(Paragraph("PROFESSIONAL EXPERIENCE", S["section"]))
-        elements.append(Spacer(1, 4))
+        elements.append(Paragraph("WORK EXPERIENCE", S["section"]))
         for i, exp in enumerate(data["experience"]):
-            elements.append(Paragraph(f'{exp["role"]}  \u2014  {exp["date"]}', S["role"]))
-            company_text = _link(exp["company"], exp.get("company_url"))
-            loc_part = f', {exp["location"]}' if exp.get("location") else ''
-            elements.append(Paragraph(f'{company_text}{loc_part}', S["meta"]))
-            elements.append(Spacer(1, 2))
+            loc_part = f'  \u2014  {exp["location"]}' if exp.get("location") else ''
+            company_line = f'{exp["company"]}{loc_part}'
+            company_para = Paragraph(_link_with_icon(company_line, exp.get("company_url")), S["company"])
+            elements.append(company_para)
+            elements.append(Paragraph(f'{exp["role"]}  |  {exp["date"]}', S["role_date"]))
             for bullet in exp["bullets"]:
-                elements.append(Paragraph(f"- {bullet}", S["bullet"]))
-            elements.append(Spacer(1, 8 if i < len(data["experience"]) - 1 else 5))
+                elements.append(Paragraph(f"\u2022 {bullet}", S["bullet"]))
+            if i < len(data["experience"]) - 1:
+                elements.append(Spacer(1, 3))
 
     if data["skills"]:
-        elements.append(Spacer(1, 2))
         elements.append(Paragraph("SKILLS", S["section"]))
-        elements.append(Spacer(1, 3))
         for cat, items in data["skills"]:
             elements.append(Paragraph(f"<b>{cat}:</b>  {items}", S["skill"]))
 
     def _render_project_group(header, projects):
-        elements.append(Spacer(1, 6))
         elements.append(Paragraph(header, S["section"]))
-        elements.append(Spacer(1, 3))
         for proj in projects:
             link_part = ""
             if proj.get("link") and proj.get("url"):
-                link_part = f'  \u2014  {_link(proj["link"], proj["url"])}'
-            name_str = f'{proj["name"]} ({proj["type"]})  \u2014  {proj["date"]}{link_part}'
-            elements.append(Paragraph(name_str, S["project_name"]))
+                link_part = f'  |  {_link_with_icon(proj["link"], proj["url"])}'
+            name_str = f'{proj["name"]} ({proj["type"]})  |  {proj["date"]}{link_part}'
+            name_para = Paragraph(name_str, S["project_name"])
+            elements.append(name_para)
             elements.append(Paragraph(proj["desc"], S["project_desc"]))
             for bullet in proj.get("bullets") or []:
-                elements.append(Paragraph(f"- {bullet}", S["bullet"]))
-            elements.append(Spacer(1, 4))
+                elements.append(Paragraph(f"\u2022 {bullet}", S["bullet"]))
+            elements.append(Spacer(1, 3))
 
-    if data["projects_commercial"]:
-        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
     if data["projects_personal"]:
         _render_project_group(data["projects_personal_label"], data["projects_personal"])
+    if data["projects_commercial"]:
+        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
 
     if data["education"]:
-        elements.append(Spacer(1, 2))
         elements.append(Paragraph("EDUCATION &amp; CERTIFICATIONS", S["section"]))
-        elements.append(Spacer(1, 3))
         for title, date, url in data["education"]:
-            title_text = _link(title, url)
-            elements.append(Paragraph(f"{title_text}  \u2014  {date}", S["edu"]))
+            edu_line = f"{title}  |  {date}"
+            edu_para = Paragraph(_link_with_icon(edu_line, url), S["edu"])
+            elements.append(edu_para)
 
     if data["languages"]:
-        elements.append(Spacer(1, 6))
         elements.append(Paragraph("LANGUAGES", S["section"]))
-        elements.append(Spacer(1, 3))
         for lang, level in data["languages"]:
             elements.append(Paragraph(f"<b>{lang}:</b>  {level}", S["lang"]))
 
@@ -222,11 +250,11 @@ def _build_docx(data):
     section.top_margin = Cm(1.6)
     section.bottom_margin = Cm(1.0)
 
-    font_name = "Courier New"
-    secondary = RGBColor(0x33, 0x33, 0x33)
+    font_name = "Segoe UI"
     black_c = RGBColor(0x00, 0x00, 0x00)
+    secondary = RGBColor(0x33, 0x33, 0x33)
 
-    def add_run(para, text, size=8.5, bold=False, color=black_c):
+    def add_run(para, text, size=7.5, bold=False, color=black_c):
         run = para.add_run(text)
         run.font.name = font_name
         run._element.rPr.rFonts.set(qn('w:cs'), font_name)
@@ -235,7 +263,7 @@ def _build_docx(data):
         run.font.color.rgb = color
         return run
 
-    def add_hyperlink(para, text, url, size=8.5, bold=False, color=black_c):
+    def add_hyperlink(para, text, url, size=7.5, bold=False, color=black_c):
         part = para.part
         r_id = part.relate_to(url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True)
         hyperlink = para._element.makeelement(qn('w:hyperlink'), {qn('r:id'): r_id})
@@ -261,131 +289,137 @@ def _build_docx(data):
     p = doc.add_paragraph()
     p.space_after = Pt(0)
     p.space_before = Pt(0)
-    add_run(p, data["name"], size=17, bold=True)
+    add_run(p, data["name"], size=14, bold=True)
 
     p = doc.add_paragraph()
-    p.space_after = Pt(1)
+    p.space_after = Pt(0)
     p.space_before = Pt(0)
-    add_run(p, data["title"], size=9, color=secondary)
+    add_run(p, data["title"], size=7.5, color=secondary)
 
     p = doc.add_paragraph()
-    p.space_after = Pt(4)
-    p.space_before = Pt(1)
+    p.space_after = Pt(2)
+    p.space_before = Pt(0)
     contact_parts = []
     if data["contact"]["email"]:
         contact_parts.append(data["contact"]["email"])
     if data["contact"]["location"]:
         contact_parts.append(data["contact"]["location"])
-    add_run(p, "  |  ".join(contact_parts) + "  |  ", size=8.5, color=secondary)
+    add_run(p, " | ".join(contact_parts) + " | ", size=7, color=secondary)
     if data["contact"]["linkedin"] and data["contact"]["linkedin_url"]:
-        add_hyperlink(p, data["contact"]["linkedin"], data["contact"]["linkedin_url"], size=8.5, color=secondary)
+        add_hyperlink(p, data["contact"]["linkedin"], data["contact"]["linkedin_url"], size=7, color=secondary)
 
     if data.get("bio"):
         p = doc.add_paragraph()
-        p.space_after = Pt(4)
-        p.space_before = Pt(2)
-        add_run(p, data["bio"], size=8.5, color=secondary)
+        p.space_after = Pt(2)
+        p.space_before = Pt(1)
+        add_run(p, data["bio"], size=7, color=secondary)
 
     if data["experience"]:
         p = doc.add_paragraph()
-        p.space_after = Pt(2)
+        p.space_after = Pt(1)
         p.space_before = Pt(2)
-        add_run(p, "PROFESSIONAL EXPERIENCE", size=8.5, bold=True, color=secondary)
+        add_run(p, "WORK EXPERIENCE", size=7.5, bold=True, color=secondary)
 
         for exp in data["experience"]:
             p = doc.add_paragraph()
             p.space_after = Pt(0)
-            p.space_before = Pt(2)
-            add_run(p, f'{exp["role"]}  \u2014  {exp["date"]}', size=9.5, bold=True)
+            p.space_before = Pt(1)
+            if exp.get("company_url"):
+                add_hyperlink(p, exp["company"], exp["company_url"], size=8, bold=True)
+            else:
+                add_run(p, exp["company"], size=8, bold=True)
+            if exp.get("location"):
+                add_run(p, f'  \u2014  {exp["location"]}', size=8, color=secondary)
 
             p = doc.add_paragraph()
-            p.space_after = Pt(1)
+            p.space_after = Pt(0)
             p.space_before = Pt(0)
-            if exp.get("company_url"):
-                add_hyperlink(p, exp["company"], exp["company_url"], size=8.5, bold=True)
-            else:
-                add_run(p, exp["company"], size=8.5, bold=True)
-            if exp.get("location"):
-                add_run(p, f', {exp["location"]}', size=8.5, color=secondary)
+            add_run(p, f'{exp["role"]}  |  {exp["date"]}', size=7, color=secondary)
+
+            if exp.get("overview"):
+                p = doc.add_paragraph()
+                p.space_after = Pt(0)
+                p.space_before = Pt(0)
+                add_run(p, exp["overview"], size=7, color=secondary)
 
             for bullet in exp["bullets"]:
                 p = doc.add_paragraph()
                 p.space_after = Pt(0)
                 p.space_before = Pt(0)
-                add_run(p, f"- {bullet}", size=8.5, color=secondary)
+                add_run(p, f"\u2022 {bullet}", size=7, color=secondary)
 
     if data["skills"]:
         p = doc.add_paragraph()
-        p.space_after = Pt(2)
-        p.space_before = Pt(3)
-        add_run(p, "SKILLS", size=8.5, bold=True, color=secondary)
+        p.space_after = Pt(1)
+        p.space_before = Pt(2)
+        add_run(p, "SKILLS", size=7.5, bold=True, color=secondary)
 
         for cat, items in data["skills"]:
             p = doc.add_paragraph()
             p.space_after = Pt(0)
             p.space_before = Pt(0)
-            add_run(p, f"{cat}: ", size=8.5, bold=True, color=black_c)
-            add_run(p, items, size=8.5, color=secondary)
+            add_run(p, f"{cat}: ", size=7, bold=True)
+            add_run(p, items, size=7, color=secondary)
 
     def _render_project_group(header, projects):
         p = doc.add_paragraph()
-        p.space_after = Pt(2)
-        p.space_before = Pt(3)
-        add_run(p, header, size=8.5, bold=True, color=secondary)
+        p.space_after = Pt(1)
+        p.space_before = Pt(2)
+        add_run(p, header, size=7.5, bold=True, color=secondary)
 
         for proj in projects:
             p = doc.add_paragraph()
             p.space_after = Pt(0)
             p.space_before = Pt(1)
-            add_run(p, f'{proj["name"]} ({proj["type"]})  \u2014  {proj["date"]}', size=8.5, bold=True)
+            add_run(p, f'{proj["name"]} ({proj["type"]})  |  {proj["date"]}', size=7.5, bold=True)
 
             p = doc.add_paragraph()
             p.space_after = Pt(0)
             p.space_before = Pt(0)
-            add_run(p, proj["desc"], size=8.5, color=secondary)
+            add_run(p, proj["desc"], size=7, color=secondary)
             if proj.get("link") and proj.get("url"):
-                add_run(p, f'  \u2014  ', size=8.5, color=secondary)
-                add_hyperlink(p, proj["link"], proj["url"], size=8.5, color=secondary)
+                add_run(p, '  |  ', size=7, color=secondary)
+                add_hyperlink(p, proj["link"] + ' \u25a0', proj["url"], size=7, color=secondary)
 
             for bullet in proj.get("bullets") or []:
                 p = doc.add_paragraph()
                 p.space_after = Pt(0)
                 p.space_before = Pt(0)
-                add_run(p, f"- {bullet}", size=8.5, color=secondary)
+                add_run(p, f"\u2022 {bullet}", size=7, color=secondary)
 
-    if data["projects_commercial"]:
-        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
     if data["projects_personal"]:
         _render_project_group(data["projects_personal_label"], data["projects_personal"])
+    if data["projects_commercial"]:
+        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
 
     if data["education"]:
         p = doc.add_paragraph()
-        p.space_after = Pt(2)
-        p.space_before = Pt(3)
-        add_run(p, "EDUCATION & CERTIFICATIONS", size=8.5, bold=True, color=secondary)
+        p.space_after = Pt(1)
+        p.space_before = Pt(2)
+        add_run(p, "EDUCATION & CERTIFICATIONS", size=7.5, bold=True, color=secondary)
 
         for title, date, url in data["education"]:
             p = doc.add_paragraph()
             p.space_after = Pt(0)
             p.space_before = Pt(0)
             if url:
-                add_hyperlink(p, title, url, size=8.5, bold=True)
+                add_hyperlink(p, title + ' \u25a0', url, size=7, bold=True)
             else:
-                add_run(p, title, size=8.5, bold=True)
-            add_run(p, f'  \u2014  {date}', size=8.5, color=secondary)
+                add_run(p, title, size=7, bold=True)
+            add_run(p, f'  |  {date}', size=7, color=secondary)
 
     if data["languages"]:
         p = doc.add_paragraph()
-        p.space_after = Pt(2)
-        p.space_before = Pt(3)
-        add_run(p, "LANGUAGES", size=8.5, bold=True, color=secondary)
+        p.space_after = Pt(1)
+        p.space_before = Pt(2)
+        add_run(p, "LANGUAGES", size=7.5, bold=True, color=secondary)
 
         for lang, level in data["languages"]:
             p = doc.add_paragraph()
             p.space_after = Pt(0)
             p.space_before = Pt(0)
-            add_run(p, f"{lang}: ", size=8.5, bold=True)
-            add_run(p, level, size=8.5, color=secondary)
+            add_run(p, f"{lang}: ", size=7, bold=True)
+            add_run(p, level, size=7, color=secondary)
 
     buffer = io.BytesIO()
     doc.save(buffer)
@@ -396,8 +430,6 @@ def _build_txt(data):
     lines = []
     lines.append(data["name"])
     lines.append(data["title"])
-    lines.append("")
-
     contact_parts = []
     if data["contact"]["email"]:
         contact_parts.append(data["contact"]["email"])
@@ -407,80 +439,92 @@ def _build_txt(data):
         contact_parts.append(data["contact"]["linkedin_url"])
     if data["contact"]["website"]:
         contact_parts.append(data["contact"]["website"])
-    lines.append("  |  ".join(contact_parts))
-
+    lines.append(" | ".join(contact_parts))
     if data.get("bio"):
-        lines.append("")
         lines.append(data["bio"])
-
-    lines.append("")
     lines.append("")
 
     if data["experience"]:
-        lines.append("PROFESSIONAL EXPERIENCE")
-        lines.append("")
+        lines.append("WORK EXPERIENCE")
         for exp in data["experience"]:
-            lines.append(f'{exp["role"]}  \u2014  {exp["date"]}')
             company_line = exp["company"]
             if exp.get("company_url"):
-                company_line += f'  ({exp["company_url"]})'
+                company_line += f' ({exp["company_url"]})'
             if exp.get("location"):
-                company_line += f'  \u2014  {exp["location"]}'
+                company_line += f' \u2014 {exp["location"]}'
             lines.append(company_line)
+            lines.append(f'{exp["role"]} | {exp["date"]}')
+            if exp.get("overview"):
+                lines.append(exp["overview"])
             for bullet in exp["bullets"]:
-                lines.append(f"- {bullet}")
+                lines.append(f"\u2022 {bullet}")
             lines.append("")
 
     if data["skills"]:
-        lines.append("")
         lines.append("SKILLS")
-        lines.append("")
         for cat, items in data["skills"]:
             lines.append(f"{cat}: {items}")
+        lines.append("")
 
     def _render_project_group(header, projects):
-        lines.append("")
-        lines.append("")
         lines.append(header)
-        lines.append("")
         for proj in projects:
-            lines.append(f'{proj["name"]} \u00b7 {proj["type"]}  \u2014  {proj["date"]}')
+            lines.append(f'{proj["name"]} ({proj["type"]}) | {proj["date"]}')
             lines.append(proj["desc"])
             for bullet in proj.get("bullets") or []:
-                lines.append(f"- {bullet}")
+                lines.append(f"\u2022 {bullet}")
             if proj.get("url"):
                 lines.append(proj["url"])
-            lines.append("")
+        lines.append("")
 
-    if data["projects_commercial"]:
-        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
     if data["projects_personal"]:
         _render_project_group(data["projects_personal_label"], data["projects_personal"])
+    if data["projects_commercial"]:
+        _render_project_group("COMMERCIAL PROJECTS", data["projects_commercial"])
 
     if data["education"]:
-        lines.append("")
         lines.append("EDUCATION & CERTIFICATIONS")
-        lines.append("")
         for title, date, url in data["education"]:
-            line = f"{title}  \u2014  {date}"
+            line = f"{title} | {date}"
             if url:
-                line += f"  ({url})"
+                line += f" ({url})"
             lines.append(line)
+        lines.append("")
 
     if data["languages"]:
-        lines.append("")
-        lines.append("")
         lines.append("LANGUAGES")
-        lines.append("")
         for lang, level in data["languages"]:
             lines.append(f"{lang}: {level}")
 
-    lines.append("")
     return "\n".join(lines)
 
 
 def _cache_path(version, fmt):
     return CACHE_DIR / f"cv_{version}.{fmt}"
+
+
+ALL_SECTIONS = {'experience', 'skills', 'commercial', 'personal', 'education', 'languages'}
+
+
+def _filter_sections(data, sections):
+    """Return a shallow copy of data with only the requested sections populated."""
+    if sections is None:
+        return data
+    keep = set(sections) & ALL_SECTIONS
+    filtered = dict(data)
+    if 'experience' not in keep:
+        filtered['experience'] = []
+    if 'skills' not in keep:
+        filtered['skills'] = []
+    if 'commercial' not in keep:
+        filtered['projects_commercial'] = []
+    if 'personal' not in keep:
+        filtered['projects_personal'] = []
+    if 'education' not in keep:
+        filtered['education'] = []
+    if 'languages' not in keep:
+        filtered['languages'] = []
+    return filtered
 
 
 def invalidate_cv_cache(version=None):
@@ -492,43 +536,52 @@ def invalidate_cv_cache(version=None):
                 path.unlink()
 
 
-def get_cv_pdf(version='engineer'):
-    path = _cache_path(version, 'pdf')
-    if path.exists():
-        return path.read_bytes()
+def get_cv_pdf(version='engineer', sections=None):
+    use_cache = sections is None
+    if use_cache:
+        path = _cache_path(version, 'pdf')
+        if path.exists():
+            return path.read_bytes()
 
     data = _get_cv_data(version)
     if not data:
         return None
 
-    pdf_bytes = _build_pdf(data)
-    path.write_bytes(pdf_bytes)
+    pdf_bytes = _build_pdf(_filter_sections(data, sections))
+    if use_cache:
+        path.write_bytes(pdf_bytes)
     return pdf_bytes
 
 
-def get_cv_docx(version='engineer'):
-    path = _cache_path(version, 'docx')
-    if path.exists():
-        return path.read_bytes()
+def get_cv_docx(version='engineer', sections=None):
+    use_cache = sections is None
+    if use_cache:
+        path = _cache_path(version, 'docx')
+        if path.exists():
+            return path.read_bytes()
 
     data = _get_cv_data(version)
     if not data:
         return None
 
-    docx_bytes = _build_docx(data)
-    path.write_bytes(docx_bytes)
+    docx_bytes = _build_docx(_filter_sections(data, sections))
+    if use_cache:
+        path.write_bytes(docx_bytes)
     return docx_bytes
 
 
-def get_cv_txt(version='engineer'):
-    path = _cache_path(version, 'txt')
-    if path.exists():
-        return path.read_text(encoding='utf-8')
+def get_cv_txt(version='engineer', sections=None):
+    use_cache = sections is None
+    if use_cache:
+        path = _cache_path(version, 'txt')
+        if path.exists():
+            return path.read_text(encoding='utf-8')
 
     data = _get_cv_data(version)
     if not data:
         return None
 
-    txt_content = _build_txt(data)
-    path.write_text(txt_content, encoding='utf-8')
+    txt_content = _build_txt(_filter_sections(data, sections))
+    if use_cache:
+        path.write_text(txt_content, encoding='utf-8')
     return txt_content

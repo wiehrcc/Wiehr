@@ -4,8 +4,6 @@
 
 {% block title %}{{ lab_object.title }} at Lab — Wiehr. Official Website{% endblock %}
 
-{% block backdrop %}{% static 'images/backdrop/lab.jpg' %}{% endblock %}
-
 {% block head %}
     {% compress css inline %}
         <link rel="stylesheet" href="{% static 'css/entities/lab-object.css' %}">
@@ -119,7 +117,7 @@
         {% endif %}
 
         <div class="whatitactuallyis">
-            <h1 class="whaticalledit">{{ lab_object.title }}</h1>
+            <h1 class="whaticalledit">{{ lab_object.title_with_type }}</h1>
             <span class="whenthathappened">{{ lab_object.get_year_range }}</span>
             {% if lab_object.role %}
             <span class="whatiwasdoingthere">{{ lab_object.role }}</span>

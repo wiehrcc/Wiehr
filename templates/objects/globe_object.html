@@ -4,8 +4,6 @@
 
 {% block title %}{{ release.display_release_title|default:release.title }} by Wiehr at Globe — Wiehr. Official Website{% endblock %}
 
-{% block backdrop %}{% static 'images/backdrop/globe.jpg' %}{% endblock %}
-
 {% block head %}
     <link rel="canonical" href="{{ site_url_nodashed }}/globe/{{ release.slug }}">
     <link rel="alternate" href="{{ site_url_nodashed }}/globe/{{ release.slug }}" />
